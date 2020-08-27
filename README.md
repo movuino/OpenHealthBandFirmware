@@ -17,6 +17,15 @@ Firmware for Open Health Band
   or
   - Smartphone with bluefruit app : https://github.com/adafruit/Bluefruit_LE_Connect_v2
 
+<b>Data format :</b>
+  16-byte packets LSB
+  [0-3] timestamp (uint32_t)
+  [4-7] red channel ppg (uint32_t)
+  [8-11] red channel ppg (uint32_t)
+  [12-15] red channel ppg (uint32_t)
+
+<b>Connection paramaters</b>
+connection interval : 20 ms
 
 - ##### Unit Test folder
   => Tests of each of the funcionnalities
