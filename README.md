@@ -9,6 +9,15 @@ Firmware for Open Health Band
 - ##### BLueart example :
   * testing in progress
 
+- ##### Test Firmware using BLE UART
+=> testing streaming of data via ble uart characteristic
+<b> Peripheral part :</b> OHB with OHB-BLEuart-peripheral
+<b> Central part </b> :
+  - another nrf52840 to act as dongle with OHB-BLEuart-central Firmware
+  or
+  - Smartphone with bluefruit app : https://github.com/adafruit/Bluefruit_LE_Connect_v2
+
+
 - ##### Unit Test folder
   => Tests of each of the funcionnalities
   * ###### I2C scanner (modified from arduino I2c scanner)
