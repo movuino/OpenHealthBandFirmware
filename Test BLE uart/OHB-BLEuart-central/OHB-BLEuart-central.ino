@@ -26,6 +26,15 @@ unsigned int timer0,timer1;
 int packetNb=0;
 int readBytesNb=0;
 byte buf[16];
+/*output mode 
+0 : received byte nb 
+1 : timestamp
+2 : timestamp + red ppg 
+3 : timestamp + red ppg + green ppg
+4 : timestamp + red ppg + green ppg + ir ppg
+
+*/
+int outputMode=2; 
 
 
 void setup()
@@ -224,8 +233,38 @@ void bleuart_rx_callback(BLEClientUart& uart_svc)
       redPPG = (redPPG  << 8) + buf[5];
       redPPG = (redPPG  << 8) + buf[6];
       redPPG = (redPPG  << 8) + buf[7];  
-      //Serial.print("redPPG: "+String(redPPG));
-      Serial.println(redPPG);
+      /*green PPG*/
+      uint32_t greenPPG= 0;
+      greenPPG = buf[8];
+      greenPPG = (greenPPG  << 8) + buf[9];
+      greenPPG = (greenPPG  << 8) + buf[10];
+      greenPPG = (greenPPG << 8) + buf[11];
+      /*IR ppg*/
+      uint32_t irPPG= 0;
+      irPPG = buf[12];
+      irPPG = (irPPG  << 8) + buf[13];
+      irPPG = (redPPG  << 8) + buf[14];
+      irPPG = (redPPG  << 8) + buf[15];
+      
+      if(outputMode==1){
+        Serial.println(String(timestamp));
+      }
+      else if(outputMode==2){
+        Serial.print(String(timestamp)+" ");
+        Serial.println(redPPG);
+      }
+      else if(outputMode==3){
+        Serial.print(String(timestamp)+" ");
+        Serial.print(String(redPPG)+" ");
+        Serial.println(greenPPG);
+      }
+      else if(outputMode==4){
+        Serial.print(String(timestamp)+" ");
+        Serial.print(String(redPPG)+" ");
+        Serial.print(String(greenPPG)+" ");
+        Serial.println(String(irPPG));
+      }
+      
   }
   
   //Serial.print("Received bytes"+String(readBytesNb));
