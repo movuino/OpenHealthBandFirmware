@@ -27,6 +27,11 @@ Firmware for Open Health Band
 <b>Connection paramaters</b>
 connection interval : 20 ms
 
+<b>Current issues : </b>
+- PPG sensor read takes 10 ms : particleSensor.getRed() => 20ms min between 2 samples
+=> solution : using fifo
+
+
 - ##### Unit Test folder
   => Tests of each of the funcionnalities
   * ###### I2C scanner (modified from arduino I2c scanner)
