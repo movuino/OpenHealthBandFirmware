@@ -37,23 +37,27 @@ extern "C"
 #endif // __cplusplus
 
 // Number of pins defined in PinDescription array
-#define PINS_COUNT           (36)
-#define NUM_DIGITAL_PINS     (36)
+#define PINS_COUNT           (38)
+#define NUM_DIGITAL_PINS     (38)
 #define NUM_ANALOG_INPUTS    (6) // A6 is used for battery, A7 is analog reference
 #define NUM_ANALOG_OUTPUTS   (0)
 
 // LEDs
-#define PIN_LED1             (3)
-#define PIN_LED2             (4)
-#define PIN_NEOPIXEL         (8)
+#define PIN_LED1        (4) //p1.10 red
+#define PIN_LED2        (34) //P1.11 blue
+#define PIN_LED3	    (37) //P1.14 green
 
 #define LED_BUILTIN          PIN_LED1
 #define LED_CONN             PIN_LED2
 
 #define LED_RED              PIN_LED1
 #define LED_BLUE             PIN_LED2
+#define LED_GREEN            PIN_LED3
 
-#define LED_STATE_ON         1         // State when LED is litted
+#define LED_STATE_ON         0         // State when LED is litted
+/*Interrup pins */
+#define INT_MPU (36)    //p1.12 int mpu
+#define INT_PPG (37)    //p1.13 int ppg
 
 /*
  * Buttons

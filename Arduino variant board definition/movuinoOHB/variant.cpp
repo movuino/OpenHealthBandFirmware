@@ -30,7 +30,7 @@ const uint32_t g_ADigitalPinMap[] =
   24,  // D1  is P0.24 (UART RX 
   10,  // D2  is P0.10 (NFC2)
   47,  // D3  is P1.15 (LED1)
-  42,  // D4  is P1.10 (LED2)
+  42,  // D4  is P1.10 (LED2) RED LED
   40,  // D5  is P1.08
    7,  // D6  is P0.07
   34,  // D7  is P1.02 (Button)
@@ -89,10 +89,10 @@ const uint32_t g_ADigitalPinMap[] =
   // 37,      // P1.05 is not connected per schematic
   // 38,      // P1.06 is not connected per schematic
   // 39,      // P1.07 is not connected per schematic
-   43,      // P1.11 is not connected per schematic
-  // 44,      // P1.12 is not connected per schematic
-  // 45,      // P1.13 is not connected per schematic
-   46,      // P1.14 is not connected per schematic
+   43,      // P1.11 is not connected per schematic  BLUE LED 34
+   44,      // P1.12 is not connected per schematic  INT MPU   35?
+   45,      // P1.13 is not connected per schematic  INT PPG   36?
+   46,      // P1.14 is not connected per schematic  GREEN LED  (35)
 };
 
 void initVariant()
@@ -103,5 +103,8 @@ void initVariant()
 
   pinMode(PIN_LED2, OUTPUT);
   ledOff(PIN_LED2);
+  
+   pinMode(PIN_LED3, OUTPUT);
+  ledOff(PIN_LED3);
 }
 
