@@ -74,9 +74,9 @@ void setup()
   particleSensor.setup(); //Configure sensor. Use 6.4mA for LED drive
   //Setup parameters
   byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
-  byte sampleAverage = 2; //Options: 1, 2, 4, 8, 16, 32
+  byte sampleAverage = 1; //Options: 1, 2, 4, 8, 16, 32
   byte ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
-  int sampleRate = 400; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+  int sampleRate = 200; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
   int pulseWidth = 411; //Options: 69, 118, 215, 411
   int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
   particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange); //Configure sensor with these settings
@@ -233,14 +233,14 @@ void loop()
     buf[5] = (uint8_t)(redPPG>>=8);
     buf[4] = (uint8_t)(redPPG>>=8);
     Serial.print("] IR[");
-    uint32_t irPPG= particleSensor.getIR();
+    uint32_t irPPG= particleSensor.getFIFOIR();
     Serial.print(irPPG);
     buf[11] = (uint8_t)irPPG;
     buf[10] = (uint8_t)(irPPG>>=8);
     buf[9] = (uint8_t)(irPPG>>=8);
     buf[8] = (uint8_t)(irPPG>>=8);
     Serial.print("] G[");
-    uint32_t greenPPG= particleSensor.getGreen();
+    uint32_t greenPPG= particleSensor.getFIFOGreen();
     Serial.print(greenPPG);
     buf[15] = (uint8_t)greenPPG;
     buf[14] = (uint8_t)(greenPPG>>=8);
