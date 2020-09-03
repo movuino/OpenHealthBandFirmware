@@ -32,9 +32,10 @@ byte buf[16];
 2 : timestamp + red ppg 
 3 : timestamp + red ppg + green ppg
 4 : timestamp + red ppg + green ppg + ir ppg
+5 : green ppg
 
 */
-int outputMode=2; 
+int outputMode=5; 
 
 
 void setup()
@@ -264,6 +265,10 @@ void bleuart_rx_callback(BLEClientUart& uart_svc)
         Serial.print(String(greenPPG)+" ");
         Serial.println(String(irPPG));
       }
+       else if(outputMode==5){
+        Serial.println(String(irPPG));
+      }
+      
       
   }
   
