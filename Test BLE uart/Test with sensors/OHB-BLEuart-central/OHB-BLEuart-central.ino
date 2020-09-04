@@ -26,6 +26,11 @@ unsigned int timer0,timer1;
 int packetNb=0;
 int readBytesNb=0;
 byte buf[16];
+
+uint32_t redPPG= 0;
+uint32_t irPPG= 0;
+uint32_t greenPPG= 0;
+uint32_t timestamp =0;
 /*output mode 
 0 : received byte nb 
 1 : timestamp
@@ -35,7 +40,7 @@ byte buf[16];
 5 : green ppg
 
 */
-int outputMode=5; 
+int outputMode=2; 
 
 
 void setup()
@@ -194,33 +199,17 @@ void bleuart_rx_callback(BLEClientUart& uart_svc)
   //Serial.print("[RX]: ");
  // packetNb++;
   //Serial.print(String (millis()-timer0)+" "+String(packetNb));
-
  int i=0; 
  while ( uart_svc.available() )
   {
   buf[readBytesNb]=uart_svc.read();
-  //Serial.print(String(buf[readBytesNb])+" ");
-  //every 2 bytes received
-  /*
-  if(i==4) {
-    
-    uint16_t tempData= word( buf[i-1],  buf[i]);
-    Serial.print(String(buf[i-1])+" ");
-    Serial.print(String(buf[i])+" ");
-    Serial.print(" [v]: ");
-    Serial.print(tempData);
-    Serial.print(" ");
-    i=0;
-  }
-  else i++;*/ 
-
   readBytesNb++;
    // Serial.print( /*(char)*/ uart_svc.read() );
   }
-  if(readBytesNb==16){
-      //uint32_t timestamp= 0;
+  if(readBytesNb>4){
+    //uint32_t timestamp= 0;
       int startByte=7;
-      uint32_t timestamp = buf[0]; //0
+      timestamp = buf[0]; //0
       timestamp = (timestamp  << 8) + buf[1];
       timestamp = (timestamp << 8) + buf[2];
       timestamp = (timestamp << 8) + buf[3];  
@@ -229,23 +218,30 @@ void bleuart_rx_callback(BLEClientUart& uart_svc)
        Serial.print("buf[2]: "+String(buf[2]));
       Serial.print(" buf[3]: "+String(buf[3]));*/
       //Serial.print(" timestamp: "+String(timestamp));
-      uint32_t redPPG= 0;
+     // uint32_t redPPG= 0;
       redPPG = buf[4];
       redPPG = (redPPG  << 8) + buf[5];
       redPPG = (redPPG  << 8) + buf[6];
       redPPG = (redPPG  << 8) + buf[7];  
-      /*green PPG*/
-      uint32_t greenPPG= 0;
-      greenPPG = buf[8];
-      greenPPG = (greenPPG  << 8) + buf[9];
-      greenPPG = (greenPPG  << 8) + buf[10];
-      greenPPG = (greenPPG << 8) + buf[11];
+  }
+  
+  if(readBytesNb>9){
       /*IR ppg*/
-      uint32_t irPPG= 0;
-      irPPG = buf[12];
-      irPPG = (irPPG  << 8) + buf[13];
-      irPPG = (redPPG  << 8) + buf[14];
-      irPPG = (redPPG  << 8) + buf[15];
+    //  uint32_t irPPG= 0;
+      irPPG = buf[8];
+      irPPG = (irPPG  << 8) + buf[9];
+      irPPG = (irPPG  << 8) + buf[10];
+      irPPG = (irPPG  << 8) + buf[11];
+      }
+   if(readBytesNb>15) {
+      /*green PPG*/
+     // uint32_t greenPPG= 0;
+      greenPPG = buf[12];
+      greenPPG = (greenPPG  << 8) + buf[13];
+      greenPPG = (greenPPG  << 8) + buf[14];
+      greenPPG = (greenPPG << 8) + buf[15];
+      }
+
       
       if(outputMode==1){
         Serial.println(String(timestamp));
@@ -269,13 +265,11 @@ void bleuart_rx_callback(BLEClientUart& uart_svc)
         Serial.println(String(irPPG));
       }
       
-      
+      readBytesNb=0;
   }
-  
   //Serial.print("Received bytes"+String(readBytesNb));
-  readBytesNb=0;
+  //readBytesNb=0;
   //Serial.println();
-}
 
 void loop()
 {

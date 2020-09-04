@@ -30,6 +30,7 @@ BLEBas  blebas;  // battery
 int counter=0;
 int counterG;
 uint8_t buf[16];
+int buflen=16;
 bool connected=false;
 unsigned int timer0;
 uint16_t bufData[8];
@@ -42,6 +43,8 @@ int samplingRateMs = 1000/10 ;
 //ppg
 MAX30105 particleSensor;
 long samplesTaken = 0; //Counter for calculating the Hz or read rate
+byte ledMode;
+
 /*
 timestamp uint32 
 r g b uint32
@@ -75,7 +78,8 @@ void setup()
   //Setup parameters
   byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
   byte sampleAverage = 1; //Options: 1, 2, 4, 8, 16, 32
-  byte ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+  ledMode = 1; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+  buflen=4+4*(ledMode);
   int sampleRate = 200; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
   int pulseWidth = 411; //Options: 69, 118, 215, 411
   int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
@@ -233,20 +237,27 @@ void loop()
     buf[5] = (uint8_t)(redPPG>>=8);
     buf[4] = (uint8_t)(redPPG>>=8);
     Serial.print("] IR[");
-    uint32_t irPPG= particleSensor.getFIFOIR();
-    Serial.print(irPPG);
-    buf[11] = (uint8_t)irPPG;
-    buf[10] = (uint8_t)(irPPG>>=8);
-    buf[9] = (uint8_t)(irPPG>>=8);
-    buf[8] = (uint8_t)(irPPG>>=8);
-    Serial.print("] G[");
-    uint32_t greenPPG= particleSensor.getFIFOGreen();
-    Serial.print(greenPPG);
-    buf[15] = (uint8_t)greenPPG;
-    buf[14] = (uint8_t)(greenPPG>>=8);
-    buf[13] = (uint8_t)(greenPPG>>=8);
-    buf[12] = (uint8_t)(greenPPG>>=8);
-    Serial.print("] Hz[");
+   
+    if(ledMode >1){
+      uint32_t irPPG= particleSensor.getFIFOIR();
+      Serial.print(irPPG);
+      buf[11] = (uint8_t)irPPG;
+      buf[10] = (uint8_t)(irPPG>>=8);
+      buf[9] = (uint8_t)(irPPG>>=8);
+      buf[8] = (uint8_t)(irPPG>>=8);
+      Serial.print("]"); 
+      }
+    if(ledMode >2){
+      Serial.print("G[");
+      uint32_t greenPPG= particleSensor.getFIFOGreen();
+      Serial.print(greenPPG);
+      buf[15] = (uint8_t)greenPPG;
+      buf[14] = (uint8_t)(greenPPG>>=8);
+      buf[13] = (uint8_t)(greenPPG>>=8);
+      buf[12] = (uint8_t)(greenPPG>>=8);
+      Serial.print("]");
+      } 
+    Serial.print("Hz[");
     Serial.print((float)samplesTaken / ((millis() - timer0) / 1000.0), 2);
     Serial.print("]");
     Serial.print(samplesTaken);
@@ -256,7 +267,7 @@ void loop()
     }  
   
   if(dataReady)  {
-    bleuart.write(buf, 16  );
+    bleuart.write(buf, buflen  );
     dataReady=false;    
   }
  }
