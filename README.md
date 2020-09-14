@@ -66,4 +66,5 @@ but this profile has to be customized to make it fully work with open OpenHealth
 <b> MAX30205 : </b> Protocentral MAX30205 v1.0.0 (from arduino library manager) : https://github.com/protocentral/ProtoCentral_MAX30205
 
 <b> MAX30105 : </b> Sparkfun MAX3010x Sensor library v1.1.1 (from arduino library manager) : https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
+
 <b> MPU9250 : </b> MPU9250 asukiaaa v1.5.8 (from arduino library manager) : https://github.com/asukiaaa/MPU9250_asukiaaa
