@@ -63,7 +63,7 @@ void updatePPG(){
   /*Get data from ppg*/
   particleSensor.check(); //Check the sensor, read up to 3 samples
   //Serial.print(String(millis()-timer0)+" ");
-  while (particleSensor.available()){
+ while (particleSensor.available()){
     samplesTaken++;
     counterG++;
     uint32_t timestamp=millis();
@@ -119,7 +119,7 @@ void updatePPG(){
 }
 void setup() {
   Serial.begin(115200);
-  while ( !Serial ) delay(10);
+ // while ( !Serial ) delay(10);
   /*not strating until ppg sensor is started */
   /*todo : error codes*/
   if (particleSensor.begin() == false){
