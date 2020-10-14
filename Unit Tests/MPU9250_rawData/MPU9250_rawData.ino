@@ -1,11 +1,6 @@
-#include <Esplora.h>
-
+//#include <Esplora.h>
 #include <MPU9250_asukiaaa.h>
 
-#ifdef _ESP32_HAL_I2C_H_
-#define SDA_PIN 21
-#define SCL_PIN 22
-#endif
 
 MPU9250_asukiaaa mySensor(0x69);
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
@@ -77,5 +72,5 @@ void loop() {
 
   Serial.println("at " + String(millis()) + "ms");
   Serial.println(""); // Add an empty line
-  delay(500);
+  delay(10);
 }
