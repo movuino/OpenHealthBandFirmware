@@ -1,8 +1,11 @@
-//#include <Esplora.h>
 #include <MPU9250_asukiaaa.h>
 
+#ifdef _ESP32_HAL_I2C_H_
+#define SDA_PIN 21
+#define SCL_PIN 22
+#endif
 
-MPU9250_asukiaaa mySensor(0x69);
+MPU9250_asukiaaa mySensor;
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
 
 void setup() {
@@ -26,31 +29,27 @@ void setup() {
 }
 
 void loop() {
-  /*
   uint8_t sensorId;
   if (mySensor.readId(&sensorId) == 0) {
     Serial.println("sensorId: " + String(sensorId));
   } else {
     Serial.println("Cannot read sensorId");
   }
-*/
+
   if (mySensor.accelUpdate() == 0) {
     aX = mySensor.accelX();
-    uint32_t toto = mySensor.accelX();
-    float toto2=float(toto);
     aY = mySensor.accelY();
     aZ = mySensor.accelZ();
     aSqrt = mySensor.accelSqrt();
-    Serial.print("accelX: " + String(aX));
-    Serial.println("uintaccelX: " + String(toto));
-    //Serial.println("accelY: " + String(aY));
-    //Serial.println("accelZ: " + String(aZ));
-    //Serial.println("accelSqrt: " + String(aSqrt));
+    Serial.println("accelX: " + String(aX));
+    Serial.println("accelY: " + String(aY));
+    Serial.println("accelZ: " + String(aZ));
+    Serial.println("accelSqrt: " + String(aSqrt));
   } else {
     Serial.println("Cannod read accel values");
   }
 
- /* if (mySensor.gyroUpdate() == 0) {
+  if (mySensor.gyroUpdate() == 0) {
     gX = mySensor.gyroX();
     gY = mySensor.gyroY();
     gZ = mySensor.gyroZ();
@@ -75,6 +74,6 @@ void loop() {
   }
 
   Serial.println("at " + String(millis()) + "ms");
-  Serial.println(""); // Add an empty line*/
-  delay(10);
+  Serial.println(""); // Add an empty line
+  delay(500);
 }
