@@ -16,7 +16,7 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
  */
 void connect_callback(uint16_t conn_handle)
 {
-  Serial.println("Connected");
+   Serial.println("Connected");
   Serial.print("Discovering Custom Service ... ");
 
   // If HRM is not found, disconnect and return
@@ -32,9 +32,9 @@ void connect_callback(uint16_t conn_handle)
 
   // Once HRM service is found, we continue to discover its characteristic
   Serial.println("Found it");
-  
   Serial.print("Discovering ACC characteristic ... ");
-  if ( !IMUCharacteristic.discover() )
+  //while ( !IMUCharacteristic.discover()) Serial.println("discovering imucharacteristic");  
+ if ( !IMUCharacteristic.discover() )
   {
     // Measurement chr is mandatory, if it is not found (valid), then disconnect
     Serial.println("not found !!!");  
@@ -74,11 +74,10 @@ void connect_callback(uint16_t conn_handle)
   {
     Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
   }
-/*timestamp service*/
-  delay(100);
-   // If HRM is not found, disconnect and return
-/* if ( !timeStampService.discover(conn_handle) )
+/*  Serial.print("Discovering timestamp Service ... ");
+   if ( !timeStampService.discover(conn_handle) )
   {
+     Serial.print("timestamp not found ");
     Serial.println("Found NONE timeStamp");
 
     // disconnect since we couldn't find HRM service
@@ -86,29 +85,9 @@ void connect_callback(uint16_t conn_handle)
 
     return;
   }
-
-  // Once HRM service is found, we continue to discover its characteristic
-  Serial.println("Found timeStamp service");
-  
-  /*Serial.print("Discovering timeStamp characteristic ... ");
-  if ( !timeStampCharacteristic.discover() )
-  {
-    // Measurement chr is mandatory, if it is not found (valid), then disconnect
-    Serial.println("timeStamp characteristic not found !!!");  
-    Bluefruit.disconnect(conn_handle);
-    return;
-  }
-  Serial.println("timeStamp characteristic Found");
-  delay(20);
-  // Reaching here means we are ready to go, let's enable notification on measurement chr
-  if ( timeStampCharacteristic.enableNotify() )
-  {
-    Serial.println("timeStamp characteristic notify enabled");
-    myTimer=millis();
-  }else
-  {
-    Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
-  }*/
+  Serial.println("Found timestamp service");
+  delay(100);*/
+ 
   
 }
 

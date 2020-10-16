@@ -5,8 +5,9 @@ BLEClientService        IMUService(0x1101);
 BLEClientCharacteristic IMUCharacteristic(0x1102);
 BLEClientCharacteristic GyroCharacteristic(0x1103);
 
-BLEService timeStampService = BLEService(0x1165);
-BLECharacteristic timeStampCharacteristic = BLECharacteristic(0x1166);
+
+BLEClientService timeStampService (0x1165);
+BLEClientCharacteristic timeStampCharacteristic (0x1166);
 
 long myTimer=0;
 long receivedSamplesNb=0;
@@ -39,9 +40,6 @@ void setup() {
    // set up callback for receiving measurement
   GyroCharacteristic.setNotifyCallback(GyroCharacteristic_notify_callback);
   GyroCharacteristic.begin();
-
-    // set up callback for receiving measurement
-  timeStampService.begin();
   delay(20);
  // timeStampCharacteristic.setNotifyCallback(timeStampCharacteristic_notify_callback);
  // timeStampCharacteristic.begin();
