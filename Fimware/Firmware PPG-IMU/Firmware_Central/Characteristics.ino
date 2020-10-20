@@ -33,6 +33,7 @@ void timeStampCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8
 //    Serial.println(data[1]);
 //  }
 }
+/*
 void IMUCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
   Serial.println("acc packet");
@@ -45,7 +46,7 @@ void IMUCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* da
   Serial.println(data[1]);
   Serial.println(data[2]);
   Serial.println(data[3]);*/
-  uint32_t timestamp = data[3]; //0
+/*  uint32_t timestamp = data[3]; //0
   timestamp = (timestamp  << 8) + data[2];
   timestamp = (timestamp << 8) + data[1];
   timestamp = (timestamp << 8) + data[0];

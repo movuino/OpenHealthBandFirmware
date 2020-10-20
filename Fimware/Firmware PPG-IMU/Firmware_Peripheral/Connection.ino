@@ -61,9 +61,25 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
             Serial.println("Service 'Notify' disabled");
         }
     }
-    else if (chr->uuid ==IMUCharacteristic.uuid) {
+    else if (chr->uuid == AccCharacteristic.uuid) {
         if (chr->notifyEnabled(conn_hdl)) {
-            Serial.println("Service IMU 'Notify' enabled");
+             Serial.println("Acc Characteristcis 'Notify' enabled");
+            startTimer=millis();
+        } else {
+            Serial.println("Service 'Notify' disabled");
+        }
+    }
+    else if (chr->uuid == GyroCharacteristic.uuid) {
+        if (chr->notifyEnabled(conn_hdl)) {
+            Serial.println("Gyro Characteristcis 'Notify' enabled");
+            startTimer=millis();
+        } else {
+            Serial.println("Service 'Notify' disabled");
+        }
+    }
+   else if (chr->uuid == MagCharacteristic.uuid) {
+        if (chr->notifyEnabled(conn_hdl)) {
+            Serial.println("Mag Characteristcis 'Notify' enabled");
             startTimer=millis();
         } else {
             Serial.println("Service 'Notify' disabled");

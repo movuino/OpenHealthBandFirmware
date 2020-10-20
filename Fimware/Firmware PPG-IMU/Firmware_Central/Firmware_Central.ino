@@ -4,7 +4,9 @@ BLEClientService        timeStampService(0x1165);
 BLEClientService        IMUService(0x1101);
 
 BLEClientCharacteristic timeStampCharacteristic(0x1166);
-BLEClientCharacteristic IMUCharacteristic(0x1102);
+BLECharacteristic AccCharacteristic = BLECharacteristic(0x1102);
+BLECharacteristic GyroCharacteristic = BLECharacteristic(0x1103);
+BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 
 
 long myTimer=0;
@@ -30,8 +32,8 @@ void setup() {
  
   
   // set up callback for receiving measurement
-  IMUCharacteristic.setNotifyCallback(IMUCharacteristic_notify_callback);
-  IMUCharacteristic.begin();
+  //IMUCharacteristic.setNotifyCallback(IMUCharacteristic_notify_callback);
+  //IMUCharacteristic.begin();
   timeStampCharacteristic.setNotifyCallback(timeStampCharacteristic_notify_callback);
   timeStampCharacteristic.begin();
 

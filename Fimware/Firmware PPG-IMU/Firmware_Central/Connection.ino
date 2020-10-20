@@ -65,7 +65,7 @@ void connect_callback(uint16_t conn_handle)
     Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
   }
 /*IMU service*/
-  if ( !IMUService.discover(conn_handle) )
+/*  if ( !IMUService.discover(conn_handle) )
   {
     Serial.println("IMU not found");
     // disconnect since we couldn't find HRM service
@@ -88,7 +88,7 @@ void connect_callback(uint16_t conn_handle)
  Serial.println(result);
   delay(20);*/
   
-  // Reaching here means we are ready to go, let's enable notification on measurement chr
+ /* // Reaching here means we are ready to go, let's enable notification on measurement chr
   if ( IMUCharacteristic.enableNotify() )
   {
     Serial.println("Ready to receive C1 Measurement value");
@@ -99,7 +99,7 @@ void connect_callback(uint16_t conn_handle)
   }else
   {
     Serial.println("Couldn't enable notify for IMU");
-  }
+  }*/
 }
 
 /**
