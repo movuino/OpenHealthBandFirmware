@@ -36,7 +36,7 @@ int counterG;
 uint8_t buf[16];
 uint8_t bufPPG[16];
 //uint8_t bufIMU[16];
-uint8_t bufAcc[6];
+uint8_t bufAcc[10];
 uint8_t bufGyro[6];
 uint8_t bufMag[7];
 
@@ -150,7 +150,7 @@ if (mySensor.accelUpdate() == 0) {
      bufAcc[1] = (uint8_t)(timestamp>>=8);
      bufAcc[0] = (uint8_t)(timestamp>>=8);
     for(int i=4;i<=9;i++){
-      bufAcc[i] = accelBuf[i];
+      bufAcc[i] = accelBuf[i-4];
     }
     dataReady=true; 
   } else {
