@@ -1,5 +1,21 @@
 ## OpenHealthBandFirmware
 Firmware for Open Health Band
+
+- ##### Arduino Boards package used : Adafruit NRF52 v0.21.0 (temporary fix)
+https://www.adafruit.com/package_adafruit_index.json Should be added into arduino IDE in file -> prefrences -> additionnal board manager URLs) then install ADafruit NRF52 boards in board manager (v0.21.0)
+
+  The open health band will be recognized by arduino as adafuit feather nrf52840
+but this profile has to be customized to make it fully work with open OpenHealthBand
+
+  => replace the contents of your folder :<i> xxx\Arduino15\packages\adafruit\hardware\nrf52\0.20.5\variants\feather_nrf52840_express</i>  by the content of the folder " Arduino variant board definition "
+
+- ##### Libraries used
+<b> MAX30205 : </b> Protocentral MAX30205 v1.0.0 (from arduino library manager) : https://github.com/protocentral/ProtoCentral_MAX30205
+
+<b> MAX30105 : </b> Sparkfun MAX3010x Sensor library v1.1.1 (from arduino library manager) : https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
+
+<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.8 <b>(only use the forked version of the lib provided in this repo)</b> (original lib is here : https://github.com/asukiaaa/MPU9250_asukiaaa)
+
 - ##### Throughput example :
   * work as a demonstrator of maximal throughtput
   * not customized yet for data sending
@@ -52,19 +68,8 @@ connection interval : 20 ms
   * ###### MPU9250_rawData
   => Returns raw data of 9-axis IMU
 
-- ##### Arduino Boards package used : Adafruit NRF52 v0.20.5 (temporary fix)
-https://www.adafruit.com/package_adafruit_index.json Should be added into arduino IDE in file -> prefrences -> additionnal board manager URLs)
-
-  The open health band will be recognized by arduino as adafuit feather nrf52840
-but this profile has to be customized to make it fully work with open OpenHealthBand
-
-  => replace the contents of your folder :<i> xxx\Arduino15\packages\adafruit\hardware\nrf52\0.20.5\variants\feather_nrf52840_express</i>  by the content of the folder " Arduino variant board definition "
 
 
 
-- ##### Libraries used
-<b> MAX30205 : </b> Protocentral MAX30205 v1.0.0 (from arduino library manager) : https://github.com/protocentral/ProtoCentral_MAX30205
 
-<b> MAX30105 : </b> Sparkfun MAX3010x Sensor library v1.1.1 (from arduino library manager) : https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
 
-<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.8 (from arduino library manager) : https://github.com/asukiaaa/MPU9250_asukiaaa
