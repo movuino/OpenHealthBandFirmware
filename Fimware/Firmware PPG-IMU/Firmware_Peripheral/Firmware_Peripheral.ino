@@ -8,16 +8,20 @@ uint32_t aX,aY,aZ;
 uint8_t* accelBuf;
 uint8_t* gyroBuf;
 uint8_t* magBuf;
+uint8_t accScale=16;
+uint8_t gyroScale=2000;
+//todo : getter and setter for scales
+
 //#define debugPPG
 
-BLEService timeStampService = BLEService(0x1165);
+BLEService PPGService = BLEService(0x1165);
 BLEService IMUService = BLEService(0x1101);
 BLECharacteristic AccCharacteristic = BLECharacteristic(0x1102);
 BLECharacteristic GyroCharacteristic = BLECharacteristic(0x1103);
 BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 
 
-BLECharacteristic timeStampCharacteristic = BLECharacteristic(0x1166);
+BLECharacteristic rawPPGCharacteristic = BLECharacteristic(0x1166);
 
 BLEDis bledis;    // DIS (Device Information Service) helper class instance
 BLEBas  blebas;  // battery
@@ -36,9 +40,9 @@ int counterG;
 uint8_t buf[16];
 uint8_t bufPPG[16];
 //uint8_t bufIMU[16];
-uint8_t bufAcc[6];
-uint8_t bufGyro[6];
-uint8_t bufMag[7];
+uint8_t bufAcc[7];
+uint8_t bufGyro[7];
+uint8_t bufMag[8];
 
 int buflen=16;
 bool connected=false;
@@ -143,13 +147,16 @@ void configureIMU(){
 
 void updateAcc(){
 if (mySensor.accelUpdate() == 0) {
+    //read sensor 
     accelBuf=mySensor.getAccelBuffer();
+    //read timestamp
     uint32_t timestamp=millis();
-     bufAcc[3] = (uint8_t)timestamp;
-     bufAcc[2] = (uint8_t)(timestamp>>=8);
-     bufAcc[1] = (uint8_t)(timestamp>>=8);
-     bufAcc[0] = (uint8_t)(timestamp>>=8);
-    for(int i=4;i<=9;i++){
+    bufAcc[3] = (uint8_t)timestamp;
+    bufAcc[2] = (uint8_t)(timestamp>>=8);
+    bufAcc[1] = (uint8_t)(timestamp>>=8);
+    bufAcc[0] = (uint8_t)(timestamp>>=8);
+    bufAcc[4] = 16;
+    for(int i=5;i<=10;i++){
       bufAcc[i] = accelBuf[i];
     }
     dataReady=true; 
@@ -165,7 +172,8 @@ if (mySensor.gyroUpdate() == 0) {
     bufGyro[2] = (uint8_t)(timestamp>>=8);
     bufGyro[1] = (uint8_t)(timestamp>>=8);
     bufGyro[0] = (uint8_t)(timestamp>>=8);
-    for(int i=4;i<=9;i++){
+    bufAcc[4] = 2000;
+    for(int i=5;i<=10;i++){
       bufGyro[i] = gyroBuf[i];
     }
     
@@ -226,7 +234,7 @@ void setup() {
 
   // Setup the Custom Service BLEService and BLECharacteristic
   Serial.println("Configuring the Custom Service");
-  setupTimeStampService();
+  setupPPGService();
   setupIMUService();
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
@@ -246,19 +254,19 @@ void loop() {
         // Note: We use .notify instead of .write!
         // If it is connected but CCCD is not enabled
         // The characteristic's value is still updated although notification is not sent
-        if ( timeStampCharacteristic.notify(buf,16) ){
-            //Serial.print("timeStampCharacteristic updated to: ");
+        if ( rawPPGCharacteristic.notify(buf,16) ){
+            //Serial.print("rawPPGCharacteristic updated to: ");
             //Serial.println(timeStampValue); 
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
             }
-       if ( AccCharacteristic.notify(bufAcc,10) ){
+       if ( AccCharacteristic.notify(bufAcc,11) ){
             //Serial.print("IMUCharacteristic updated to: ");
             //Serial.println(timeStampValue);             
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
             }
-        if ( GyroCharacteristic.notify(bufGyro,10) ){
+        if ( GyroCharacteristic.notify(bufGyro,11) ){
             //Serial.print("IMUCharacteristic updated to: ");
             //Serial.println(timeStampValue);             
             }else{

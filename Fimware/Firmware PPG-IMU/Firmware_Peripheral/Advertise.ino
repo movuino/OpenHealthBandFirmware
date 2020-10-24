@@ -6,7 +6,7 @@ void startAdv(void)
 
 
   // Include TimeStamp Service UUID
-  Bluefruit.Advertising.addService(timeStampService);
+  Bluefruit.Advertising.addService(PPGService);
     // Include IMU Service UUID
   Bluefruit.Advertising.addService(IMUService);
 

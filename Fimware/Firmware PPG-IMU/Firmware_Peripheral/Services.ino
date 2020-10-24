@@ -1,12 +1,12 @@
-void setupTimeStampService(void)
+void setupPPGService(void)
 {
-  timeStampService.begin();
+  PPGService.begin();
 
-  timeStampCharacteristic.setProperties(CHR_PROPS_NOTIFY);
-  timeStampCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  timeStampCharacteristic.setFixedLen(16);
-  timeStampCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
-  timeStampCharacteristic.begin();
+  rawPPGCharacteristic.setProperties(CHR_PROPS_NOTIFY);
+  rawPPGCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  rawPPGCharacteristic.setFixedLen(16);
+  rawPPGCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
+  rawPPGCharacteristic.begin();
 }
 
 void setupIMUService(void)
@@ -14,13 +14,13 @@ void setupIMUService(void)
   IMUService.begin();
   AccCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   AccCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  AccCharacteristic.setFixedLen(10);
+  AccCharacteristic.setFixedLen(11);
   AccCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
   AccCharacteristic.begin();
   /*Gyro*/
   GyroCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   GyroCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  GyroCharacteristic.setFixedLen(10);
+  GyroCharacteristic.setFixedLen(11);
   GyroCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
   GyroCharacteristic.begin();
   /*Mag*/

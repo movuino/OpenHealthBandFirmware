@@ -53,7 +53,7 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
 
     // Check the characteristic this CCCD update is associated with in case
     // this handler is used for multiple CCCD records.
-    if (chr->uuid == timeStampCharacteristic.uuid) {
+    if (chr->uuid == rawPPGCharacteristic.uuid) {
         if (chr->notifyEnabled(conn_hdl)) {
             Serial.println("Service timeStamp 'Notify' enabled");
             startTimer=millis();
