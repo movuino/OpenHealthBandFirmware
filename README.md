@@ -16,37 +16,33 @@ but this profile has to be customized to make it fully work with open OpenHealth
 
 <b> MPU9250 : </b> MPU9250 asukiaaa v1.5.8 <b>(only use the forked version of the lib provided in this repo)</b> (original lib is here : https://github.com/asukiaaa/MPU9250_asukiaaa)
 
-- ##### Throughput example :
-  * work as a demonstrator of maximal throughtput
-  * not customized yet for data sending
-  * test results :
-      - iPhone 11 as central  : 60 kB/s
-      - other nrf52840 as central : ~100 kB/s
-- ##### BLueart example :
-  * testing in progress
-
-- ##### Test Firmware using BLE UART
-=> testing streaming of data via ble uart characteristic
-<b> Peripheral part :</b> OHB with OHB-BLEuart-peripheral
-<b> Central part </b> :
-  - another nrf52840 to act as dongle with OHB-BLEuart-central Firmware
-  or
-  - Smartphone with bluefruit app : https://github.com/adafruit/Bluefruit_LE_Connect_v2
-
-<b>Data format :</b>
-  16-byte packets LSB
-  [0-3] timestamp (uint32_t)
-  [4-7] red channel ppg (uint32_t)
-  [8-11] red channel ppg (uint32_t)
-  [12-15] red channel ppg (uint32_t)
-
-<b>Connection paramaters</b>
-connection interval : 20 ms
-
-<b>Current issues : </b>
-- PPG sensor read takes 10 ms : particleSensor.getRed() => 20ms min between 2 samples
-=> solution : using fifo
-
+- ##### Latest firmware is PPG-IMU
+data format 
+<b>PPGService</b>
+<i>rawPPcharacteristic (16-bytes)</i>
+[0-3] : timestamp
+[4-7]: redPPG 
+[8-11]:IRPPG
+[12-15]: GreenPPG
+<b>IMUService</b>
+<i>accCharacteristic (11-bytes)</i>
+[0-3] : timestamp
+[4] : accelerometer sensitivity in g 
+[5-6]: AccX 
+[7-8]:AccY
+[9-10]: AccZ
+<i>gyroCharacteristic (11-bytes)</i>
+[0-3] : timestamp
+[4] : gyro sensitivity in DPS
+[5-6]: GyroX 
+[7-8]: GyroY
+[9-10]: GyroZ
+<i>magCharacteristic (11-bytes)</i>
+[0-3] : timestamp
+[4-5]: MagX 
+[6-7]: MagY
+[8-9]: MagZ
+[10]: Mag sensor address , (to be verified)
 
 - ##### Unit Test folder
   => Tests of each of the funcionnalities
