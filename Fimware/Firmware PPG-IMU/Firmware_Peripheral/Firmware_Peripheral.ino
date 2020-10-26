@@ -157,7 +157,7 @@ if (mySensor.accelUpdate() == 0) {
     bufAcc[0] = (uint8_t)(timestamp>>=8);
     bufAcc[4] = 16;
     for(int i=5;i<=10;i++){
-      bufAcc[i] = accelBuf[i-1];
+      bufAcc[i] = accelBuf[i-5];
     }
     dataReady=true; 
   } else {
@@ -174,7 +174,7 @@ if (mySensor.gyroUpdate() == 0) {
     bufGyro[0] = (uint8_t)(timestamp>>=8);
     bufGyro[4] = 2000;
     for(int i=5;i<=10;i++){
-      bufGyro[i] = gyroBuf[i-1];
+      bufGyro[i] = gyroBuf[i-5];
     }
     
   } else {
