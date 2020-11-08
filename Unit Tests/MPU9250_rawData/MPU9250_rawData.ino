@@ -1,4 +1,3 @@
-//#include <Esplora.h>
 #include <MPU9250_asukiaaa.h>
 
 
@@ -31,7 +30,7 @@ void loop() {
 */
   if (mySensor.accelUpdate() == 0) {
     if(dataMode==0){
-         accelBuf=mySensor.getAccelBuffer();
+         accelBuf=mySensor.accelBuff;
          int16_t v = ((int16_t) accelBuf[0]) << 8 | accelBuf[1];
          aX=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
          v = ((int16_t) accelBuf[2]) << 8 | accelBuf[3];
@@ -50,7 +49,7 @@ void loop() {
   }
 if (mySensor.gyroUpdate() == 0) {
     if(dataMode==0){
-         gyroBuf=mySensor.getGyroBuffer();
+        gyroBuf=mySensor.gyroBuff;
           int16_t v = ((int16_t) gyroBuf[0]) << 8 | gyroBuf[1];
          gX=((float) -v) * gyroRange / (float) 0x8000;
            v = ((int16_t) gyroBuf[2]) << 8 | gyroBuf[3];
@@ -68,7 +67,7 @@ if (mySensor.gyroUpdate() == 0) {
   }
  if (mySensor.magUpdate() == 0) {
     if(dataMode==0){
-        magBuf=mySensor.getMagBuffer();
+        magBuf=mySensor.magBuff;
         mX=(((int16_t) magBuf[0]) << 8) | magBuf[1];
         mY=(((int16_t) magBuf[2]) << 8) | magBuf[3];
         mZ=(((int16_t) magBuf[4]) << 8) | magBuf[5];
@@ -79,7 +78,7 @@ if (mySensor.gyroUpdate() == 0) {
         mZ = mySensor.magZ();
     }
       } else {
-    Serial.println("Cannod read mag values");
+    Serial.println("Cannot read mag values");
   }
 
 
@@ -94,10 +93,6 @@ if (mySensor.gyroUpdate() == 0) {
   Serial.print("mX: " + String( mX));
   Serial.print(" mY: " + String( mY));
   Serial.println(" mZ: " + String( mZ));
-   
-  
-   
-
 
  /* if (mySensor.gyroUpdate() == 0) {
     gX = mySensor.gyroX();

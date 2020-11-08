@@ -14,32 +14,32 @@ but this profile has to be customized to make it fully work with open OpenHealth
 
 <b> MAX30105 : </b> Sparkfun MAX3010x Sensor library v1.1.1 (from arduino library manager) : https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
 
-<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.8 <b>(only use the forked version of the lib provided in this repo)</b> (original lib is here : https://github.com/asukiaaa/MPU9250_asukiaaa)
+<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.10 <b> the updated mpu9250 library gives access to uint buffer directly
 
 - ##### Latest firmware is PPG-IMU
-data format 
+data format
 <b>PPGService</b>
 <i>rawPPcharacteristic (16-bytes)</i>
 [0-3] : timestamp
-[4-7]: redPPG 
+[4-7]: redPPG
 [8-11]:IRPPG
 [12-15]: GreenPPG
 <b>IMUService</b>
 <i>accCharacteristic (11-bytes)</i>
 [0-3] : timestamp
-[4] : accelerometer sensitivity in g 
-[5-6]: AccX 
+[4] : accelerometer sensitivity in g
+[5-6]: AccX
 [7-8]:AccY
 [9-10]: AccZ
 <i>gyroCharacteristic (11-bytes)</i>
 [0-3] : timestamp
 [4] : gyro sensitivity in DPS
-[5-6]: GyroX 
+[5-6]: GyroX
 [7-8]: GyroY
 [9-10]: GyroZ
 <i>magCharacteristic (11-bytes)</i>
 [0-3] : timestamp
-[4-5]: MagX 
+[4-5]: MagX
 [6-7]: MagY
 [8-9]: MagZ
 [10]: Mag sensor address , (to be verified)
@@ -63,9 +63,3 @@ data format
 
   * ###### MPU9250_rawData
   => Returns raw data of 9-axis IMU
-
-
-
-
-
-

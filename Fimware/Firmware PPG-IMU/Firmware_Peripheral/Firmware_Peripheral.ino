@@ -148,7 +148,7 @@ void configureIMU(){
 void updateAcc(){
 if (mySensor.accelUpdate() == 0) {
     //read sensor 
-    accelBuf=mySensor.getAccelBuffer();
+    accelBuf=mySensor.accelBuff;
     //read timestamp
     uint32_t timestamp=millis();
     bufAcc[3] = (uint8_t)timestamp;
@@ -166,7 +166,7 @@ if (mySensor.accelUpdate() == 0) {
 }
 void updateGyro(){
 if (mySensor.gyroUpdate() == 0) {
-    gyroBuf=mySensor.getGyroBuffer();
+    gyroBuf=mySensor.gyroBuff;
     uint32_t timestamp=millis();
     bufGyro[3] = (uint8_t)timestamp;
     bufGyro[2] = (uint8_t)(timestamp>>=8);
@@ -183,7 +183,7 @@ if (mySensor.gyroUpdate() == 0) {
 }
 void updateMag(){
 if (mySensor.magUpdate() == 0) {
-    magBuf=mySensor.getMagBuffer();
+    magBuf=mySensor.magBuff;
     uint32_t timestamp=millis();
    bufMag[3] = (uint8_t)timestamp;
     bufMag[2] = (uint8_t)(timestamp>>=8);
