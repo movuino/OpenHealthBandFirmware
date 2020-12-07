@@ -279,6 +279,7 @@ void loop() {
   if ( Bluefruit.connected() ) {
       if(errorFlag){
         ErrorCharacteristic.notify(bufError,2);
+        Serial.print("error characteristic updated");
         }
       if(dataReady)  {
         // Note: We use .notify instead of .write!
