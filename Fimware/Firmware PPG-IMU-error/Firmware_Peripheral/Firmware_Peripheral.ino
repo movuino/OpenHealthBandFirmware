@@ -10,6 +10,12 @@ uint8_t* gyroBuf;
 uint8_t* magBuf;
 uint8_t accScale=16;
 uint8_t gyroScale=2000;
+//error codes 
+/*uint8_t IMUerror=0x00;
+uint8_t PPGerror=0x00;*/
+bool errorFlag=false;
+uint8_t bufError[2];
+
 //todo : getter and setter for scales
 //#define debugPPG
 
@@ -22,6 +28,9 @@ BLECharacteristic AccCharacteristic = BLECharacteristic(0x1102);
 BLECharacteristic GyroCharacteristic = BLECharacteristic(0x1103);
 BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 
+/*Error Service & characteristic*/
+BLEService ErrorService = BLEService(0x1200);
+BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
 
 BLEDis bledis;    // DIS (Device Information Service) helper class instance
 BLEBas  blebas;  // battery
@@ -140,6 +149,19 @@ void updatePPG(){
     }
 }
 void configureIMU(){
+  /*Read sensorId*/
+  uint8_t sensorId;
+  if (mySensor.readId(&sensorId) == 0) {
+    Serial.println("sensorId: " + String(sensorId));
+    bufError[0]=1;
+    }
+  else {
+    Serial.println("Error cannot read sensor ID");
+    //IMUerror=1;
+    bufError[0]=1;
+    errorFlag=true;
+  }
+  /*Begin IMU*/  
   mySensor.beginAccel();
   mySensor.beginGyro();
   mySensor.beginMag();
@@ -204,8 +226,12 @@ void setup() {
   /*Init PPG*/
   if (particleSensor.begin() == false){
     Serial.println("MAX30105 was not found. Please check wiring/power. ");
-    while (1);
+    //while (1);
+    //PPGerror=1;
+    bufError[1]=1;
+    errorFlag=true;
     }
+  else bufError[1]=0;
   configurePPG();
   Serial.println(F("Custom TimeStamp Service and Characteristic"));
   Serial.println(F("-----------------------\n"));
@@ -251,6 +277,9 @@ void loop() {
   updateGyro();
   updateMag();
   if ( Bluefruit.connected() ) {
+      if(errorFlag){
+        ErrorCharacteristic.notify(bufError,2);
+        }
       if(dataReady)  {
         // Note: We use .notify instead of .write!
         // If it is connected but CCCD is not enabled
@@ -281,7 +310,13 @@ void loop() {
             }    
         dataReady=false; 
         }
-       else delay(1);
+        else delay(1);
+        //if an error is reported notify the central  
+        if(errorFlag){
+          
+           
+        }
+                
       if(counterG >=1000) {
         printConnParams();
         counterG=0;
