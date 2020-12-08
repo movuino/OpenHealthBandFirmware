@@ -2,7 +2,7 @@
 
 BLEClientService        ErrorService(0x1200);
 
-BLEClientCharacteristic ErrorCharacteristic(0x1102);
+BLEClientCharacteristic ErrorCharacteristic(0x1201);
 
 long myTimer=0;
 long receivedSamplesNb=0;

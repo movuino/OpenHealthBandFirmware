@@ -14,6 +14,8 @@ uint8_t gyroScale=2000;
 /*uint8_t IMUerror=0x00;
 uint8_t PPGerror=0x00;*/
 bool errorFlag=false;
+bool errorIMU=false;
+bool errorPPG=false;
 uint8_t bufError[2];
 
 //todo : getter and setter for scales
@@ -159,12 +161,15 @@ void configureIMU(){
     Serial.println("Error cannot read sensor ID");
     //IMUerror=1;
     bufError[0]=1;
+    errorIMU=true;
     errorFlag=true;
-  }
+    }
   /*Begin IMU*/  
-  mySensor.beginAccel();
-  mySensor.beginGyro();
-  mySensor.beginMag();
+  if(!errorIMU){
+    mySensor.beginAccel();
+    mySensor.beginGyro();
+    mySensor.beginMag();
+    }
 }
 
 void updateAcc(){
@@ -221,6 +226,7 @@ if (mySensor.magUpdate() == 0) {
 }
 void setup() {
   Serial.begin(115200);
+  //delay(5000);
   /*init IMU*/
   configureIMU();
   /*Init PPG*/
@@ -229,9 +235,13 @@ void setup() {
     //while (1);
     //PPGerror=1;
     bufError[1]=1;
+    errorPPG=true;
     errorFlag=true;
     }
-  else bufError[1]=0;
+  else {
+    bufError[1]=0;
+    errorPPG=false;
+  }
   configurePPG();
   Serial.println(F("Custom TimeStamp Service and Characteristic"));
   Serial.println(F("-----------------------\n"));
@@ -263,6 +273,7 @@ void setup() {
   Serial.println("Configuring the Custom Service");
   setupPPGService();
   setupIMUService();
+  setupErrorService();
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
@@ -272,10 +283,14 @@ void loop() {
   //timeStampValue = millis()-startTimer;
   //startTimer=millis();
   digitalToggle(LED_RED);
-  updatePPG();
-  updateAcc();
-  updateGyro();
-  updateMag();
+  if(!errorPPG){
+    updatePPG();
+    }
+  if(!errorIMU){
+    updateAcc();
+    updateGyro();
+    updateMag();
+    }
   if ( Bluefruit.connected() ) {
       if(errorFlag){
         ErrorCharacteristic.notify(bufError,2);

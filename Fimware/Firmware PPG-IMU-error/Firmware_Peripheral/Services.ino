@@ -34,6 +34,6 @@ void setupErrorService(void){
   ErrorCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   ErrorCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   ErrorCharacteristic.setFixedLen(2);
-  ErrorCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
+  ErrorCharacteristic.setCccdWriteCallback(cccd_callback2);  // Optionally capture CCCD updates
   ErrorCharacteristic.begin();
   }

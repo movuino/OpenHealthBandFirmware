@@ -85,7 +85,16 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
             Serial.println("Service 'Notify' disabled");
         }
     }
-   else if (chr->uuid == ErrorCharacteristic.uuid) {
+ 
+}
+void cccd_callback2(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value)
+{
+    // Display the raw request packet
+    Serial.print("CCCD Updated: ");
+    //Serial.printBuffer(request->data, request->len);
+    Serial.print(cccd_value);
+    Serial.println("");
+    if (chr->uuid == ErrorCharacteristic.uuid) {
         if (chr->notifyEnabled(conn_hdl)) {
             Serial.println("Error Characteristcis 'Notify' enabled");
         } else {
