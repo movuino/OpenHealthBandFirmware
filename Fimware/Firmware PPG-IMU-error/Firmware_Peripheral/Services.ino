@@ -1,11 +1,10 @@
 void setupPPGService(void)
 {
   PPGService.begin();
-
   rawPPGCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   rawPPGCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   rawPPGCharacteristic.setFixedLen(16);
-  rawPPGCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
+  rawPPGCharacteristic.setCccdWriteCallback(cccd_callback_rawPPG);  // Optionally capture CCCD updates
   rawPPGCharacteristic.begin();
 }
 void setupIMUService(void)

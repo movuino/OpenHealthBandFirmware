@@ -20,7 +20,9 @@ uint8_t bufError[2];
 
 //todo : getter and setter for scales
 //#define debugPPG
-
+/*Error Service & characteristic*/
+BLEService ErrorService = BLEService(0x1200);
+BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
 /*PPG Service & characteristic*/
 BLEService PPGService = BLEService(0x1165);
 BLECharacteristic rawPPGCharacteristic = BLECharacteristic(0x1166);
@@ -30,9 +32,7 @@ BLECharacteristic AccCharacteristic = BLECharacteristic(0x1102);
 BLECharacteristic GyroCharacteristic = BLECharacteristic(0x1103);
 BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 
-/*Error Service & characteristic*/
-BLEService ErrorService = BLEService(0x1200);
-BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
+
 
 BLEDis bledis;    // DIS (Device Information Service) helper class instance
 BLEBas  blebas;  // battery
@@ -271,9 +271,10 @@ void setup() {
 
   // Setup the Custom Service BLEService and BLECharacteristic
   Serial.println("Configuring the Custom Service");
+  setupErrorService();
   setupPPGService();
   setupIMUService();
-  setupErrorService();
+ 
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
@@ -292,10 +293,10 @@ void loop() {
     updateMag();
     }
   if ( Bluefruit.connected() ) {
-      if(errorFlag){
+      //if(errorFlag){
         ErrorCharacteristic.notify(bufError,2);
         Serial.print("error characteristic updated");
-        }
+      //  }
       if(dataReady)  {
         // Note: We use .notify instead of .write!
         // If it is connected but CCCD is not enabled

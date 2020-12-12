@@ -1,29 +1,25 @@
 #include <bluefruit.h>
 
 BLEClientService        ErrorService(0x1200);
-
 BLEClientCharacteristic ErrorCharacteristic(0x1201);
 
+uint16_t conn_handle0;
 long myTimer=0;
 long receivedSamplesNb=0;
+int errorFlag=0;
 
 void setup() {
   Serial.begin(115200);
   while ( !Serial ) delay(10);   // for nrf52840 with native usb
-
   Serial.println(F("Custom Service and Characteristic Example Rx"));
   Serial.println(F("--------------------------------------\n"));
-
   // Initialize Bluefruit with maximum connections as Peripheral = 0, Central = 1
   // SRAM usage required by SoftDevice will increase dramatically with number of connections
   Serial.println("Initialise the Bluefruit nRF52 module");
   Bluefruit.begin(0, 1);
-
   Bluefruit.setName("OHB Receiver");
-
   // Initialize Custom Service Client
   ErrorService.begin();
-  
   // set up callback for receiving measurement
   ErrorCharacteristic.setNotifyCallback(ErrorCharacteristic_notify_callback);
   ErrorCharacteristic.begin();

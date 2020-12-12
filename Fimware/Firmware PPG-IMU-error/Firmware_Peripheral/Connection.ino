@@ -87,6 +87,25 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
     }
  
 }
+void cccd_callback_rawPPG(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value)
+{
+    // Display the raw request packet
+    Serial.print("CCCD Updated: ");
+    //Serial.printBuffer(request->data, request->len);
+    Serial.print(cccd_value);
+    Serial.println("");
+    // Check the characteristic this CCCD update is associated with in case
+    // this handler is used for multiple CCCD records.
+    if (chr->uuid == rawPPGCharacteristic.uuid) {
+        if (chr->notifyEnabled(conn_hdl)) {
+            Serial.println("Service timeStamp 'Notify' enabled");
+            startTimer=millis();
+        } else {
+            Serial.println("Service 'Notify' disabled");
+        }
+    }
+}
+
 void cccd_callback2(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value)
 {
     // Display the raw request packet

@@ -16,45 +16,39 @@ void scan_callback(ble_gap_evt_adv_report_t* report)
  */
 void connect_callback(uint16_t conn_handle)
 {
+  conn_handle0=conn_handle;
   Serial.println("Connected");
-  Serial.print("Discovering Custom Service ... ");
+  Serial.print("Discovering Error Service ... ");
 
   // If HRM is not found, disconnect and return
   if ( !ErrorService.discover(conn_handle) )
-  {
-    Serial.println("Found NONE");
-
+    {
+    Serial.println("Error service not found");
     // disconnect since we couldn't find HRM service
     Bluefruit.disconnect(conn_handle);
-
     return;
-  }
-
+    }
   // Once HRM service is found, we continue to discover its characteristic
-  Serial.println("Found it");
-  
-  Serial.print("Discovering Measurement characteristic ... ");
+  Serial.println("Found error service");
+  Serial.print("Discovering error characteristic ... ");
   if ( !ErrorCharacteristic.discover() )
-  {
+    {
     // Measurement chr is mandatory, if it is not found (valid), then disconnect
-    Serial.println("not found !!!");  
-    Serial.println("Measurement characteristic is mandatory but not found");
+    Serial.println("error characteristic not found !!!");  
     Bluefruit.disconnect(conn_handle);
     return;
-  }
-  Serial.println("Found C1");
-
+    }
+  Serial.println("Error characteristic found");
   delay(20);
-  
   // Reaching here means we are ready to go, let's enable notification on measurement chr
   if ( ErrorCharacteristic.enableNotify() )
-  {
-    Serial.println("Ready to receive C1 Measurement value");
-    myTimer=millis();
-  }else
-  {
+    {
+    Serial.println("Ready to receive Error characteristic data");
+    }
+  else
+    {
     Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
-  }
+    }
 }
 
 /**
@@ -66,6 +60,5 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 {
   (void) conn_handle;
   (void) reason;
-
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
 }

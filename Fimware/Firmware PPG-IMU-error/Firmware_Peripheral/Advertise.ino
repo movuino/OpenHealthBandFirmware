@@ -3,14 +3,12 @@ void startAdv(void)
   // Advertising packet
   Bluefruit.Advertising.addFlags(BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE);
   Bluefruit.Advertising.addTxPower();
-
+    // Include Error Service UUID
+  Bluefruit.Advertising.addService(ErrorService);
   // Include TimeStamp Service UUID
   Bluefruit.Advertising.addService(PPGService);
-    // Include IMU Service UUID
+  // Include IMU Service UUID
   Bluefruit.Advertising.addService(IMUService);
-  // Include Error Service UUID
-  Bluefruit.Advertising.addService(ErrorService);
-
   // Include Name
   Bluefruit.Advertising.addName();
   
