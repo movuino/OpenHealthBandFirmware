@@ -43,9 +43,9 @@ extern "C"
 #define NUM_ANALOG_OUTPUTS   (0)
 
 // LEDs
-#define PIN_LED1        (4) //p1.10 red
-#define PIN_LED2        (34) //P1.11 blue
-#define PIN_LED3	    (37) //P1.14 green
+#define PIN_LED1        (33) //p1.10 red  ->> 0.09
+#define PIN_LED2        (9) //P1.11 blue
+#define PIN_LED3	    (2) //P1.14 green
 
 #define LED_BUILTIN          PIN_LED1
 #define LED_CONN             PIN_LED2
@@ -105,11 +105,11 @@ static const uint8_t AREF = PIN_AREF;
  */
 #define SPI_INTERFACES_COUNT 1
 
-#define PIN_SPI_MISO         (24)
-#define PIN_SPI_MOSI         (25)
-#define PIN_SPI_SCK          (26)
+#define PIN_SPI_MISO         (13)
+#define PIN_SPI_MOSI         (12)
+#define PIN_SPI_SCK          (11)
 
-static const uint8_t SS   = (5);
+static const uint8_t SS   = (10);
 static const uint8_t MOSI = PIN_SPI_MOSI ;
 static const uint8_t MISO = PIN_SPI_MISO ;
 static const uint8_t SCK  = PIN_SPI_SCK ;
@@ -120,7 +120,7 @@ static const uint8_t SCK  = PIN_SPI_SCK ;
 #define WIRE_INTERFACES_COUNT 1
 
 #define PIN_WIRE_SDA         (22)
-#define PIN_WIRE_SCL         (23)
+#define PIN_WIRE_SCL         (6)
 
 // QSPI Pins
 #define PIN_QSPI_SCK         27

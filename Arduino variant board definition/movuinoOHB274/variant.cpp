@@ -28,18 +28,18 @@ const uint32_t g_ADigitalPinMap[] =
   // D0 .. D13
   25,  // D0  is P0.25 (UART TX)
   24,  // D1  is P0.24 (UART RX 
-  10,  // D2  is P0.10 (NFC2)
+  10,  // D2  is P0.10 (NFC2)  GREEN LED
   47,  // D3  is P1.15 (LED1)
   42,  // D4  is P1.10 (LED2) RED LED
   40,  // D5  is P1.08
-   7,  // D6  is P0.07
+  7,  // D6  is P0.07 (SCL)
   34,  // D7  is P1.02 (Button)
-  16,  // D8  is P0.16 (NeoPixel)
-  26,  // D9  is P0.26
-  27,  // D10 is P0.27
-   6,  // D11 is P0.06
-   8,  // D12 is P0.08
-  41,  // D13 is P1.09
+  16,  // D8  is P0.16 
+  26,  // D9  is P0.26   BLUE LED
+  27,  // D10 is P0.27	(CS)
+   6,  // D11 is P0.06	(SPI SCK)
+   8,  // D12 is P0.08	(SPI MOSI)
+  41,  // D13 is P1.09  (SPI MISO)
 
   // D14 .. D21 (aka A0 .. A7)
    4,  // D14 is P0.04 (A0)
@@ -53,12 +53,12 @@ const uint32_t g_ADigitalPinMap[] =
 
   // D22 .. D23 (aka I2C pins)
   12,  // D22 is P0.12 (SDA)
-  11,  // D23 is P0.11 (SCL)
+  11,  // D23  
 
   // D24 .. D26 (aka SPI pins)
-  15,  // D24 is P0.15 (SPI MISO)
-  13,  // D25 is P0.13 (SPI MOSI)
-  14,  // D26 is P0.14 (SPI SCK )
+  15,  // D24 is P0.15 
+  13,  // D25 is P0.13 
+  14,  // D26 is P0.14 
 
   // QSPI pins (not exposed via any header / test point)
   19,  // D27 is P0.19 (QSPI CLK)
@@ -69,7 +69,7 @@ const uint32_t g_ADigitalPinMap[] =
   21,  // D32 is P0.21 (QSPI Data 3)
 
   // The remaining NFC pin
-   9,  // D33 is P0.09 (NFC1, exposed only via test point on bottom of board)
+   9,  // D33 is P0.09 (NFC1, exposed only via test point on bottom of board)    RED LED
 
   // Thus, there are 34 defined pins
 

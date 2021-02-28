@@ -552,109 +552,108 @@ mdbt50qrx.menu.debug.l3.build.debug_flags=-DCFG_DEBUG=3
 mdbt50qrx.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
 
 # ----------------------------------
-# Movuino Open Health Band
+# Movuino Open Health Band v0.2.7.2
 # ----------------------------------
-movuinoOHB.name=Movuino Open Health Band
+movuinoOHB273.name=Movuino Open Health Band v0.2.7.2
 
 # VID/PID for bootloader with/without UF2, Arduino + Circuitpython App
-movuinoOHB.vid.0=0x239A
-movuinoOHB.pid.0=0x8029
-movuinoOHB.vid.1=0x239A
-movuinoOHB.pid.1=0x0029
-movuinoOHB.vid.2=0x239A
-movuinoOHB.pid.2=0x002A
-movuinoOHB.vid.3=0x239A
-movuinoOHB.pid.3=0x802A
+movuinoOHB272.vid.0=0x239A
+movuinoOHB272.pid.0=0x8029
+movuinoOHB272.vid.1=0x239A
+movuinoOHB272.pid.1=0x0029
+movuinoOHB272.vid.2=0x239A
+movuinoOHB272.pid.2=0x002A
+movuinoOHB272.vid.3=0x239A
+movuinoOHB272.pid.3=0x802A
 
 # Upload
-movuinoOHB.bootloader.tool=bootburn
-movuinoOHB.upload.tool=nrfutil
-movuinoOHB.upload.protocol=nrfutil
-movuinoOHB.upload.use_1200bps_touch=true
-movuinoOHB.upload.wait_for_upload_port=true
-movuinoOHB.upload.maximum_size=815104
-movuinoOHB.upload.maximum_data_size=237568
+movuinoOHB272.bootloader.tool=bootburn
+movuinoOHB272.upload.tool=nrfutil
+movuinoOHB272.upload.protocol=nrfutil
+movuinoOHB272.upload.use_1200bps_touch=true
+movuinoOHB272.upload.wait_for_upload_port=true
+movuinoOHB272.upload.maximum_size=815104
+movuinoOHB272.upload.maximum_data_size=237568
 
 # Build
-movuinoOHB.build.mcu=cortex-m4
-movuinoOHB.build.f_cpu=64000000
-movuinoOHB.build.board=NRF52840_FEATHER
-movuinoOHB.build.core=nRF5
-movuinoOHB.build.variant=movuinoOHB
-movuinoOHB.build.usb_manufacturer="Adafruit LLC"
-movuinoOHB.build.usb_product="Feather nRF52840 Express"
-movuinoOHB.build.extra_flags=-DNRF52840_XXAA {build.flags.usb}
-movuinoOHB.build.ldscript=nrf52840_s140_v6.ld
-movuinoOHB.build.vid=0x239A
-movuinoOHB.build.pid=0x8029
+movuinoOHB272.build.mcu=cortex-m4
+movuinoOHB272.build.f_cpu=64000000
+movuinoOHB272.build.board=NRF52840_FEATHER
+movuinoOHB272.build.core=nRF5
+movuinoOHB272.build.variant=movuinoOHB272
+movuinoOHB272.build.usb_manufacturer="Adafruit LLC"
+movuinoOHB272.build.usb_product="Feather nRF52840 Express"
+movuinoOHB272.build.extra_flags=-DNRF52840_XXAA {build.flags.usb}
+movuinoOHB272.build.ldscript=nrf52840_s140_v6.ld
+movuinoOHB272.build.vid=0x239A
+movuinoOHB272.build.pid=0x8029
 
 # SofDevice Menu
-movuinoOHB.menu.softdevice.s140v6=0.3.2 SoftDevice s140 6.1.1
-movuinoOHB.menu.softdevice.s140v6.build.sd_name=s140
-movuinoOHB.menu.softdevice.s140v6.build.sd_version=6.1.1
-movuinoOHB.menu.softdevice.s140v6.build.sd_fwid=0x00B6
+movuinoOHB272.menu.softdevice.s140v6=0.3.2 SoftDevice s140 6.1.1
+movuinoOHB272.menu.softdevice.s140v6.build.sd_name=s140
+movuinoOHB272.menu.softdevice.s140v6.build.sd_version=6.1.1
+movuinoOHB272.menu.softdevice.s140v6.build.sd_fwid=0x00B6
 
 # Debug Menu
-movuinoOHB.menu.debug.l0=Level 0 (Release)
-movuinoOHB.menu.debug.l0.build.debug_flags=-DCFG_DEBUG=0
-movuinoOHB.menu.debug.l1=Level 1 (Error Message)
-movuinoOHB.menu.debug.l1.build.debug_flags=-DCFG_DEBUG=1
-movuinoOHB.menu.debug.l2=Level 2 (Full Debug)
-movuinoOHB.menu.debug.l2.build.debug_flags=-DCFG_DEBUG=2
-movuinoOHB.menu.debug.l3=Level 3 (Segger SystemView)
-movuinoOHB.menu.debug.l3.build.debug_flags=-DCFG_DEBUG=3
-movuinoOHB.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
-
+movuinoOHB272.menu.debug.l0=Level 0 (Release)
+movuinoOHB272.menu.debug.l0.build.debug_flags=-DCFG_DEBUG=0
+movuinoOHB272.menu.debug.l1=Level 1 (Error Message)
+movuinoOHB272.menu.debug.l1.build.debug_flags=-DCFG_DEBUG=1
+movuinoOHB272.menu.debug.l2=Level 2 (Full Debug)
+movuinoOHB272.menu.debug.l2.build.debug_flags=-DCFG_DEBUG=2
+movuinoOHB272.menu.debug.l3=Level 3 (Segger SystemView)
+movuinoOHB272.menu.debug.l3.build.debug_flags=-DCFG_DEBUG=3
+movuinoOHB272.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
 # ----------------------------------
-# Movuino Open Health Band v0.2.7
+# Movuino Open Health Band v0.2.7.4
 # ----------------------------------
-movuinoOHB27.name=Movuino Open Health Band v0.2.7
+movuinoOHB274.name=Movuino Open Health Band v0.2.7.4
 
 # VID/PID for bootloader with/without UF2, Arduino + Circuitpython App
-movuinoOHB27.vid.0=0x239A
-movuinoOHB27.pid.0=0x8029
-movuinoOHB27.vid.1=0x239A
-movuinoOHB27.pid.1=0x0029
-movuinoOHB27.vid.2=0x239A
-movuinoOHB27.pid.2=0x002A
-movuinoOHB27.vid.3=0x239A
-movuinoOHB27.pid.3=0x802A
+movuinoOHB274.vid.0=0x239A
+movuinoOHB274.pid.0=0x8029
+movuinoOHB274.vid.1=0x239A
+movuinoOHB274.pid.1=0x0029
+movuinoOHB274.vid.2=0x239A
+movuinoOHB274.pid.2=0x002A
+movuinoOHB274.vid.3=0x239A
+movuinoOHB274.pid.3=0x802A
 
 # Upload
-movuinoOHB27.bootloader.tool=bootburn
-movuinoOHB27.upload.tool=nrfutil
-movuinoOHB27.upload.protocol=nrfutil
-movuinoOHB27.upload.use_1200bps_touch=true
-movuinoOHB27.upload.wait_for_upload_port=true
-movuinoOHB27.upload.maximum_size=815104
-movuinoOHB27.upload.maximum_data_size=237568
+movuinoOHB274.bootloader.tool=bootburn
+movuinoOHB274.upload.tool=nrfutil
+movuinoOHB274.upload.protocol=nrfutil
+movuinoOHB274.upload.use_1200bps_touch=true
+movuinoOHB274.upload.wait_for_upload_port=true
+movuinoOHB274.upload.maximum_size=815104
+movuinoOHB274.upload.maximum_data_size=237568
 
 # Build
-movuinoOHB27.build.mcu=cortex-m4
-movuinoOHB27.build.f_cpu=64000000
-movuinoOHB27.build.board=NRF52840_FEATHER
-movuinoOHB27.build.core=nRF5
-movuinoOHB27.build.variant=movuinoOHB27
-movuinoOHB27.build.usb_manufacturer="Adafruit LLC"
-movuinoOHB27.build.usb_product="Feather nRF52840 Express"
-movuinoOHB27.build.extra_flags=-DNRF52840_XXAA {build.flags.usb}
-movuinoOHB27.build.ldscript=nrf52840_s140_v6.ld
-movuinoOHB27.build.vid=0x239A
-movuinoOHB27.build.pid=0x8029
+movuinoOHB274.build.mcu=cortex-m4
+movuinoOHB274.build.f_cpu=64000000
+movuinoOHB274.build.board=NRF52840_FEATHER
+movuinoOHB274.build.core=nRF5
+movuinoOHB274.build.variant=movuinoOHB274
+movuinoOHB274.build.usb_manufacturer="Adafruit LLC"
+movuinoOHB274.build.usb_product="Feather nRF52840 Express"
+movuinoOHB274.build.extra_flags=-DNRF52840_XXAA {build.flags.usb}
+movuinoOHB274.build.ldscript=nrf52840_s140_v6.ld
+movuinoOHB274.build.vid=0x239A
+movuinoOHB274.build.pid=0x8029
 
 # SofDevice Menu
-movuinoOHB27.menu.softdevice.s140v6=0.3.2 SoftDevice s140 6.1.1
-movuinoOHB27.menu.softdevice.s140v6.build.sd_name=s140
-movuinoOHB27.menu.softdevice.s140v6.build.sd_version=6.1.1
-movuinoOHB27.menu.softdevice.s140v6.build.sd_fwid=0x00B6
+movuinoOHB274.menu.softdevice.s140v6=0.3.2 SoftDevice s140 6.1.1
+movuinoOHB274.menu.softdevice.s140v6.build.sd_name=s140
+movuinoOHB274.menu.softdevice.s140v6.build.sd_version=6.1.1
+movuinoOHB274.menu.softdevice.s140v6.build.sd_fwid=0x00B6
 
 # Debug Menu
-movuinoOHB27.menu.debug.l0=Level 0 (Release)
-movuinoOHB27.menu.debug.l0.build.debug_flags=-DCFG_DEBUG=0
-movuinoOHB27.menu.debug.l1=Level 1 (Error Message)
-movuinoOHB27.menu.debug.l1.build.debug_flags=-DCFG_DEBUG=1
-movuinoOHB27.menu.debug.l2=Level 2 (Full Debug)
-movuinoOHB27.menu.debug.l2.build.debug_flags=-DCFG_DEBUG=2
-movuinoOHB27.menu.debug.l3=Level 3 (Segger SystemView)
-movuinoOHB27.menu.debug.l3.build.debug_flags=-DCFG_DEBUG=3
-movuinoOHB27.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
+movuinoOHB274.menu.debug.l0=Level 0 (Release)
+movuinoOHB274.menu.debug.l0.build.debug_flags=-DCFG_DEBUG=0
+movuinoOHB274.menu.debug.l1=Level 1 (Error Message)
+movuinoOHB274.menu.debug.l1.build.debug_flags=-DCFG_DEBUG=1
+movuinoOHB274.menu.debug.l2=Level 2 (Full Debug)
+movuinoOHB274.menu.debug.l2.build.debug_flags=-DCFG_DEBUG=2
+movuinoOHB274.menu.debug.l3=Level 3 (Segger SystemView)
+movuinoOHB274.menu.debug.l3.build.debug_flags=-DCFG_DEBUG=3
+movuinoOHB274.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
