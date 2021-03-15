@@ -554,7 +554,7 @@ mdbt50qrx.menu.debug.l3.build.sysview_flags=-DCFG_SYSVIEW=1
 # ----------------------------------
 # Movuino Open Health Band v0.2.7.2
 # ----------------------------------
-movuinoOHB273.name=Movuino Open Health Band v0.2.7.2
+movuinoOHB272.name=Movuino Open Health Band v0.2.7.2
 
 # VID/PID for bootloader with/without UF2, Arduino + Circuitpython App
 movuinoOHB272.vid.0=0x239A
