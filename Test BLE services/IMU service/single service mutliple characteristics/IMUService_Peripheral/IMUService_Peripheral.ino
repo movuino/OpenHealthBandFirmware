@@ -56,7 +56,7 @@ void configureIMU(){
 
 void updateAcc(){
 if (mySensor.accelUpdate() == 0) {
-    accelBuf=mySensor.getAccelBuffer();
+    accelBuf=mySensor.accelBuff;
     for(int i=0;i<=6;i++){
       bufAcc[i] = accelBuf[i];
      //Serial.println("Cannod read accel values");
@@ -68,17 +68,17 @@ if (mySensor.accelUpdate() == 0) {
 }
 void updateGyro(){
 if (mySensor.gyroUpdate() == 0) {
-    gyroBuf=mySensor.getGyroBuffer();
+    gyroBuf=mySensor.gyroBuff;
     for(int i=0;i<=6;i++){
       bufGyro[i] = gyroBuf[i];
     }
     
   } else {
-    Serial.println("Cannod read accel values");
+    Serial.println("Cannot read accel values");
   }
 }
 void updateMag(){
-if (mySensor.magUpdate() == 0) {
+/*if (mySensor.magUpdate() == 0) {
     magBuf=mySensor.getMagBuffer();
     for(int i=0;i<=7;i++){
       bufMag[i] = magBuf[i];
@@ -86,7 +86,7 @@ if (mySensor.magUpdate() == 0) {
     
   } else {
     Serial.println("Cannod read accel values");
-  }
+  }*/
 }
 void setup() {
   Serial.begin(115200);
@@ -150,12 +150,12 @@ void loop() {
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
             }
-         if ( MagCharacteristic.notify(bufMag,7) ){
+        /* if ( MagCharacteristic.notify(bufMag,7) ){
             //Serial.print("IMUCharacteristic updated to: ");
             //Serial.println(timeStampValue);             
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-            }    
+            }    */
         dataReady=false; 
         }
        else delay(1);

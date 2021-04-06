@@ -14,7 +14,7 @@ but this profile has to be customized to make it fully work with open OpenHealth
 
 <b> MAX30105 : </b> Sparkfun MAX3010x Sensor library v1.1.1 (from arduino library manager) : https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library
 
-<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.10 <b> the updated mpu9250 library gives access to uint buffer directly
+<b> MPU9250 : </b> MPU9250 asukiaaa v1.5.11 <b> the updated mpu9250 library gives access to uint buffer directly
 
 - ##### Latest firmware is PPG-IMU
 data format
