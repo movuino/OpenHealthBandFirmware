@@ -130,7 +130,7 @@ void updatePPG(){
 }
 void updateIMU(){
 if (mySensor.accelUpdate() == 0) {
-    accelBuf=mySensor.getAccelBuffer();
+    accelBuf=mySensor.accelBuff;
     for(int i=0;i<=6;i++){
       bufAcc[i] = accelBuf[i];
      //Serial.println("Cannod read accel values");

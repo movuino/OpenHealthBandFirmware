@@ -10,7 +10,7 @@ void IMUCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* da
     aY=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
     v = ((int16_t) data[4]) << 8 | data[5];
     aZ=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
-  Serial.print(receivedSamplesNb);
+  //Serial.print(receivedSamplesNb);
   Serial.print(" accelX: " + String( aX));
   Serial.print("accelY: " + String( aY));
   Serial.println("accelZ: " + String( aZ));

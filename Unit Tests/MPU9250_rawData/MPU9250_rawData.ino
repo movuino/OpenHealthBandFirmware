@@ -65,7 +65,7 @@ if (mySensor.gyroUpdate() == 0) {
       } else {
     Serial.println("Cannod read gyro values");
   }
- if (mySensor.magUpdate() == 0) {
+/* if (mySensor.magUpdate() == 0) {
     if(dataMode==0){
         magBuf=mySensor.magBuff;
         mX=(((int16_t) magBuf[0]) << 8) | magBuf[1];
@@ -79,7 +79,7 @@ if (mySensor.gyroUpdate() == 0) {
     }
       } else {
     Serial.println("Cannot read mag values");
-  }
+  }*/
 
 
 
@@ -90,9 +90,9 @@ if (mySensor.gyroUpdate() == 0) {
   Serial.print("gX: " + String( gX));
   Serial.print(" gY: " + String( gY));
   Serial.println(" gZ: " + String( gZ));
-  Serial.print("mX: " + String( mX));
+ /* Serial.print("mX: " + String( mX));
   Serial.print(" mY: " + String( mY));
-  Serial.println(" mZ: " + String( mZ));
+  Serial.println(" mZ: " + String( mZ));*/
 
  /* if (mySensor.gyroUpdate() == 0) {
     gX = mySensor.gyroX();

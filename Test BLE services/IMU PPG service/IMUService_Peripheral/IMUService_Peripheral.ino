@@ -59,7 +59,7 @@ void configureIMU(){
 
 void updateAcc(){
 if (mySensor.accelUpdate() == 0) {
-    accelBuf=mySensor.getAccelBuffer();
+    accelBuf=mySensor.accelBuff;
     for(int i=0;i<=6;i++){
       bufAcc[i] = accelBuf[i];
      //Serial.println("Cannod read accel values");
@@ -71,7 +71,7 @@ if (mySensor.accelUpdate() == 0) {
 }
 void updateGyro(){
 if (mySensor.gyroUpdate() == 0) {
-    gyroBuf=mySensor.getGyroBuffer();
+     gyroBuf=mySensor.gyroBuff;
     for(int i=0;i<=6;i++){
       bufGyro[i] = gyroBuf[i];
     }
@@ -82,7 +82,7 @@ if (mySensor.gyroUpdate() == 0) {
 }
 void updateMag(){
 if (mySensor.magUpdate() == 0) {
-    magBuf=mySensor.getMagBuffer();
+     magBuf=mySensor.magBuff;
     for(int i=0;i<=7;i++){
       bufMag[i] = magBuf[i];
     }
