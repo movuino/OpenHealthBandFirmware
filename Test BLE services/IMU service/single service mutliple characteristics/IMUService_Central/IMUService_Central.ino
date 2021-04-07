@@ -2,8 +2,9 @@
 
 BLEClientService        IMUService(0x1101);
 
-BLEClientCharacteristic IMUCharacteristic(0x1102);
+BLEClientCharacteristic AccCharacteristic(0x1102);
 BLEClientCharacteristic GyroCharacteristic(0x1103);
+BLEClientCharacteristic MagCharacteristic(0x1104);
 
 long myTimer=0;
 long receivedSamplesNb=0;
@@ -30,11 +31,14 @@ void setup() {
   IMUService.begin();
   
   // set up callback for receiving measurement
-  IMUCharacteristic.setNotifyCallback(IMUCharacteristic_notify_callback);
-  IMUCharacteristic.begin();
-   // set up callback for receiving measurement
+  AccCharacteristic.setNotifyCallback(AccCharacteristic_notify_callback);
+  AccCharacteristic.begin();
+  // set up callback for receiving measurement
   GyroCharacteristic.setNotifyCallback(GyroCharacteristic_notify_callback);
   GyroCharacteristic.begin();
+  // set up callback for receiving measurement
+  MagCharacteristic.setNotifyCallback(MagCharacteristic_notify_callback);
+  MagCharacteristic.begin();
   
   // Increase Blink rate to different from PrPh advertising mode
   Bluefruit.setConnLedInterval(250);

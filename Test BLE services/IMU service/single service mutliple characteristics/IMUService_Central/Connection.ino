@@ -34,7 +34,7 @@ void connect_callback(uint16_t conn_handle)
   Serial.println("Found it");
   
   Serial.print("Discovering ACC characteristic ... ");
-  if ( !IMUCharacteristic.discover() )
+  if ( !AccCharacteristic.discover() )
   {
     // Measurement chr is mandatory, if it is not found (valid), then disconnect
     Serial.println("not found !!!");  
@@ -45,7 +45,7 @@ void connect_callback(uint16_t conn_handle)
   Serial.println("Acc characteristic Found");
   delay(20);
   // Reaching here means we are ready to go, let's enable notification on measurement chr
-  if ( IMUCharacteristic.enableNotify() )
+  if ( AccCharacteristic.enableNotify() )
   {
     Serial.println("Acc characteristic notify enabled");
     myTimer=millis();
@@ -53,6 +53,8 @@ void connect_callback(uint16_t conn_handle)
   {
     Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
   }
+  
+  
   /*Gyro*/
    Serial.print("Discovering Gyro characteristic ... ");
   if ( !GyroCharacteristic.discover() )
@@ -69,6 +71,28 @@ void connect_callback(uint16_t conn_handle)
   if ( GyroCharacteristic.enableNotify() )
   {
     Serial.println("Gyro characteristic notify enabled");
+    myTimer=millis();
+  }else
+  {
+    Serial.println("Couldn't enable notify for C1 Measurement. Increase DEBUG LEVEL for troubleshooting");
+  }
+
+  /*Mag*/
+  Serial.print("Discovering Mag characteristic ... ");
+  if ( !MagCharacteristic.discover() )
+    {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("not found !!!");  
+    Serial.println("Measurement characteristic is mandatory but not found");
+    Bluefruit.disconnect(conn_handle);
+    return;
+    }
+  Serial.println("Mag characteristic Found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if ( MagCharacteristic.enableNotify() )
+  {
+    Serial.println("Mag characteristic notify enabled");
     myTimer=millis();
   }else
   {

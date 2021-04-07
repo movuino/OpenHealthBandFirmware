@@ -78,15 +78,15 @@ if (mySensor.gyroUpdate() == 0) {
   }
 }
 void updateMag(){
-/*if (mySensor.magUpdate() == 0) {
-    magBuf=mySensor.getMagBuffer();
+if (mySensor.magUpdate() == 0) {
+    magBuf=mySensor.magBuff;
     for(int i=0;i<=7;i++){
       bufMag[i] = magBuf[i];
     }
     
   } else {
     Serial.println("Cannod read accel values");
-  }*/
+  }
 }
 void setup() {
   Serial.begin(115200);
@@ -150,12 +150,12 @@ void loop() {
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
             }
-        /* if ( MagCharacteristic.notify(bufMag,7) ){
+         if ( MagCharacteristic.notify(bufMag,7) ){
             //Serial.print("IMUCharacteristic updated to: ");
             //Serial.println(timeStampValue);             
             }else{
             Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-            }    */
+            }
         dataReady=false; 
         }
        else delay(1);

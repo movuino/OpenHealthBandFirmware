@@ -1,4 +1,4 @@
-void IMUCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
+void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
   // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.heart_rate_measurement.xml
   // Measurement contains of control byte0 and measurement (8 or 16 bit) + optional field
@@ -11,7 +11,7 @@ void IMUCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* da
     v = ((int16_t) data[4]) << 8 | data[5];
     aZ=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
   //Serial.print(receivedSamplesNb);
-  Serial.print(" accelX: " + String( aX));
+  Serial.print("accelX: " + String( aX));
   Serial.print("accelY: " + String( aY));
   Serial.println("accelZ: " + String( aZ));
 }
@@ -29,4 +29,14 @@ void GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* d
   Serial.print("gyrolX: " + String( gX));
   Serial.print("GyroY: " + String( gY));
   Serial.println("gyroZ: " + String( gZ));
+}
+void MagCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
+{
+  //Serial.println("mag updated");
+  mX=(((int16_t) data[1]) << 8) | data[0];
+  mY=(((int16_t) data[3]) << 8) | data[2];
+  mZ=(((int16_t) data[5]) << 8) | data[4];
+  Serial.print("mX: " + String( mX));
+  Serial.print("mY: " + String( mY));
+  Serial.println("mZ: " + String( mZ));
 }
