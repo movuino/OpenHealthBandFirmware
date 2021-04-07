@@ -25,25 +25,62 @@ void ErrorCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
 }
 void rawPPGCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
-  
-    Serial.println("rawPPG updated");
-  
+    //Serial.println("rawPPG updated");
+    timeStamp = data[0];
+    timeStamp = (timeStamp  << 8) + data[1];
+    timeStamp = (timeStamp << 8) + data[2];
+    timeStamp = (timeStamp << 8) + data[3];  
+    Serial.print(" timestamp: "+String(timeStamp));
+    redPPG = data[4];
+    redPPG = (redPPG  << 8) + data[5];
+    redPPG = (redPPG  << 8) + data[6];
+    redPPG = (redPPG  << 8) + data[7];  
+    Serial.print(" R: "+String(redPPG));
+    irPPG = data[8];
+    irPPG = (irPPG  << 8) + data[9];
+    irPPG = (irPPG  << 8) + data[10];
+    irPPG = (irPPG  << 8) + data[11];
+    Serial.print(" IR: "+String(irPPG));
+    greenPPG = data[12];
+    greenPPG = (greenPPG  << 8) + data[13];
+    greenPPG = (greenPPG  << 8) + data[14];
+    greenPPG = (greenPPG << 8) + data[15];  
+    Serial.println(" G: "+String(greenPPG)); 
 }
 void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
-  
-    Serial.println("AccCharacteristic updated");
-  
+  //Serial.println("AccCharacteristic updated");
+  int16_t v = ((int16_t) data[0]) << 8 | data[1];
+  aX=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+  v = ((int16_t) data[2]) << 8 | data[3];
+  aY=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+  v = ((int16_t) data[4]) << 8 | data[5];
+  aZ=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+  //Serial.print(receivedSamplesNb);
+  Serial.print("accelX: " + String( aX));
+  Serial.print("accelY: " + String( aY));
+  Serial.println("accelZ: " + String( aZ));
 }
 void  GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
-  
-    Serial.println("GyroCharacteristic updated");
-  
+  //Serial.println("GyroCharacteristic updated");
+  int16_t v = ((int16_t) data[0]) << 8 | data[1];
+  gX= ((float) -v) * gyroRange / (float) 0x8000;
+  v = ((int16_t) data[2]) << 8 | data[3];
+  gY= ((float) -v) * gyroRange / (float) 0x8000;
+  v = ((int16_t) data[4]) << 8 | data[5];
+  gZ= ((float) -v) * gyroRange / (float) 0x8000;
+  Serial.print("gyrolX: " + String( gX));
+  Serial.print("GyroY: " + String( gY));
+  Serial.println("gyroZ: " + String( gZ));  
 }
 void  MagCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
-  
-    Serial.println("MagCharacteristic updated");
-  
+  //Serial.println("MagCharacteristic updated");
+  mX=(((int16_t) data[1]) << 8) | data[0];
+  mY=(((int16_t) data[3]) << 8) | data[2];
+  mZ=(((int16_t) data[5]) << 8) | data[4];
+  Serial.print("mX: " + String( mX));
+  Serial.print("mY: " + String( mY));
+  Serial.println("mZ: " + String( mZ));
 }

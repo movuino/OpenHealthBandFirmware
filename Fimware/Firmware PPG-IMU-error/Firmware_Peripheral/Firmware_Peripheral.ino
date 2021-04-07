@@ -76,7 +76,7 @@ uint32_t greenPPG2 = 0;
 void configurePPG() {
 
   /*ppg sensor setup*/
-  particleSensor.setup(); //Configure sensor. Use 6.4mA for LED drive
+  //particleSensor.setup(); //Configure sensor. Use 6.4mA for LED drive
   //Setup parameters
   byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
   byte ledMode = 3;
@@ -102,34 +102,35 @@ void updatePPG() {
     buf[2] = (uint8_t)(timestamp >>= 8);
     buf[1] = (uint8_t)(timestamp >>= 8);
     buf[0] = (uint8_t)(timestamp >>= 8);
+    //those getters cannot be separated
     redPPG = particleSensor.getFIFORed();
+    irPPG = particleSensor.getFIFOIR();
+    greenPPG = particleSensor.getFIFOGreen();
     redPPG2 = redPPG;
-    buf[7] = (uint8_t)redPPG;
-    buf[6] = (uint8_t)(redPPG >>= 8);
-    buf[5] = (uint8_t)(redPPG >>= 8);
-    buf[4] = (uint8_t)(redPPG >>= 8);
-
+    buf[7] = (uint8_t)redPPG2;
+    buf[6] = (uint8_t)(redPPG2 >>= 8);
+    buf[5] = (uint8_t)(redPPG2 >>= 8);
+    buf[4] = (uint8_t)(redPPG2 >>= 8);
     if (ledMode > 1) {
-      irPPG = particleSensor.getFIFOIR();
+     // irPPG = particleSensor.getFIFOIR();
       irPPG2 = irPPG;
-      buf[11] = (uint8_t)irPPG;
-      buf[10] = (uint8_t)(irPPG >>= 8);
-      buf[9] = (uint8_t)(irPPG >>= 8);
-      buf[8] = (uint8_t)(irPPG >>= 8);
+      buf[11] = (uint8_t)irPPG2;
+      buf[10] = (uint8_t)(irPPG2 >>= 8);
+      buf[9] = (uint8_t)(irPPG2 >>= 8);
+      buf[8] = (uint8_t)(irPPG2 >>= 8);
 
     }
     if (ledMode > 2) {
-
-      greenPPG = particleSensor.getFIFOGreen();
+      //greenPPG = particleSensor.getFIFOGreen();
       greenPPG2 = greenPPG;
-      buf[15] = (uint8_t)greenPPG;
-      buf[14] = (uint8_t)(greenPPG >>= 8);
-      buf[13] = (uint8_t)(greenPPG >>= 8);
-      buf[12] = (uint8_t)(greenPPG >>= 8);
-
+      buf[15] = (uint8_t)greenPPG2;
+      buf[14] = (uint8_t)(greenPPG2 >>= 8);
+      buf[13] = (uint8_t)(greenPPG2>>= 8);
+      buf[12] = (uint8_t)(greenPPG2 >>= 8);
     }
 #ifdef debugPPG
     //not working it has to be fixed !!
+    //Serial.print(timestamp);
     Serial.print(" R[");
     Serial.print(redPPG);
     Serial.print("] IR[");
@@ -166,7 +167,6 @@ void configureIMU() {
     mySensor.beginMag();
   }
 }
-
 void updateAcc() {
   if (mySensor.accelUpdate() == 0) {
     //read sensor
@@ -225,7 +225,7 @@ void setup() {
   /*init IMU*/
   configureIMU();
   /*Init PPG*/
-  if (!particleSensor.begin()) {
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
     Serial.println("MAX30105 was not found. Please check wiring/power. ");
     errorPPG = true;
   }
@@ -273,10 +273,12 @@ void setup() {
 }
 
 void loop() {
-  //timeStampValue = millis()-startTimer;
+ // 
+ // timeStampValue = millis()-startTimer;
   //startTimer=millis();
-  digitalToggle(LED_RED);
-  if (!errorPPG) {
+ // digitalToggle(LED_RED);
+ if (!errorPPG) {
+    //readPPG();
     updatePPG();
   }
   if (!errorIMU) {
@@ -289,12 +291,12 @@ void loop() {
       // Note: We use .notify instead of .write!
       // If it is connected but CCCD is not enabled
       // The characteristic's value is still updated although notification is not sent
-      if ( rawPPGCharacteristic.notify(buf, 16) ) {
+    /* if ( rawPPGCharacteristic.notify(buf, 16) ) {
         //Serial.print("rawPPGCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
         Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
+      }*/
       if ( AccCharacteristic.notify(bufAcc, 11) ) {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
@@ -317,7 +319,7 @@ void loop() {
     }
     else delay(1);
 
-    if (counterG >= 1000) {
+   if (counterG >= 1000) {
       printConnParams();
       counterG = 0;
     }
