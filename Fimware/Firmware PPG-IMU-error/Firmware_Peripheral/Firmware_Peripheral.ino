@@ -18,7 +18,7 @@ bool errorPPG = false;
 uint8_t bufError[2];
 
 //todo : getter and setter for scales
-//#define debugPPG
+#define debugPPG
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
 BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
@@ -43,7 +43,7 @@ long startTimer = 0;
 //ppg
 MAX30105 particleSensor;
 long samplesTaken = 0; //Counter for calculating the Hz or read rate
-byte ledMode;
+byte ledMode=3;
 
 int counter = 0;
 int counterG;
@@ -53,6 +53,7 @@ uint8_t bufPPG[16];
 uint8_t bufAcc[7];
 uint8_t bufGyro[7];
 uint8_t bufMag[8];
+
 
 int buflen = 16;
 bool connected = false;
@@ -79,7 +80,7 @@ void configurePPG() {
   //particleSensor.setup(); //Configure sensor. Use 6.4mA for LED drive
   //Setup parameters
   byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
-  byte ledMode = 3;
+  //ledMode = 3;
   ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
   buflen = 4 + 4 * (ledMode);
   byte sampleAverage = 1; 
@@ -98,6 +99,7 @@ void updatePPG() {
     samplesTaken++;
     counterG++;
     uint32_t timestamp = millis();
+    uint32_t timestamp2 = timestamp;
     buf[3] = (uint8_t)timestamp;
     buf[2] = (uint8_t)(timestamp >>= 8);
     buf[1] = (uint8_t)(timestamp >>= 8);
@@ -111,26 +113,23 @@ void updatePPG() {
     buf[6] = (uint8_t)(redPPG2 >>= 8);
     buf[5] = (uint8_t)(redPPG2 >>= 8);
     buf[4] = (uint8_t)(redPPG2 >>= 8);
-    if (ledMode > 1) {
-     // irPPG = particleSensor.getFIFOIR();
-      irPPG2 = irPPG;
-      buf[11] = (uint8_t)irPPG2;
-      buf[10] = (uint8_t)(irPPG2 >>= 8);
-      buf[9] = (uint8_t)(irPPG2 >>= 8);
-      buf[8] = (uint8_t)(irPPG2 >>= 8);
-
+    if (ledMode >= 1) {
+    irPPG2 =irPPG;
+    buf[11] = (uint8_t)irPPG2;
+    buf[10] = (uint8_t)(irPPG2 >>= 8);
+    buf[9] = (uint8_t)(irPPG2 >>= 8);
+    buf[8] = (uint8_t)(irPPG2 >>= 8);
     }
-    if (ledMode > 2) {
-      //greenPPG = particleSensor.getFIFOGreen();
-      greenPPG2 = greenPPG;
-      buf[15] = (uint8_t)greenPPG2;
-      buf[14] = (uint8_t)(greenPPG2 >>= 8);
-      buf[13] = (uint8_t)(greenPPG2>>= 8);
-      buf[12] = (uint8_t)(greenPPG2 >>= 8);
+   if(ledMode>=2){
+    greenPPG2 = greenPPG;
+    buf[15] = (uint8_t)greenPPG2;
+    buf[14] = (uint8_t)(greenPPG2 >>= 8);
+    buf[13] = (uint8_t)(greenPPG2>>= 8);
+    buf[12] = (uint8_t)(greenPPG2 >>= 8);
     }
 #ifdef debugPPG
     //not working it has to be fixed !!
-    //Serial.print(timestamp);
+    Serial.print(timestamp2);
     Serial.print(" R[");
     Serial.print(redPPG);
     Serial.print("] IR[");
@@ -278,7 +277,6 @@ void loop() {
   //startTimer=millis();
  // digitalToggle(LED_RED);
  if (!errorPPG) {
-    //readPPG();
     updatePPG();
   }
   if (!errorIMU) {
@@ -291,12 +289,12 @@ void loop() {
       // Note: We use .notify instead of .write!
       // If it is connected but CCCD is not enabled
       // The characteristic's value is still updated although notification is not sent
-    /* if ( rawPPGCharacteristic.notify(buf, 16) ) {
+     if ( rawPPGCharacteristic.notify(buf, 16) ) {
         //Serial.print("rawPPGCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
         Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }*/
+      }
       if ( AccCharacteristic.notify(bufAcc, 11) ) {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
