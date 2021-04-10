@@ -155,9 +155,8 @@ if (mySensor.accelUpdate() == 0) {
     bufAcc[2] = (uint8_t)(timestamp>>=8);
     bufAcc[1] = (uint8_t)(timestamp>>=8);
     bufAcc[0] = (uint8_t)(timestamp>>=8);
-    bufAcc[4] = 16;
-    for(int i=5;i<=10;i++){
-      bufAcc[i] = accelBuf[i-5];
+    for(int i=4;i<=9;i++){
+      bufAcc[i] = accelBuf[i-4];
     }
     dataReady=true; 
   } else {
