@@ -40,7 +40,7 @@ void setup()
   }
 
   //Setup parameters
-  byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
+  byte ledBrightness = 0x1F; //Options: 0=Off to 255=50mA
   byte sampleAverage = 1; //Options: 1, 2, 4, 8, 16, 32
   byte ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
   int sampleRate = 200; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200

@@ -18,7 +18,11 @@ bool errorPPG = false;
 uint8_t bufError[2];
 
 //todo : getter and setter for scales
-#define debugPPG
+/*Debug Modes*/
+//#define debugPPG
+//#define debugAcc;
+#define debugMag;
+
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
 BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
@@ -79,7 +83,7 @@ void configurePPG() {
   /*ppg sensor setup*/
   //particleSensor.setup(); //Configure sensor. Use 6.4mA for LED drive
   //Setup parameters
-  byte ledBrightness = 0x3F; //Options: 0=Off to 255=50mA
+  byte ledBrightness = 0x1F; //Options: 0=Off to 255=50mA
   //ledMode = 3;
   ledMode = 3; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
   buflen = 4 + 4 * (ledMode);
@@ -179,10 +183,13 @@ void updateAcc() {
     bufAcc[4] = 16;
     for (int i = 5; i <= 10; i++) {
       bufAcc[i] = accelBuf[i - 5];
+      #ifdef debugAcc
+      Serial.println(String(bufAcc[i]));
+      #endif
     }
     dataReady = true;
   } else {
-    Serial.println("Cannod read accel values");
+    Serial.println("Cannot read accel values");
   }
 }
 void updateGyro() {
@@ -210,8 +217,11 @@ void updateMag() {
     bufMag[2] = (uint8_t)(timestamp >>= 8);
     bufMag[1] = (uint8_t)(timestamp >>= 8);
     bufMag[0] = (uint8_t)(timestamp >>= 8);
-    for (int i = 4; i <= 10; i++) {
-      bufMag[i] = magBuf[i];
+    for (int i = 4; i <= 9; i++) {
+      bufMag[i] = magBuf[i-4];
+      #ifdef debugMag
+      Serial.println(String(bufMag[i]));
+      #endif
     }
 
   } else {

@@ -2,7 +2,7 @@
 
 
 MPU9250_asukiaaa mySensor(0x69);
-float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
+float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ,mX2,mY2,mZ2;
 float accelRange=16.0;
 float gyroRange=2000.0;
 uint8_t* accelBuf;
@@ -66,34 +66,36 @@ if (mySensor.gyroUpdate() == 0) {
     Serial.println("Cannod read gyro values");
   }
 if (mySensor.magUpdate() == 0) {
-    if(dataMode==0){
+    //if(dataMode==0){
         magBuf=mySensor.magBuff;
+       // for(int i=0;i<=5;i++) Serial.println(magBuf[i]);
         mX=(((int16_t) magBuf[1]) << 8) | magBuf[0];
         mY=(((int16_t) magBuf[3]) << 8) | magBuf[2];
         mZ=(((int16_t) magBuf[5]) << 8) | magBuf[4];
-    }
-    else if (dataMode==1){
-        mX = mySensor.magX();
-        mY = mySensor.magY();
-        mZ = mySensor.magZ();
-    }
+  //  }
+  //  else if (dataMode==1){
+        mX2 = mySensor.magX();
+        mY2 = mySensor.magY();
+        mZ2 = mySensor.magZ();
+  //  }
       } else {
     Serial.println("Cannot read mag values");
   }
 
 
-
-      
-  Serial.print("aX: " + String( aX));
+  //Serial.print("------------------");
+ /* Serial.print("aX: " + String( aX));
   Serial.print(" aY: " + String( aY));
   Serial.println(" aZ: " + String( aZ));
   Serial.print("gX: " + String( gX));
   Serial.print(" gY: " + String( gY));
-  Serial.println(" gZ: " + String( gZ));
+  Serial.println(" gZ: " + String( gZ));*/
   Serial.print("mX: " + String( mX));
+  Serial.print("mX2: " + String( mX2));
   Serial.print(" mY: " + String( mY));
+  Serial.print(" mY2: " + String( mY2));
   Serial.println(" mZ: " + String( mZ));
-
+Serial.println(" mZ2: " + String( mZ2));
  /* if (mySensor.gyroUpdate() == 0) {
     gX = mySensor.gyroX();
     gY = mySensor.gyroY();
