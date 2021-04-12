@@ -31,6 +31,13 @@ void loop() {
   if (mySensor.accelUpdate() == 0) {
     if(dataMode==0){
          accelBuf=mySensor.accelBuff;
+         for(int i=0;i<=5;i++) {
+          Serial.print(i);
+          Serial.print(":");
+          Serial.print(accelBuf[i]);
+          Serial.print(" ");
+         }
+         Serial.println(" ");
          int16_t v = ((int16_t) accelBuf[0]) << 8 | accelBuf[1];
          aX=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
          v = ((int16_t) accelBuf[2]) << 8 | accelBuf[3];
@@ -84,13 +91,13 @@ if (mySensor.magUpdate() == 0) {
 
 
   //Serial.print("------------------");
- /* Serial.print("aX: " + String( aX));
+  /*Serial.print("aX: " + String( aX));
   Serial.print(" aY: " + String( aY));
-  Serial.println(" aZ: " + String( aZ));
-  Serial.print("gX: " + String( gX));
+  Serial.println(" aZ: " + String( aZ));*/
+  /*Serial.print("gX: " + String( gX));
   Serial.print(" gY: " + String( gY));
   Serial.println(" gZ: " + String( gZ));*/
-  Serial.print("mX: " + String( mX));
+  /*Serial.print("mX: " + String( mX));
   Serial.print("mX2: " + String( mX2));
   Serial.print(" mY: " + String( mY));
   Serial.print(" mY2: " + String( mY2));

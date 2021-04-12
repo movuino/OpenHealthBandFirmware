@@ -5,6 +5,7 @@
 MPU9250_asukiaaa mySensor(0x69);
 //float aX, aY, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
 uint32_t  aX, aY, aZ;
+float aX2,aY2,aZ2;
 uint8_t*  accelBuf;
 uint8_t*  gyroBuf;
 uint8_t*  magBuf;
@@ -16,12 +17,12 @@ uint8_t   gyroScale = 2000;
 bool errorIMU = false;
 bool errorPPG = false;
 uint8_t bufError[2];
-
+float accelRange=16.0;
 //todo : getter and setter for scales
 /*Debug Modes*/
 //#define debugPPG
-//#define debugAcc;
-#define debugMag;
+#define debugAcc1;
+//#define debugMag;
 
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
@@ -183,10 +184,29 @@ void updateAcc() {
     bufAcc[4] = 16;
     for (int i = 5; i <= 10; i++) {
       bufAcc[i] = accelBuf[i - 5];
-      #ifdef debugAcc
-      Serial.println(String(bufAcc[i]));
+      #ifdef debugAcc2
+      Serial.print(String(i));
+      Serial.print(":");
+      Serial.print(String(bufAcc[i]));
+      Serial.print(" ");
       #endif
     }
+    #ifdef debugAcc1
+    Serial.println(" ");
+    
+    int16_t v = ((int16_t) accelBuf[0]) << 8 | accelBuf[1];
+    aX2=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+    v = ((int16_t) accelBuf[2]) << 8 | accelBuf[3];
+    aY2=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+    v = ((int16_t) accelBuf[4]) << 8 | accelBuf[5];
+    aZ2=((float) -v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
+    Serial.print(String(aX2));
+    Serial.print(" ");   
+    Serial.print(String(aY2));   
+    Serial.print(" ");   
+    Serial.print(String(aZ2));   
+    Serial.println(" ");        
+    #endif
     dataReady = true;
   } else {
     Serial.println("Cannot read accel values");
