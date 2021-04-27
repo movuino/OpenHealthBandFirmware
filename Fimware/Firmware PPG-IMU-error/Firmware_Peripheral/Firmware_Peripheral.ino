@@ -182,7 +182,7 @@ void updateAcc() {
     bufAcc[1] = (uint8_t)(timestamp >>= 8);
     bufAcc[0] = (uint8_t)(timestamp >>= 8);
     bufAcc[4] = 16;
-    for (int i = 5; i <= 10; i++) {
+    for (int i = 4; i <= 9; i++) {
       bufAcc[i] = accelBuf[i - 5];
       #ifdef debugAcc2
       Serial.print(String(i));
@@ -250,6 +250,7 @@ void updateMag() {
 }
 void setup() {
   Serial.begin(115200);
+  while(!Serial) {}
   //delay(5000);
   /*init IMU*/
   configureIMU();
