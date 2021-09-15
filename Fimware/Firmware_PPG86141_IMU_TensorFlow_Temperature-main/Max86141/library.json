@@ -1,0 +1,20 @@
+{
+    "name": "MAX86141",
+    "keywords": "photodiode(s), led(s), ppg, heart rate",
+    "description": "Enables using Max86140 and Max86141 sensor on NRF52840 board",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/MakerLabCRI/Max86141.git"
+    },
+    "authors":
+    {
+        "name": "Youssouph Ndao",
+        "url": "https://github.com/Youniesta",
+        "maintainer": true
+    },
+    "version": "1.0.0",
+    "license": "MIT",
+    "frameworks": "arduino",
+    "platforms": "*"
+}
