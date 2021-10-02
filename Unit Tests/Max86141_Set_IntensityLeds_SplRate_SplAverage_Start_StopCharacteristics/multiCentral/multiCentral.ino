@@ -24,7 +24,7 @@ BLEClientCharacteristic SNR1_2_Characteristic2(0x1313);
 BLEClientCharacteristic SNR2_2_Characteristic2(0x1314);
 
 
-BLEClientService Start_StopService(1400);
+BLEClientService Start_StopService(0x1400);
 BLEClientCharacteristic StartCharacteristic(0x1401);
 BLEClientCharacteristic intensityLedsCharacteristic(0x1402);
 BLEClientCharacteristic smplRateCharacteristic(0x1403);
