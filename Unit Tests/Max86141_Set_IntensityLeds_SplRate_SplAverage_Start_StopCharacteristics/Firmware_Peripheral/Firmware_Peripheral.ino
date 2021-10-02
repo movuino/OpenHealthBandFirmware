@@ -3,7 +3,7 @@
 
 BLEConnection* connection ;
 
-BLEService Start_StopService = BLEService(1400);
+BLEService Start_StopService = BLEService(0x1400);
 BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
 BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
 BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
