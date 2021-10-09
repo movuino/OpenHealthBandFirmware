@@ -41,7 +41,7 @@ void setup() {
   pinMode(SS_PIN, OUTPUT);
 
   digitalWrite(SS_PIN, HIGH);
-  
+
   //initialise SPI
   pulseOx1.spi = new SPIClass(SPI);
 
@@ -53,8 +53,8 @@ void setup() {
 
   pulseOx1.setDebug(true);
 #ifdef PDsLED
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
-  pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 2/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x5/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
+  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/};
+  pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDLEDs
@@ -63,8 +63,8 @@ void setup() {
 #endif
 
 #ifdef PDsLEDs
-  int LedMode[]={1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/,3/*LED3 (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
-  pulseOx1.initialisation(2/*nb_ppg*/,LedMode/*LedMode*/,4/*Number of sequences*/,3/*Number of LEDs*/,4/*intensity_LEDs*/,0x3/*sample_average*/, 0x0E/*sample_rate*/,0x3/*pulse width*/,0x2/*ADC Range= 16uA*/,spiClk);
+  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/, 3/*LED3 (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
+  pulseOx1.initialisation(2/*nb_ppg*/, LedMode/*LedMode*/, 4/*Number of sequences*/, 3/*Number of LEDs*/, 4/*intensity_LEDs*/, 0x3/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
   Serial.println("--Read Register-- System Control");
@@ -86,73 +86,106 @@ void setup() {
 
 void loop() {
 
-   uint8_t intStatus;
+  uint8_t intStatus;
   //Read Status
   intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
   bool flagA_full = (intStatus & 0x80) >> 7;
 
-/////// if there is 8 samples in the FIFO ///////
+  /////// if there is 8 samples in the FIFO ///////
   if (flagA_full) {
     int fifo_size = pulseOx1.device_data_read1();
-    
-#ifdef PDsLED
-    //Serial.println("Reading all 8 samples from PD1: ");
-     for(int i=0; i<fifo_size/2;i++){
-      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
-      }
-     Serial.println("Reading all 8 samples from PD2: ");
-     for(int i=0; i<fifo_size/2;i++){
-      Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
-      }
 
-    Serial.println("Reading first sample from PD1: ");
+#ifdef PDsLED
     int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
     //Serial.println(ledSeq1A_PD1);
 
-    ///////////// Add in buffer for SNR //////////
-    pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
-    pulseOx1.signalData_ledSeq1A_PD1[cpt1+1] = pulseOx1.tab_ledSeq1A_PD1[1];
-    pulseOx1.signalData_ledSeq1A_PD1[cpt1+2] = pulseOx1.tab_ledSeq1A_PD1[2];
-    pulseOx1.signalData_ledSeq1A_PD1[cpt1+3] = pulseOx1.tab_ledSeq1A_PD1[3];
-    uint32_t timestamp = millis();
+    for (int i = 0; i < fifo_size / 2; i++) {
+      if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
+        Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+      }
+    }
+    Serial.println("-----------------------");
 
-   cpt1 += 4;
+    for (int i = 0; i < fifo_size / 2; i++) {
+      if (pulseOx1.tab_ledSeq1A_PD2[i] != 0) {
+        Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
+      }
+    }
+    Serial.println("##########################");
+
+
+    ///////////// Add in buffer for SNR //////////
+    //pulseOx1.signalData_ledSeq1A_PD1[cpt1] = ledSeq1A_PD1;
+    if ( (pulseOx1.tab_ledSeq1A_PD1[0] != 0) && (pulseOx1.tab_ledSeq1A_PD1[1] != 0) && (pulseOx1.tab_ledSeq1A_PD1[2] != 0) && (pulseOx1.tab_ledSeq1A_PD1[3] != 0))
+    { pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
+      pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 1] = pulseOx1.tab_ledSeq1A_PD1[1];
+      pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 2] = pulseOx1.tab_ledSeq1A_PD1[2];
+      pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 3] = pulseOx1.tab_ledSeq1A_PD1[3];
+    }
+
+    cpt1 += 4;
     if (cpt1 == SIZE) {
       //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
+      int var = 0;
+      var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
+      if (var < 0) {
+        int a = -100 * var;
+        // Serial.println("SNR2 : " + String(a));
+        //SNR1_2 = (uint8_t*)&a;
+      }
+      else {
+        //Serial.println("SNR2 : " + String(var));
+        //SNR1_2 = (uint8_t*)&var;
+      }
       cpt1 = 0;
     }
 
-    Serial.println("Reading first sample from PD2: ");
     int ledSeq1A_PD2 = pulseOx1.get_ledSeq1A_PD2();
     //Serial.println(ledSeq1A_PD2);
+
     ///////////// Add in buffer for SNR //////////
-   // pulseOx1.signalData_ledSeq1A_PD2[cpt2] = ledSeq1A_PD2;
-    pulseOx1.signalData_ledSeq1A_PD2[cpt2] = pulseOx1.tab_ledSeq1A_PD2[0];
-    pulseOx1.signalData_ledSeq1A_PD2[cpt2+1] = pulseOx1.tab_ledSeq1A_PD2[1];
-    pulseOx1.signalData_ledSeq1A_PD2[cpt2+2] = pulseOx1.tab_ledSeq1A_PD2[2];
-    pulseOx1.signalData_ledSeq1A_PD2[cpt2+3] = pulseOx1.tab_ledSeq1A_PD2[3];
+    //pulseOx1.signalData_ledSeq1A_PD2[cpt2] = ledSeq1A_PD2;
+    if ( (pulseOx1.tab_ledSeq1A_PD2[0] != 0) && (pulseOx1.tab_ledSeq1A_PD2[1] != 0) && (pulseOx1.tab_ledSeq1A_PD2[2] != 0) && (pulseOx1.tab_ledSeq1A_PD2[3] != 0))
+    { pulseOx1.signalData_ledSeq1A_PD2[cpt2] = pulseOx1.tab_ledSeq1A_PD2[0];
+      pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 1] = pulseOx1.tab_ledSeq1A_PD2[1];
+      pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 2] = pulseOx1.tab_ledSeq1A_PD2[2];
+      pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 3] = pulseOx1.tab_ledSeq1A_PD2[3];
+    }
 
     cpt2 += 4;
     if (cpt2 == SIZE) {
       //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
+      int var = 0;
+      var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
+      if (var < 0) {
+        int a = -100 * var;
+        //Serial.println("SNR2 : "+String(a));
+        //SNR2_2 = (uint8_t*)&a;
+      }
+      else {
+        //Serial.println("SNR2 : "+String(var));
+        //SNR2_2 = (uint8_t*)&var;
+      }
       cpt2 = 0;
     }
 
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);
-          /*Serial.println("LED 1 Seq 1 A - PD1 channel : ");
-          Serial.println(ledSeq1A_PD1);
-          Serial.println("TAG of LED 1 Seq 1 A - PD1 channel : ");
-          int tagSeq1A_PD1 = pulseOx1.get_tagSeq1A_PD1();
-          Serial.println(tagSeq1A_PD1);
-          Serial.println("LED 1 Seq 1 A - PD2 channel : ");
-          Serial.println(ledSeq1A_PD2);
-          Serial.println("TAG of LED 1 Seq 1 A - PD2  channel : ");
-          int tagSeq1A_PD2 = pulseOx1.get_tagSeq1A_PD2();
-          Serial.println(tagSeq1A_PD2);
-          Serial.println("LED AVERAGE");
-          int led_avg = (ledSeq1A_PD1 + ledSeq1A_PD2) * 0.5;
-          Serial.println(led_avg);*/    
+    free(pulseOx1.tab_ledSeq1B_PD1);
+    free(pulseOx1.tab_ledSeq1B_PD2);
+    /*Serial.println("LED 1 Seq 1 A - PD1 channel : ");
+      Serial.println(ledSeq1A_PD1);
+      Serial.println("TAG of LED 1 Seq 1 A - PD1 channel : ");
+      int tagSeq1A_PD1 = pulseOx1.get_tagSeq1A_PD1();
+      Serial.println(tagSeq1A_PD1);
+      Serial.println("LED 1 Seq 1 A - PD2 channel : ");
+      Serial.println(ledSeq1A_PD2);
+      Serial.println("TAG of LED 1 Seq 1 A - PD2  channel : ");
+      int tagSeq1A_PD2 = pulseOx1.get_tagSeq1A_PD2();
+      Serial.println(tagSeq1A_PD2);
+      Serial.println("LED AVERAGE");
+      int led_avg = (ledSeq1A_PD1 + ledSeq1A_PD2) * 0.5;
+      Serial.println(led_avg);*/
 #endif
 
 #ifdef PDLEDs
@@ -238,10 +271,10 @@ void loop() {
     Serial.println("Direct ambient AVERAGE");
     int ambient_avg = (ledSeq2B_PD1 + ledSeq2B_PD2) * 0.5;
     Serial.println(ambient_avg);
-   
+
 #endif
   }
   else {
-  //Serial.println("FIFO not A_full");
-  } 
+    //Serial.println("FIFO not A_full");
+  }
 }
