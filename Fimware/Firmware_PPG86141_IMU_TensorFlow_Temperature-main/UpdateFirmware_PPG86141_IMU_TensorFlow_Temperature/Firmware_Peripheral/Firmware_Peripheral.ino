@@ -1,5 +1,5 @@
 #include <bluefruit.h>
-//#include <Wire.h>
+#include <Wire.h>
 
 BLEConnection* connection ;
 
