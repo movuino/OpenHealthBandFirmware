@@ -12,10 +12,13 @@
 #include "MAX86141.h"
 #include <SPI.h>
 
-//PD: PhotoDiode
+/* PD: PhotoDiode */
 #define PDsLED; // 2 PDs - 1 LED
 //#define PDLEDs; // 1 PD - 2 LEDs
 //#define PDsLEDs; // 2 PDs - 3 LEDs, here  1 LED is composed of "Green, IR and RED" leds
+
+/* Sample Rate taken */
+#define Sample_Rate
 
 static int spiClk = 1000000; // 8 MHz Maximum
 
@@ -32,6 +35,9 @@ static int spiClk = 1000000; // 8 MHz Maximum
 MAX86141 pulseOx1;
 
 int cpt1 = 0, cpt2 = 0;
+
+long startTime;
+long samplesTaken = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -81,6 +87,9 @@ void setup() {
   delay(1000);
 
   pulseOx1.setDebug(false);
+
+  startTime = millis();
+
 }
 
 
@@ -93,12 +102,16 @@ void loop() {
 
   /////// if there is 8 samples in the FIFO ///////
   if (flagA_full) {
+    samplesTaken++;
+    Serial.println("<---------------------------------------->");
     int fifo_size = pulseOx1.device_data_read1();
-
+    
 #ifdef PDsLED
     int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
     //Serial.println(ledSeq1A_PD1);
 
+    Serial.println("8 data read from the sensor : ");
+    
     for (int i = 0; i < fifo_size / 2; i++) {
       if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
         Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
@@ -113,6 +126,16 @@ void loop() {
     }
     Serial.println("##########################");
 
+#ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken*4) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+
+    Serial.println();
+    Serial.println("<---------------------------------------->");
+    Serial.println();
+
+#endif
 
     ///////////// Add in buffer for SNR //////////
     //pulseOx1.signalData_ledSeq1A_PD1[cpt1] = ledSeq1A_PD1;
@@ -168,7 +191,7 @@ void loop() {
       }
       cpt2 = 0;
     }
-
+    
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);
     free(pulseOx1.tab_ledSeq1B_PD1);
