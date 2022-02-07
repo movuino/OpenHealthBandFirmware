@@ -41,7 +41,7 @@ BLEClientCharacteristic PossCharacteristic(0x1501);
 
 #define PPG_Max86141
 #define IMU9250
-#define Temperature
+//#define Temperature
 #define TensorFlow
 
 //long myTimer=0;
