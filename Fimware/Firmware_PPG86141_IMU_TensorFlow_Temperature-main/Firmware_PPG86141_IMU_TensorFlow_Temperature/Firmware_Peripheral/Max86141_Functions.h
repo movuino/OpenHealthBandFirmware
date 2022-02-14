@@ -22,7 +22,7 @@ uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 //# define PDsLEDs; // 2 PDs - 3 LEDs
 
 /* Sample Rate taken */
-//#define Sample_Rate
+#define Sample_Rate
 
 /* Pin Definitions  */
 // #define MISO_PIN              19
@@ -148,21 +148,21 @@ void updatePPG86(void) {
 #ifdef BleTest
 
 #ifdef PDsLED
-    int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
+    //int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
     //Serial.println(ledSeq1A_PD1);
 
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 2; i++) {
-      if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
+      //if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
         Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
-      }
+      //}
     }
     //Serial.println("-----------------------");
 
     for (int i = 0; i < fifo_size / 2; i++) {
-      if (pulseOx1.tab_ledSeq1A_PD2[i] != 0) {
+      //if (pulseOx1.tab_ledSeq1A_PD2[i] != 0) {
         Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
-      }
+      //}
     }
     //Serial.println("##########################");
 
@@ -184,79 +184,80 @@ void updatePPG86(void) {
       pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 3] = pulseOx1.tab_ledSeq1A_PD1[3];
     }
 
-    uint32_t timestamp = millis();
-
     ///////////// Pointer to send only 1 sample by Bluetooth (PD1) ////////////
-    pt_ledSeq1A_PD1_2[3] = (uint8_t)timestamp;
-    pt_ledSeq1A_PD1_2[2] = (uint8_t)(timestamp >>= 8);
-    pt_ledSeq1A_PD1_2[1] = (uint8_t)(timestamp >>= 8);
-    pt_ledSeq1A_PD1_2[0] = (uint8_t)(timestamp >>= 8);
-
-    pt_ledSeq1A_PD1_2[7] = (uint8_t)ledSeq1A_PD1;
-    pt_ledSeq1A_PD1_2[6] = (uint8_t)(ledSeq1A_PD1 >>= 8);
-    pt_ledSeq1A_PD1_2[5] = (uint8_t)(ledSeq1A_PD1 >>= 8);
-    pt_ledSeq1A_PD1_2[4] = (uint8_t)(ledSeq1A_PD1 >>= 8);
-
-    ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
-    uint32_t timestamp1 = millis();
-
-    ptledSeq1APD1[3] = (uint8_t)timestamp1;
-    ptledSeq1APD1[2] = (uint8_t)(timestamp1 >>= 8);
-    ptledSeq1APD1[1] = (uint8_t)(timestamp1 >>= 8);
-    ptledSeq1APD1[0] = (uint8_t)(timestamp1 >>= 8);
-
     /*
-      for(int i=0; i<4; i++){
-      Serial.println("timestamp: "+String(pt_ledSeq1A_PD1_2[i]));
-      }
+      uint32_t timestamp = millis();
+      pt_ledSeq1A_PD1_2[3] = (uint8_t)timestamp;
+      pt_ledSeq1A_PD1_2[2] = (uint8_t)(timestamp >>= 8);
+      pt_ledSeq1A_PD1_2[1] = (uint8_t)(timestamp >>= 8);
+      pt_ledSeq1A_PD1_2[0] = (uint8_t)(timestamp >>= 8);
+
+      pt_ledSeq1A_PD1_2[7] = (uint8_t)ledSeq1A_PD1;
+      pt_ledSeq1A_PD1_2[6] = (uint8_t)(ledSeq1A_PD1 >>= 8);
+      pt_ledSeq1A_PD1_2[5] = (uint8_t)(ledSeq1A_PD1 >>= 8);
+      pt_ledSeq1A_PD1_2[4] = (uint8_t)(ledSeq1A_PD1 >>= 8);
     */
 
-    ptledSeq1APD1[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
-    ptledSeq1APD1[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-    ptledSeq1APD1[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-    ptledSeq1APD1[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+    ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
+    if ((pulseOx1.tab_ledSeq1A_PD1[0] != 0) && (pulseOx1.tab_ledSeq1A_PD1[1] != 0) && (pulseOx1.tab_ledSeq1A_PD1[2] != 0)
+        && (pulseOx1.tab_ledSeq1A_PD1[3] != 0)) {
 
-    ptledSeq1APD1[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
-    ptledSeq1APD1[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-    ptledSeq1APD1[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-    ptledSeq1APD1[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      uint32_t timestamp1 = millis();
+      ptledSeq1APD1[3] = (uint8_t)timestamp1;
+      ptledSeq1APD1[2] = (uint8_t)(timestamp1 >>= 8);
+      ptledSeq1APD1[1] = (uint8_t)(timestamp1 >>= 8);
+      ptledSeq1APD1[0] = (uint8_t)(timestamp1 >>= 8);
 
-    ptledSeq1APD1[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[2];
-    ptledSeq1APD1[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
-    ptledSeq1APD1[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
-    ptledSeq1APD1[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
 
-    ptledSeq1APD1[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[3];
-    ptledSeq1APD1[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
-    ptledSeq1APD1[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
-    ptledSeq1APD1[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+      ptledSeq1APD1[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
+      ptledSeq1APD1[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+      ptledSeq1APD1[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+      ptledSeq1APD1[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
 
-    cpt1 += 4;
-    if (cpt1 == SIZE) {
-      //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
-      int var = 0;
-      var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
-      if (var < 0) {
-        int a = -100 * var;
-        // Serial.println("SNR2 : " + String(a));
-        //SNR1_2 = (uint8_t*)&a;
-        SNR1_2[3] = (uint8_t)a;
-        SNR1_2[2] = (uint8_t)(a >>= 8);
-        SNR1_2[1] = (uint8_t)(a >>= 8);
-        SNR1_2[0] = (uint8_t)(a >>= 8);
+      ptledSeq1APD1[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
+      ptledSeq1APD1[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      ptledSeq1APD1[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      ptledSeq1APD1[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+
+      ptledSeq1APD1[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[2];
+      ptledSeq1APD1[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+      ptledSeq1APD1[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+      ptledSeq1APD1[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+
+      ptledSeq1APD1[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[3];
+      ptledSeq1APD1[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+      ptledSeq1APD1[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+      ptledSeq1APD1[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+
+      cpt1 += 4;
+      if (cpt1 == SIZE) {
+        //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
+        int var = 0;
+        var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
+        if (var < 0) {
+          int a = -100 * var;
+          //Serial.println("SNR2 : " + String(a));
+          //SNR1_2 = (uint8_t*)&a;
+          SNR1_2[3] = (uint8_t)a;
+          SNR1_2[2] = (uint8_t)(a >>= 8);
+          SNR1_2[1] = (uint8_t)(a >>= 8);
+          SNR1_2[0] = (uint8_t)(a >>= 8);
+        }
+        else {
+          //Serial.println("SNR2 : " + String(var));
+          //SNR1_2 = (uint8_t*)&var;
+          SNR1_2[3] = (uint8_t)var;
+          SNR1_2[2] = (uint8_t)(var >>= 8);
+          SNR1_2[1] = (uint8_t)(var >>= 8);
+          SNR1_2[0] = (uint8_t)(var >>= 8);
+        }
+        cpt1 = 0;
       }
-      else {
-        //Serial.println("SNR2 : " + String(var));
-        //SNR1_2 = (uint8_t*)&var;
-        SNR1_2[3] = (uint8_t)var;
-        SNR1_2[2] = (uint8_t)(var >>= 8);
-        SNR1_2[1] = (uint8_t)(var >>= 8);
-        SNR1_2[0] = (uint8_t)(var >>= 8);
-      }
-      cpt1 = 0;
+
     }
 
-    int ledSeq1A_PD2 = pulseOx1.get_ledSeq1A_PD2();
+
+    //int ledSeq1A_PD2 = pulseOx1.get_ledSeq1A_PD2();
     //Serial.println(ledSeq1A_PD2);
 
     ///////////// Add in buffer for SNR //////////
@@ -270,62 +271,67 @@ void updatePPG86(void) {
 
 
     ///////////// Pointer to send only 1 sample by Bluetooth (PD2) ////////////
-    pt_ledSeq1A_PD2_2[3] = (uint8_t)ledSeq1A_PD2;
-    pt_ledSeq1A_PD2_2[2] = (uint8_t)(ledSeq1A_PD2 >>= 8);
-    pt_ledSeq1A_PD2_2[1] = (uint8_t)(ledSeq1A_PD2 >>= 8);
-    pt_ledSeq1A_PD2_2[0] = (uint8_t)(ledSeq1A_PD2 >>= 8);
+    /*
+      pt_ledSeq1A_PD2_2[3] = (uint8_t)ledSeq1A_PD2;
+      pt_ledSeq1A_PD2_2[2] = (uint8_t)(ledSeq1A_PD2 >>= 8);
+      pt_ledSeq1A_PD2_2[1] = (uint8_t)(ledSeq1A_PD2 >>= 8);
+      pt_ledSeq1A_PD2_2[0] = (uint8_t)(ledSeq1A_PD2 >>= 8);
+    */
 
     ///////////// Pointer to send only 4 samples by Bluetooth (PD2) ////////////
-    uint32_t timestamp2 = millis();
-    ptledSeq1APD2[3] = (uint8_t)timestamp2;
-    ptledSeq1APD2[2] = (uint8_t)(timestamp2 >>= 8);
-    ptledSeq1APD2[1] = (uint8_t)(timestamp2 >>= 8);
-    ptledSeq1APD2[0] = (uint8_t)(timestamp2 >>= 8);
+    if ((pulseOx1.tab_ledSeq1A_PD2[0] != 0) && (pulseOx1.tab_ledSeq1A_PD2[1] != 0) && (pulseOx1.tab_ledSeq1A_PD2[2] != 0)
+        && (pulseOx1.tab_ledSeq1A_PD2[3] != 0)) {
+      uint32_t timestamp2 = millis();
+      ptledSeq1APD2[3] = (uint8_t)timestamp2;
+      ptledSeq1APD2[2] = (uint8_t)(timestamp2 >>= 8);
+      ptledSeq1APD2[1] = (uint8_t)(timestamp2 >>= 8);
+      ptledSeq1APD2[0] = (uint8_t)(timestamp2 >>= 8);
 
-    ptledSeq1APD2[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
-    ptledSeq1APD2[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-    ptledSeq1APD2[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-    ptledSeq1APD2[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+      ptledSeq1APD2[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
+      ptledSeq1APD2[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+      ptledSeq1APD2[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+      ptledSeq1APD2[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
 
-    ptledSeq1APD2[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[1];
-    ptledSeq1APD2[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-    ptledSeq1APD2[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-    ptledSeq1APD2[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+      ptledSeq1APD2[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[1];
+      ptledSeq1APD2[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+      ptledSeq1APD2[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+      ptledSeq1APD2[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
 
-    ptledSeq1APD2[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[2];
-    ptledSeq1APD2[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
-    ptledSeq1APD2[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
-    ptledSeq1APD2[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
+      ptledSeq1APD2[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[2];
+      ptledSeq1APD2[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
+      ptledSeq1APD2[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
+      ptledSeq1APD2[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[2] >>= 8);
 
-    ptledSeq1APD2[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[3];
-    ptledSeq1APD2[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
-    ptledSeq1APD2[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
-    ptledSeq1APD2[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
+      ptledSeq1APD2[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[3];
+      ptledSeq1APD2[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
+      ptledSeq1APD2[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
+      ptledSeq1APD2[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[3] >>= 8);
 
 
-    cpt2 += 4;
-    if (cpt2 == SIZE) {
-      //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
-      int var = 0;
-      var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
-      if (var < 0) {
-        int a = -100 * var;
-        //Serial.println("SNR2 : "+String(a));
-        //SNR2_2 = (uint8_t*)&a;
-        SNR2_2[3] = (uint8_t)a;
-        SNR2_2[2] = (uint8_t)(a >>= 8);
-        SNR2_2[1] = (uint8_t)(a >>= 8);
-        SNR2_2[0] = (uint8_t)(a >>= 8);
+      cpt2 += 4;
+      if (cpt2 == SIZE) {
+        //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
+        int var = 0;
+        var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
+        if (var < 0) {
+          int a = -100 * var;
+          //Serial.println("SNR2 : "+String(a));
+          //SNR2_2 = (uint8_t*)&a;
+          SNR2_2[3] = (uint8_t)a;
+          SNR2_2[2] = (uint8_t)(a >>= 8);
+          SNR2_2[1] = (uint8_t)(a >>= 8);
+          SNR2_2[0] = (uint8_t)(a >>= 8);
+        }
+        else {
+          //Serial.println("SNR2 : "+String(var));
+          //SNR2_2 = (uint8_t*)&var;
+          SNR2_2[3] = (uint8_t)var;
+          SNR2_2[2] = (uint8_t)(var >>= 8);
+          SNR2_2[1] = (uint8_t)(var >>= 8);
+          SNR2_2[0] = (uint8_t)(var >>= 8);
+        }
+        cpt2 = 0;
       }
-      else {
-        //Serial.println("SNR2 : "+String(var));
-        //SNR2_2 = (uint8_t*)&var;
-        SNR2_2[3] = (uint8_t)var;
-        SNR2_2[2] = (uint8_t)(var >>= 8);
-        SNR2_2[1] = (uint8_t)(var >>= 8);
-        SNR2_2[0] = (uint8_t)(var >>= 8);
-      }
-      cpt2 = 0;
     }
 
     free(pulseOx1.tab_ledSeq1A_PD1);

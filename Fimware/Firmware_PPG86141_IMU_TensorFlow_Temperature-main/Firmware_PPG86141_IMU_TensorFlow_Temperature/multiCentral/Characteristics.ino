@@ -60,7 +60,7 @@ void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* da
   aY = ((float) - v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
   v = ((int16_t) data[9]) << 8 | data[10];
   aZ = ((float) - v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
-  
+
   Serial.println("----- Accelometer data ----- :");
   Serial.println(" A " + String( aX) + " " + String( aY) + " " + String( aZ) + " ");
 }
@@ -79,7 +79,7 @@ void  GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
   gY = ((float) - v) * gyroRange / (float) 0x8000;
   v = ((int16_t) data[9]) << 8 | data[10];
   gZ = ((float) - v) * gyroRange / (float) 0x8000;
-  
+
   Serial.println("----- Gyrometer data ----- :");
   Serial.print(" G " + String( gX) + " " + String( gY) + " " + String( gZ));
   Serial.println();
@@ -146,6 +146,14 @@ void PPGMax86_ledSeq1A_PPG1_2_notify_callback(BLEClientCharacteristic* chr, uint
       Serial.println(tab[i]);
     }
   }
+
+  /*
+    for (uint32_t i = 1; i < 5; i++) {
+    Serial.print(tab[i]);
+    Serial.print(",");
+    }
+    Serial.println();
+  */
 }
 
 void PPGMax86_ledSeq1A_PPG2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -182,11 +190,20 @@ void PPGMax86_ledSeq1A_PPG2_2_notify_callback(BLEClientCharacteristic* chr, uint
   //Serial.println("tp5 : "+String(tp5));
 
   uint32_t tab[5] = {tp1, tp2, tp3, tp4, tp5};
+
   for (uint32_t i = 1; i < 5; i++) {
     Serial.println(tab[i]);
   }
   Serial.println();
   Serial.println();
+
+  /*
+    for (uint32_t i = 1; i < 5; i++) {
+      Serial.print(tab[i]);
+      Serial.print(",");
+    }
+    Serial.println();
+  */
 }
 
 void PPGMax86_SNR1_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -197,7 +214,7 @@ void PPGMax86_SNR1_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data
   tp1 = (tp1  << 8) + data[3];
 
   //Serial.println("Signal Noise Ratio");
-  
+
   if (tp1 % 100 == 0) {
     float SNR_neg = tp1;
     SNR_neg = -(SNR_neg / 10000);
@@ -251,7 +268,7 @@ void TempCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* d
   double VRta =  nineRAM + Gb1 * ( sixRAM / 12.0);
   double AMB = (sixRAM / 12.0) / VRta * pow(2, 19);
   float sensor_Temp = P_O1 + (AMB - P_R1) / P_G1 + P_T1 * pow((AMB - P_R1), 2);
-  
+
   Serial.println("----- Temperature data ----- :");
 
   Serial.print(" Sensor temperature: ");
@@ -274,6 +291,7 @@ void  PossCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
   cTensorFlow = (cTensorFlow  << 8) + data[10];
   cTensorFlow = (cTensorFlow  << 8) + data[9];
   cTensorFlow = (cTensorFlow  << 8) + data[8];
+
   Serial.println("----- TensorFlow data ----- :");
 
   Serial.println(String(aTensorFlow));
