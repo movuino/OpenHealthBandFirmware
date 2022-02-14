@@ -257,9 +257,9 @@ void loop() {
     ssCommand = StartCharacteristic.read8();
 
     if (ssCommand == 1) { //Received 1 from Central to start sending data
-        uint32_t start, sent;
-        start = sent = 0;
-        start = millis();
+       // uint32_t start, sent;
+       // start = sent = 0;
+       // start = millis();
 
       if (shutdown_or_restart == 1) { // the sensor was shutdown
 #ifdef PPG_Max86141
@@ -355,7 +355,7 @@ void loop() {
         Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 #endif
-        print_speed("Sent ", 76, millis() - start);
+        //print_speed("Sent ", 76, millis() - start);
 
       // dataReady = false;
       //}

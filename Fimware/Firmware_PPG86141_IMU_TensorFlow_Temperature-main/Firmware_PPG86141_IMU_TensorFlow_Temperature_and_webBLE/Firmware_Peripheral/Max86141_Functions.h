@@ -16,10 +16,13 @@ uint8_t ptledSeq1APD1[20]; // 4 samples * 5 bytes (timestamp added) = 16
 uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 
 /* Sensor Characteristics */
-//PD: PhotoDiode
+/* PD: PhotoDiode */
 # define PDsLED; // 2 PDs - 1 LED
 //# define PDLEDs; // 1 PD - 2 LEDs
 //# define PDsLEDs; // 2 PDs - 3 LEDs
+
+/* Sample Rate taken */
+#define Sample_Rate
 
 /* Pin Definitions  */
 // #define MISO_PIN              19
@@ -37,7 +40,8 @@ static int spiClk = 1000000; // 8 MHz Maximum
 int cpt1 = 0, cpt2 = 0;
 int interruptPin = 36;
 bool dataReady = false;
-
+long startTime;
+long samplesTaken = 0;
 
 MAX86141 pulseOx1;
 
@@ -102,7 +106,9 @@ void configurePPG86(void) {
 
   pulseOx1.setDebug(false);
 
-          Serial.println();
+  startTime = millis();
+
+  Serial.println();
 
 }
 
@@ -116,6 +122,7 @@ void updatePPG86(void) {
 
   /////// if there is 8 data in the FIFO ///////
   if (flagA_full) {
+    samplesTaken = samplesTaken + 4;
     int fifo_size = pulseOx1.device_data_read1();
 
     //---------------------------- Serial Communication -------------------------------------//
@@ -147,7 +154,7 @@ void updatePPG86(void) {
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 2; i++) {
       if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
-         Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+        Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
       }
     }
     //Serial.println("-----------------------");
@@ -159,6 +166,14 @@ void updatePPG86(void) {
     }
     //Serial.println("##########################");
 
+#ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+
+    Serial.println();
+    Serial.println();
+#endif
 
     ///////////// Add in buffer for SNR //////////
     //pulseOx1.signalData_ledSeq1A_PD1[cpt1] = ledSeq1A_PD1;
@@ -190,10 +205,12 @@ void updatePPG86(void) {
     ptledSeq1APD1[1] = (uint8_t)(timestamp1 >>= 8);
     ptledSeq1APD1[0] = (uint8_t)(timestamp1 >>= 8);
 
-    for(int i=0; i<4; i++){
-     Serial.println("timestamp: "+String(pt_ledSeq1A_PD1_2[i]));
-    }
-    
+    /*
+      for(int i=0; i<4; i++){
+      Serial.println("timestamp: "+String(pt_ledSeq1A_PD1_2[i]));
+      }
+    */
+
     ptledSeq1APD1[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
     ptledSeq1APD1[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
     ptledSeq1APD1[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
@@ -264,7 +281,7 @@ void updatePPG86(void) {
     ptledSeq1APD2[2] = (uint8_t)(timestamp2 >>= 8);
     ptledSeq1APD2[1] = (uint8_t)(timestamp2 >>= 8);
     ptledSeq1APD2[0] = (uint8_t)(timestamp2 >>= 8);
-    
+
     ptledSeq1APD2[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
     ptledSeq1APD2[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
     ptledSeq1APD2[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
@@ -414,9 +431,9 @@ void updatePPG86(void) {
     Serial.println(ambient_avg);
 
 #endif
-    //dataReady = true;
+
 #endif
   }
-          Serial.println();
+  Serial.println();
 
 }

@@ -22,7 +22,6 @@ const float accelerationThreshold = 1; // threshold of significant in G's
 const int numSamples = 50;
 
 int imucounter;
-//int samplesRead = 119;
 
 //tinyml variables
 const char* GESTURES[] = {
@@ -86,40 +85,33 @@ void configureTensorFlow() {
   tflOutputTensor = interpreter->output(0);
 
   errorTens = false;
-            Serial.println();
+  Serial.println();
 
 }
 
 void updateTensorFlow() {
   int samplesRead = 50;
-  Serial.println("sampleRead: " + String(samplesRead));
-  Serial.println("numSamples: " + String(numSamples));
-    //Serial.println("aX2: " + String(aX2));
 
   while (samplesRead == numSamples) {
    
-    float aSum = fabs(aX2) + fabs(aY2) + fabs(aZ2);
+    float aSum = fabs(aX) + fabs(aY) + fabs(aZ);
     //Serial.println("aSum: "+String(aSum));
     if (aSum >= accelerationThreshold) {
       samplesRead = 0;
-      Serial.println("sampleRead: " + String(samplesRead));
+      //Serial.println("sampleRead: " + String(samplesRead));
     }
   }
   while (samplesRead < numSamples) {
     //Serial.println("SNSKK ");
-    tflInputTensor->data.f[samplesRead * 6 + 0] = (aX2 + 4.0) / 8.0;
-    tflInputTensor->data.f[samplesRead * 6 + 1] = (aY2 + 4.0) / 8.0;
-    tflInputTensor->data.f[samplesRead * 6 + 2] = (aZ2 + 4.0) / 8.0;
-    tflInputTensor->data.f[samplesRead * 6 + 3] = (gX2 + 2000.0) / 4000.0;
-    tflInputTensor->data.f[samplesRead * 6 + 4] = (gY2 + 2000.0) / 4000.0;
-    tflInputTensor->data.f[samplesRead * 6 + 5] = (gZ2 + 2000.0) / 4000.0;
+    tflInputTensor->data.f[samplesRead * 6 + 0] = (aX + 4.0) / 8.0;
+    tflInputTensor->data.f[samplesRead * 6 + 1] = (aY + 4.0) / 8.0;
+    tflInputTensor->data.f[samplesRead * 6 + 2] = (aZ + 4.0) / 8.0;
+    tflInputTensor->data.f[samplesRead * 6 + 3] = (gX + 2000.0) / 4000.0;
+    tflInputTensor->data.f[samplesRead * 6 + 4] = (gY + 2000.0) / 4000.0;
+    tflInputTensor->data.f[samplesRead * 6 + 5] = (gZ + 2000.0) / 4000.0;
 
     samplesRead++;
 
-    if (samplesRead == numSamples) {
-      Serial.println();
-    }
-    // }
     TfLiteStatus invokeStatus = interpreter->Invoke();
     if (invokeStatus != kTfLiteOk) {
       Serial.println("Invoke failed!");
@@ -134,28 +126,31 @@ void updateTensorFlow() {
     poss[i]  = tflOutputTensor->data.f[i] * 10000;
     p = (uint8_t*)&poss;
     if (i == 0)
-    { int tp1;
+    { 
+      int tp1;
       tp1 = p[3];
       tp1 = (tp1  << 8) + p[2];
       tp1 = (tp1  << 8) + p[1];
       tp1 = (tp1  << 8) + p[0];
-      Serial.println("--- " + String(tp1));
+      //Serial.println("--- " + String(tp1));
     }
     if (i == 1)
-    { int tp2;
+    { 
+      int tp2;
       tp2 = p[7];
       tp2 = (tp2  << 8) + p[6];
       tp2 = (tp2  << 8) + p[5];
       tp2 = (tp2  << 8) + p[4];
-      Serial.println("--- " + String(tp2));
+      //Serial.println("--- " + String(tp2));
     }
     if (i == 2)
-    { int tp3;
+    { 
+      int tp3;
       tp3 = p[11];
       tp3 = (tp3  << 8) + p[10];
       tp3 = (tp3  << 8) + p[9];
       tp3 = (tp3  << 8) + p[8];
-      Serial.println("--- " + String(tp3));
+      //Serial.println("--- " + String(tp3));
     }
 
     Serial.println("----- TensorFlow data ----- :");
