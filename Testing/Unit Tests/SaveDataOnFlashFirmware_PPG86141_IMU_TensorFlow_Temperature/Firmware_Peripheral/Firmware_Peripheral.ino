@@ -1,7 +1,7 @@
 #include <bluefruit.h>
 #include <Wire.h>
 
-BLEConnection* connection ;
+BLEConnection* connection;
 
 /* Bool Errors*/
 bool errorIMU = true;
@@ -15,32 +15,30 @@ bool errorTens = true;
 #define TensorFlow
 #define Flash
 
-
 #ifdef Flash
-  uint8_t data_read_from_Flash[40] = { 0 };
-  #include "Write_Read_on_Flash.h"
+uint8_t data_read_from_Flash[40] = { 0 };
+uint8_t dataPD1[20] = {0}, dataPD2[20] = {0};
+#include "Write_Read_on_Flash.h"
 #endif
 
 #ifdef PPG_Max86141
-  #include "Max86141_Functions.h"
+#include "Max86141_Functions.h"
 #endif
 
 #ifdef IMU9250
-  #include "IMU_Functions.h"
+#include "IMU_Functions.h"
 #endif
 
 #ifdef Temperature
-  #include "Temperature_Functions.h"
+#include "Temperature_Functions.h"
 #endif
 
 #ifdef TensorFlow
-  #include "TensorFlowLite_Functions.h"
+#include "TensorFlowLite_Functions.h"
 #endif
-
 
 uint8_t bufError[4];
 long startTimer = 0;
-
 
 /*send or stop bluetooth communication*/
 String start_stop_Sending;
@@ -180,10 +178,12 @@ void setup() {
 
 #ifdef PPG_Max86141
   setupPPGMax86();
-  /*ledSeq1A_PPG1Characteristic1.write(pt_ledSeq1A_PD1_1, 4);
+  /*
+    ledSeq1A_PPG1Characteristic1.write(pt_ledSeq1A_PD1_1, 4);
     tagSeq1A_PPG1Characteristic1.write(pt_tagSeq1A_PD1_1, 1);
     ledSeq1B_PPG1Characteristic1.write(pt_ledSeq1B_PD1_1, 4);
-    tagSeq1B_PPG1Characteristic1.write(pt_tagSeq1B_PD1_1, 1);*/
+    tagSeq1B_PPG1Characteristic1.write(pt_tagSeq1B_PD1_1, 1);
+  */
 
   ledSeq1A_PPG1Characteristic2.write(ptledSeq1APD1, 20);
   //ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 8);
@@ -201,7 +201,6 @@ void setup() {
 
 #ifdef IMU9250
   setupIMUService();
-  //AccCharacteristic.write(bufAcc_Gy_Ma, 32);
   AccCharacteristic.write(bufAcc, 11);
   GyroCharacteristic.write(bufGyro, 11);
   MagCharacteristic.write(bufMag, 10);
@@ -229,7 +228,6 @@ void setup() {
 void loop() {
 
   /* Update Sensors for new values */
-
 #ifdef PPG_Max86141
   if (!errorPPG86) {
     updatePPG86();
@@ -299,58 +297,25 @@ void loop() {
       } else {
         //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      //Serial.println("data sent by BLE");
-      //Serial.println("Accelerometer: 11 bits");
-      //Serial.println("Gyro: 11 bits");
-      //Serial.println("Mag: 10 bits");
-
 #endif
-
-/*
-#ifdef PPG_Max86141
-
-      if ( ledSeq1A_PPG1Characteristic2.notify( ptledSeq1APD1, 20) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( ledSeq1A_PPG2Characteristic2.notify( ptledSeq1APD2, 20) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_2PPG1Characteristic2.notify( SNR1_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      //Serial.println("data sent by BLE");
-      //Serial.println("Data PD1: 20 bits");
-      //Serial.println("Data PD2: 20 bits");
-      //Serial.println("Data SNR PD1: 4 bits");
-      //Serial.println("Data SNR PD2: 4 bits");
-#endif
-*/
 
 #ifdef Flash
-      uint8_t dataPD1[20], dataPD2[20];
-
-      for(int i=0, j=19; i<20, j<40; i++, j++){
+      for (int i = 0, j = 20; i < 20, j < 40; i++, j++) {
         dataPD1[i] = data_read_from_Flash[i];
         dataPD2[i] = data_read_from_Flash[j];
       }
+
+      for (int i = 0; i < 20; i++) {
+        Serial.print(dataPD1[i]);
+        Serial.print("--> ");
+      }
+      Serial.println();
+
+      for (int i = 0; i < 20; i++) {
+        Serial.print(dataPD2[i]);
+        Serial.print("--> ");
+      }
+      Serial.println();
       
       if ( ledSeq1A_PPG1Characteristic2.notify( dataPD1, 20) ) {
         //Serial.print("IMUCharacteristic updated to: ");
@@ -370,7 +335,7 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
       if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
         //Serial.print("IMUCharacteristic updated to: ");
@@ -386,10 +351,8 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      Serial.println("data sent by BLE");
-      Serial.println("Data TensorFlow: 12 bits");
 #endif
 
 #ifdef Temperature
@@ -397,10 +360,9 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      Serial.println("data sent by BLE");
-      Serial.println("Data Temperature: 8 bits");
+
 #endif
 
     }

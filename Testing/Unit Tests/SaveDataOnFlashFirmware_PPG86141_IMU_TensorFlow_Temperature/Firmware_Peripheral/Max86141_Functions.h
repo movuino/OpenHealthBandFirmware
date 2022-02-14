@@ -21,6 +21,9 @@ uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 //# define PDLEDs; // 1 PD - 2 LEDs
 //# define PDsLEDs; // 2 PDs - 3 LEDs
 
+/* Sample Rate taken */
+//#define Sample_Rate
+
 /* Pin Definitions  */
 // #define MISO_PIN              19
 // #define MOSI_PIN              18
@@ -37,12 +40,13 @@ static int spiClk = 1000000; // 8 MHz Maximum
 int cpt1 = 0, cpt2 = 0;
 int interruptPin = 36;
 bool dataReady = false;
-
+long startTime;
+long samplesTaken = 0;
 
 MAX86141 pulseOx1;
 
 void configurePPG86(void) {
-  Serial.println("####  PPG MAX86141 CONFIG ###");
+  Serial.println("####  PPG MAX86141 CONFIG ####");
   // Configure IO.
   pinMode(SS_PIN, OUTPUT);
   digitalWrite(SS_PIN, HIGH);
@@ -102,6 +106,8 @@ void configurePPG86(void) {
 
   pulseOx1.setDebug(false);
 
+  startTime = millis();
+
   Serial.println();
 
 }
@@ -116,6 +122,7 @@ void updatePPG86(void) {
 
   /////// if there is 8 data in the FIFO ///////
   if (flagA_full) {
+    samplesTaken = samplesTaken + 4;
     int fifo_size = pulseOx1.device_data_read1();
 
     //---------------------------- Serial Communication -------------------------------------//
@@ -159,6 +166,14 @@ void updatePPG86(void) {
     }
     //Serial.println("##########################");
 
+#ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+
+    Serial.println();
+    Serial.println();
+#endif
 
     ///////////// Add in buffer for SNR //////////
     //pulseOx1.signalData_ledSeq1A_PD1[cpt1] = ledSeq1A_PD1;
@@ -337,10 +352,8 @@ void updatePPG86(void) {
     }
     Serial.println();
     
-    
     /* Format on Flash */
     format_Flash();
-  
 #endif
 
     free(pulseOx1.tab_ledSeq1A_PD1);
@@ -446,7 +459,7 @@ void updatePPG86(void) {
     Serial.println(ambient_avg);
 
 #endif
-    //dataReady = true;
+
 #endif
   }
   Serial.println();

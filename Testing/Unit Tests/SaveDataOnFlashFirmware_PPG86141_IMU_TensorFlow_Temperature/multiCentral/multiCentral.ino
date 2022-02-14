@@ -58,7 +58,7 @@ int errorFlag=0;
 
 void setup() {
   Serial.begin(115200);
-  while ( !Serial )
+  //while ( !Serial )
   delay(10);   // for nrf52840 with native usb
   
   Serial.println("Initialise the Bluefruit nRF52 module");
@@ -76,7 +76,6 @@ void setup() {
  ///// PDsLED ///////////
 ledSeq1A_PPG1Characteristic2.setNotifyCallback(PPGMax86_ledSeq1A_PPG1_2_notify_callback);
 ledSeq1A_PPG1Characteristic2.begin();
-
 
 ledSeq1A_PPG2Characteristic2.setNotifyCallback(PPGMax86_ledSeq1A_PPG2_2_notify_callback);
 ledSeq1A_PPG2Characteristic2.begin();

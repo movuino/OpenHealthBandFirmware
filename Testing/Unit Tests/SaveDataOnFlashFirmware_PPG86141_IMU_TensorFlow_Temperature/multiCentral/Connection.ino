@@ -162,6 +162,25 @@ void connect_callback(uint16_t conn_handle)
     Serial.println("Couldn't enable notify ledSeq1A_PPG1Characteristic2 characteristic. Increase DEBUG LEVEL for troubleshooting");
   }
 
+    if ( !ledSeq1A_PPG2Characteristic2.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("ledSeq1A_PPG2Characteristic2 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("ledSeq1A_PPG2Characteristic2 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (ledSeq1A_PPG2Characteristic2.enableNotify() )
+  {
+    Serial.println("Ready to receive ledSeq1A_PPG2Characteristic2 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify ledSeq1A_PPG2Characteristic2 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+
   if ( !SNR1_2_Characteristic2.discover() )
   {
     // Measurement chr is mandatory, if it is not found (valid), then disconnect

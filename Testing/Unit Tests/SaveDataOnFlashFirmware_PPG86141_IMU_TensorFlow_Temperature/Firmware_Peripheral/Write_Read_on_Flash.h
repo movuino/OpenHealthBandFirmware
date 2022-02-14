@@ -55,7 +55,7 @@ File file(InternalFS);
 */
 
 void configureFlash() {
-  Serial.println("Internal Read Write File Example");
+  Serial.println("#### INTERNAL FLASH CONFIG #####");
 
   // Wait for user input to run. Otherwise the code will
   // always run immediately after flash and create the FILENAME in advance
