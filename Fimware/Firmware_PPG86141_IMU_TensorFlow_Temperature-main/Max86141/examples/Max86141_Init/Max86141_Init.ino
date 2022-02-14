@@ -102,7 +102,7 @@ void loop() {
 
   /////// if there is 8 samples in the FIFO ///////
   if (flagA_full) {
-    samplesTaken++;
+    samplesTaken = samplesTaken + 4;
     Serial.println("<---------------------------------------->");
     int fifo_size = pulseOx1.device_data_read1();
     
@@ -128,7 +128,7 @@ void loop() {
 
 #ifdef Sample_Rate
     Serial.print("Sample Rate : Hz[");
-    Serial.print((float)(samplesTaken*4) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
 
     Serial.println();

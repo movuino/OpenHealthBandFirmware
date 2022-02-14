@@ -352,7 +352,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       
       
      // write_reg(REG_PICKET_FENCE,0b11000000);
-       // write_reg(REG_PICKET_FENCE,0b00000000);
+        //write_reg(REG_PICKET_FENCE,0b00000000);
       
       //
     // Clear interrupts.
@@ -425,11 +425,11 @@ if(nb_pd==1){
          //write_reg(REG_FIFO_CONFIG_1, 128-16); //(A_FULL = 112)
          write_reg(REG_FIFO_CONFIG_1, 0b01111000); //(A_FULL = 120)
          //write_reg(REG_FIFO_CONFIG_1, 128-12); //(A_FULL = 116)
-        // write_reg(REG_FIFO_CONFIG_1, 128-48); //(A_FULL = 80)
+        //write_reg(REG_FIFO_CONFIG_1, 128-48); //(A_FULL = 80)
 
      //write_reg(REG_FIFO_CONFIG_1, 0b01100100); //(A_FULL = 100)
 
-   // write_reg(REG_FIFO_CONFIG_2, 0b00010110);
+      // write_reg(REG_FIFO_CONFIG_2, 0b00010110);
        // write_reg(REG_FIFO_CONFIG_2, 0b00000010);
          write_reg(REG_FIFO_CONFIG_2, 0b00010010);
 
@@ -492,7 +492,7 @@ int  MAX86141::device_data_read1()
    //delay(2);
     //sample_count =  read_reg(REG_FIFO_DATA_COUNT);
       sample_count=8;
-//Serial.println("sample_count :"+String(read_reg(REG_FIFO_DATA_COUNT)));
+Serial.println("sample_count :"+String(read_reg(REG_FIFO_DATA_COUNT)));
  
 
 /////// Allocation dynamique /////
@@ -568,7 +568,7 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
  tab_ledSeq1A_PD2= (int*)malloc((sample_count/2)*sizeof(int));
 
 
-    /*for (i = 0; i < sample_count/2; i++)
+   /* for (i = 0; i < sample_count/2; i++)
     {
         //// BLE Test ////
         for(int j=0; j<8; j++){
