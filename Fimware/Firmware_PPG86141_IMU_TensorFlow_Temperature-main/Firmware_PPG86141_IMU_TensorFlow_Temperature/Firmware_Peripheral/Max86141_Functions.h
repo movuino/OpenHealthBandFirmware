@@ -57,7 +57,7 @@ void configurePPG86(void) {
   Serial.println("Init Device");
   pulseOx1.spi->begin();
   errorPPG86 = false;
- 
+
   delay(100);
   pulseOx1.setDebug(true);
 
@@ -122,7 +122,7 @@ void updatePPG86(void) {
 
   /////// if there is 8 data in the FIFO ///////
   if (flagA_full) {
-    samplesTaken++;
+    samplesTaken = samplesTaken + 4;
     int fifo_size = pulseOx1.device_data_read1();
 
     //---------------------------- Serial Communication -------------------------------------//
@@ -154,7 +154,7 @@ void updatePPG86(void) {
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 2; i++) {
       if (pulseOx1.tab_ledSeq1A_PD1[i] != 0) {
-         Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+        Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
       }
     }
     //Serial.println("-----------------------");
@@ -168,7 +168,7 @@ void updatePPG86(void) {
 
 #ifdef Sample_Rate
     Serial.print("Sample Rate : Hz[");
-    Serial.print((float)(samplesTaken*4) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
 
     Serial.println();
@@ -431,9 +431,9 @@ void updatePPG86(void) {
     Serial.println(ambient_avg);
 
 #endif
-    //dataReady = true;
+
 #endif
   }
-        Serial.println();
+  Serial.println();
 
 }

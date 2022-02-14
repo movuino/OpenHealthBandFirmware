@@ -9,7 +9,6 @@ float sensor_Temp;
 
 uint32_t bufTemp[9];
 uint64_t bufSix_Nine_RAM;
-//unsigned char* buffData;
 uint8_t* buffData;
 
 void configureTemp() {
@@ -40,8 +39,7 @@ void configureTemp() {
 }
 
 void updateTemp() {
-  //sensor_Temp = ReadSensor.getSensorTemp(); //Get the temperature of the sensor
-  //
+  
   if (ReadSensor.dataAvailable() == true) {
     ReadSensor.tempBuff();
     tempBuff32[5] = ReadSensor.buff[5];
@@ -107,6 +105,6 @@ void updateTemp() {
     Serial.println(" P_G1 "+String(P_G1));
     Serial.println(" P_R1 "+String(P_R1));
     Serial.println(" P_T1 "+String(P_T1));*/
-          Serial.println();
+    Serial.println();
 
 }

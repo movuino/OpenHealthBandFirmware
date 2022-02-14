@@ -1,9 +1,9 @@
 #include <bluefruit.h>
 #include <Wire.h>
 
-BLEConnection* connection ;
+BLEConnection* connection;
 
-/* Bool Errors*/
+/* Bool Errors  */
 bool errorIMU = true;
 bool errorPPG86 = true;
 bool errorTemp = true;
@@ -12,7 +12,7 @@ bool errorTens = true;
 #define PPG_Max86141
 #define IMU9250
 //#define Temperature
-#define TensorFlow
+//#define TensorFlow
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -188,7 +188,6 @@ void setup() {
 
 #ifdef IMU9250
   setupIMUService();
-  //AccCharacteristic.write(bufAcc_Gy_Ma, 32);
   AccCharacteristic.write(bufAcc, 11);
   GyroCharacteristic.write(bufGyro, 11);
   MagCharacteristic.write(bufMag, 10);
@@ -287,10 +286,6 @@ void loop() {
       } else {
         //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      //Serial.println("data sent by BLE");
-      //Serial.println("Accelerometer: 11 bytes");
-      //Serial.println("Gyro: 11 bytes");
-      //Serial.println("Mag: 10 bytes");
 
 #endif
 
@@ -323,12 +318,6 @@ void loop() {
         // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 
-      //Serial.println("data sent by BLE");
-      //Serial.println("Data PD1: 20 bytes");
-      //Serial.println("Data PD2: 20 bytes");
-      //Serial.println("Data SNR PD1: 4 bytes");
-      //Serial.println("Data SNR PD2: 4 bytes");
-
 #endif
 
 #ifdef TensorFlow
@@ -336,10 +325,8 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      Serial.println("data sent by BLE");
-      Serial.println("Data TensorFlow: 12 bytes");
 
 #endif
 
@@ -348,10 +335,8 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        Seri//al.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-      Serial.println("data sent by BLE");
-      Serial.println("Data Temperature: 8 bytes");
 #endif
 
     }

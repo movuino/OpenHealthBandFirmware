@@ -42,7 +42,7 @@ BLEClientCharacteristic PossCharacteristic(0x1501);
 #define PPG_Max86141
 #define IMU9250
 //#define Temperature
-#define TensorFlow
+//#define TensorFlow
 
 //long myTimer=0;
 long receivedSamplesNb=0;
@@ -76,7 +76,6 @@ void setup() {
  ///// PDsLED ///////////
 ledSeq1A_PPG1Characteristic2.setNotifyCallback(PPGMax86_ledSeq1A_PPG1_2_notify_callback);
 ledSeq1A_PPG1Characteristic2.begin();
-
 
 ledSeq1A_PPG2Characteristic2.setNotifyCallback(PPGMax86_ledSeq1A_PPG2_2_notify_callback);
 ledSeq1A_PPG2Characteristic2.begin();
