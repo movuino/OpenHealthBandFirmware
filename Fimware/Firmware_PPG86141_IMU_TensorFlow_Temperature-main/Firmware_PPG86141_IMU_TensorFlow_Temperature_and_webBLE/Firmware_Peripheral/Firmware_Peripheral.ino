@@ -31,7 +31,6 @@ bool errorTens = true;
 #endif
 
 uint8_t bufError[4];
-long startTimer = 0;
 
 
 /*Shutdown or restart the Max86141 sensor*/
@@ -87,7 +86,6 @@ BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
 BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
 BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
 BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
-
 
 
 void setup() {

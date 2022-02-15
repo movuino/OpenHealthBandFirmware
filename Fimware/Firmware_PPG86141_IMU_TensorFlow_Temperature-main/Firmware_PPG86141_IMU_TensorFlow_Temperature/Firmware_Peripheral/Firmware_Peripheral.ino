@@ -9,10 +9,14 @@ bool errorPPG86 = true;
 bool errorTemp = true;
 bool errorTens = true;
 
+/* Enable the data measure */
 #define PPG_Max86141
 #define IMU9250
 //#define Temperature
 //#define TensorFlow
+
+/* Print data on Serial Monitor when BLE is unenabled */
+//#define SerialDebug
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -31,13 +35,12 @@ bool errorTens = true;
 #endif
 
 uint8_t bufError[4];
-long startTimer = 0;
 
 
-/*send or stop bluetooth communication*/
+/* Send or stop bluetooth communication */
 String start_stop_Sending;
 
-/*Shutdown or restart the sensor*/
+/* Shutdown or restart the sensor */
 bool shutdown_or_restart;
 
 
@@ -109,6 +112,7 @@ void setup() {
 
   // Set the advertised device name (keep it short!)
   Serial.println("Setting Device Name to 'Open Health Band'");
+
   Bluefruit.setName("Movuino OHB - 000");
 
   // Set the connect/disconnect callback handlers
@@ -134,6 +138,7 @@ void setup() {
   Serial.println();
 
   /*Init Sensors*/
+
 #ifdef PPG_Max86141
   /*Init PPG 86140 - 86141*/
   configurePPG86();
@@ -215,13 +220,13 @@ void setup() {
 void loop() {
 
   /* Update Sensors for new values */
+#ifdef SerialDebug
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
     updatePPG86();
   }
 #endif
-
 
 #ifdef IMU9250
   if (!errorIMU) {
@@ -243,6 +248,8 @@ void loop() {
   }
 #endif
 
+#endif
+
   /* Sending data by Bluetooth */
   if ( Bluefruit.connected()) {
 
@@ -251,6 +258,7 @@ void loop() {
       if (shutdown_or_restart == 1) { // the sensor was shutdown
 #ifdef PPG_Max86141
         /*Init PPG 86140 - 86141*/
+        samplesTaken = 0;
         configurePPG86();
 
         if (!errorPPG86) {
@@ -259,6 +267,32 @@ void loop() {
 #endif
         shutdown_or_restart = 0;
       }
+
+#ifdef PPG_Max86141
+      if (!errorPPG86) {
+        updatePPG86();
+      }
+#endif
+
+#ifdef IMU9250
+      if (!errorIMU) {
+        updateAcc();
+        updateGyro();
+        updateMag();
+      }
+#endif
+
+#ifdef Temperature
+      if (!errorTemp) {
+        updateTemp();
+      }
+#endif
+
+#ifdef TensorFlow
+      if (!errorTens) {
+        updateTensorFlow();
+      }
+#endif
 
       if ( ErrorCharacteristic.notify(bufError, 4) ) {
         //Serial.print("IMUCharacteristic updated to: ");
@@ -335,7 +369,7 @@ void loop() {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
-        Seri//al.println("ERROR: Notify not set in the CCCD or not connected!");
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 #endif
 

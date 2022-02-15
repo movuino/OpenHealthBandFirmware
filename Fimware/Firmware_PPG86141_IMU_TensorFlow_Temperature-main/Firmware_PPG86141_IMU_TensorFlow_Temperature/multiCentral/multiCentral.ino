@@ -38,14 +38,13 @@ BLEClientCharacteristic  TempCharacteristicType(UUID16_CHR_TEMPERATURE_TYPE);
 BLEClientService        TensorFlowService(0x1500);
 BLEClientCharacteristic PossCharacteristic(0x1501);
 
-
+/* Enable the data measure */
 #define PPG_Max86141
 #define IMU9250
 //#define Temperature
 //#define TensorFlow
 
-//long myTimer=0;
-long receivedSamplesNb=0;
+
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
 float accelRange=16.0;
 float gyroRange=2000.0;

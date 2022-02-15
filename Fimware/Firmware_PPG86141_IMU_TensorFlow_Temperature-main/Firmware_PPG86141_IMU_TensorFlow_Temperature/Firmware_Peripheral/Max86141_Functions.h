@@ -170,7 +170,6 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-
     Serial.println();
     Serial.println();
 #endif
