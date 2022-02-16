@@ -6,7 +6,7 @@ uint8_t*  accelBuf;
 uint8_t*  gyroBuf;
 uint8_t*  magBuf;
 uint8_t   accScale = 16;
-uint8_t   gyroScale = 2000;
+int   gyroScale = 2000;
 
 float accelRange = 16.0;
 
@@ -15,10 +15,10 @@ uint8_t bufGyro[11];
 uint8_t bufMag[10];
 
 /*Debug Modes*/
-#define debugAcc1;
-#define debugGyr;
-#define debugMag;
-//#define debugAcc2;
+#define debugAcc1
+#define debugGyr
+#define debugMag
+//#define debugAcc2
 
 void configureIMU() {
 
@@ -98,7 +98,8 @@ void updateGyro() {
     bufGyro[2] = (uint8_t)(timestamp >>= 8);
     bufGyro[1] = (uint8_t)(timestamp >>= 8);
     bufGyro[0] = (uint8_t)(timestamp >>= 8);
-    bufGyro[4] = 2000;
+    //bufGyro[4] = 2000;
+    bufGyro[4] = 16;
 
     for (int i = 5; i <= 10; i++) {
       bufGyro[i] = gyroBuf[i - 5];

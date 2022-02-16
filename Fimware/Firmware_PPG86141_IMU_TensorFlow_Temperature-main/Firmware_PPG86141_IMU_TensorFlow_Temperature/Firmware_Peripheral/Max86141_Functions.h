@@ -17,9 +17,9 @@ uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 
 /* Sensor Characteristics */
 /* PD: PhotoDiode */
-# define PDsLED; // 2 PDs - 1 LED
-//# define PDLEDs; // 1 PD - 2 LEDs
-//# define PDsLEDs; // 2 PDs - 3 LEDs
+# define PDsLED  // 2 PDs - 1 LED
+//# define PDLEDs  // 1 PD - 2 LEDs
+//# define PDsLEDs  // 2 PDs - 3 LEDs
 
 /* Sample Rate taken */
 #define Sample_Rate
