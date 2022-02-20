@@ -214,7 +214,7 @@ void MAX86141::setLedModeSize( int size_led){
 }
 
 void MAX86141::setLedMode(int *ledMd){
-  ledMode= ledMd;
+  ledMode = ledMd;
   if(ledModeSize==1){
     Serial.print("1 LED CONTROL SEQ1");
     Serial.println(ledMode[0],BIN);
@@ -274,87 +274,89 @@ void MAX86141::setNumLeds(int nb_leds){
     number_leds = nb_leds;
 }
 
-void MAX86141::setIntensityLed(int intens_led, int *ledMd, int size_led){
+void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
     intensity_led= intens_led;
-    if( size_led == 1){
-      if(ledMd[0] == 1){
+    ledMode = LedMode1;
+
+    if( ledModeSize == 1){
+      if(ledMode[0] == 1){
         write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led);
       }
-      if(ledMd[0] == 2){
+      if(ledMode[0] == 2){
         write_reg(REG_LED_RANGE_1, 0b00001100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED2_PA, intensity_led);
       }
-      if(ledMd[0] == 3){
+      if(ledMode[0] == 3){
         write_reg(REG_LED_RANGE_1, 0b00110000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED3_PA, intensity_led);
       }
-      if(ledMd[0] == 4){
+      if(ledMode[0] == 4){
         write_reg(REG_LED_RANGE_1, 0b00001111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
         write_reg(REG_LED2_PA, intensity_led);
       }
-      if(ledMd[0] == 5){
+      if(ledMode[0] == 5){
         write_reg(REG_LED_RANGE_1, 0b00110011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
       }
-      if(ledMd[0] == 6){
+      if(ledMode[0] == 6){
         write_reg(REG_LED_RANGE_1, 0b00111100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED2_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
       }
-      if(ledMd[0] == 7){
+      if(ledMode[0] == 7){
         write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
         write_reg(REG_LED2_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
       }
-      if(ledMd[0] == 10){
+      if(ledMode[0] == 10){
         write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
         write_reg(REG_LED4_PA, intensity_led);
       }
         }
 
-    if( size_led == 2){
+    if( ledModeSize == 2){
 
-      for(int i=0; i<size_led; i++) {
+      for(int i=0; i<ledModeSize; i++) {
 
-        if(ledMd[i] == 1){
+        if(ledMode[i] == 1){
         write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led);
         }
-        if(ledMd[i] == 2){
+        if(ledMode[i] == 2){
         write_reg(REG_LED_RANGE_1, 0b00001100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 3){
+        if(ledMode[i] == 3){
         write_reg(REG_LED_RANGE_1, 0b00110000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 4){
+        if(ledMode[i] == 4){
         write_reg(REG_LED_RANGE_1, 0b00001111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
         write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 5){
+        if(ledMode[i] == 5){
         write_reg(REG_LED_RANGE_1, 0b00110011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 6){
+        if(ledMode[i] == 6){
         write_reg(REG_LED_RANGE_1, 0b00111100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED2_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 7){
+        if(ledMode[i] == 7){
         write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
         write_reg(REG_LED2_PA, intensity_led);
         write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 10){
+        if(ledMode[i] == 10){
         write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
         write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
         write_reg(REG_LED4_PA, intensity_led);
@@ -362,43 +364,43 @@ void MAX86141::setIntensityLed(int intens_led, int *ledMd, int size_led){
       }
   }
 
-    if( size_led == 3) {
-      for(int i=0; i<size_led; i++) {
+    if( ledModeSize == 3) {
+      for(int i=0; i<ledModeSize; i++) {
 
-        if(ledMd[i] == 1){
+        if(ledMode[i] == 1){
           write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led);
         }
-        if(ledMd[i] == 2){
+        if(ledMode[i] == 2){
           write_reg(REG_LED_RANGE_1, 0b00001100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 3){
+        if(ledMode[i] == 3){
           write_reg(REG_LED_RANGE_1, 0b00110000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 4){
+        if(ledMode[i] == 4){
           write_reg(REG_LED_RANGE_1, 0b00001111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
           write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 5){
+        if(ledMode[i] == 5){
           write_reg(REG_LED_RANGE_1, 0b00110011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 6){
+        if(ledMode[i] == 6){
           write_reg(REG_LED_RANGE_1, 0b00111100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED2_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 7){
+        if(ledMode[i] == 7){
           write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
           write_reg(REG_LED2_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 10){
+        if(ledMode[i] == 10){
           write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
           write_reg(REG_LED4_PA, intensity_led);
@@ -406,43 +408,43 @@ void MAX86141::setIntensityLed(int intens_led, int *ledMd, int size_led){
       }
     }
 
-    if( size_led == 4) {
-      for(int i=0; i<size_led; i++) {
+    if( ledModeSize == 4) {
+      for(int i=0; i<ledModeSize; i++) {
 
-        if(ledMd[i] == 1){
+        if(ledMode[i] == 1){
           write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led);
         }
-        if(ledMd[i] == 2){
+        if(ledMode[i] == 2){
           write_reg(REG_LED_RANGE_1, 0b00001100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 3){
+        if(ledMode[i] == 3){
           write_reg(REG_LED_RANGE_1, 0b00110000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 4){
+        if(ledMode[i] == 4){
           write_reg(REG_LED_RANGE_1, 0b00001111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
           write_reg(REG_LED2_PA, intensity_led);
         }
-        if(ledMd[i] == 5){
+        if(ledMode[i] == 5){
           write_reg(REG_LED_RANGE_1, 0b00110011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 6){
+        if(ledMode[i] == 6){
           write_reg(REG_LED_RANGE_1, 0b00111100); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED2_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 7){
+        if(ledMode[i] == 7){
           write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
           write_reg(REG_LED2_PA, intensity_led);
           write_reg(REG_LED3_PA, intensity_led);
         }
-        if(ledMd[i] == 10){
+        if(ledMode[i] == 10){
           write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
           write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
           write_reg(REG_LED4_PA, intensity_led);
@@ -521,7 +523,7 @@ void MAX86141::initialisation(int pd, int *ledMd, int size_led, int nb_leds, int
     write_reg(REG_PPG_CONFIG_3, 0b11000000); //LED_SETLNG, DIG_FILT_SEL, BURST_EN
     write_reg(REG_PD_BIAS, 0b00010001);
 
-    setIntensityLed(intens_led, ledMd, size_led);
+    setIntensityLed(intens_led, ledMd);
 
     if(nb_pd==1){
         write_reg(REG_MODE_CONFIG, 0b00001110);//Low Power Mode enabled (Register 0x0D[2]), Shutdown (Register 0x0D[1]), Reset (Register 0x0D[0])
@@ -540,7 +542,7 @@ void MAX86141::initialisation(int pd, int *ledMd, int size_led, int nb_leds, int
     //write_reg(REG_INT_EN_1, 0x84);
     write_reg(REG_INT_EN_1, 0xC0);
 
-     setLedMode(ledMd);
+    setLedMode(ledMd);
 
   /* exit shutdown mode. */
     if(nb_pd==1){

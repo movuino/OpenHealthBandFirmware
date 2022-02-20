@@ -305,7 +305,7 @@ class MAX86141 {
     void setNumbPD(int pd);
     void setLedMode(int *ledMd);
     void setNumLeds(int nb_leds);
-    void setIntensityLed(int intens_led, int *ledMd, int size_led);
+    void setIntensityLed(int intens_led, int* LedMode1);
     void setSample(int smpl_avr, int smpl_rate);
     void setPulseWidth(int pulse);
     void setADCrange(int adc);

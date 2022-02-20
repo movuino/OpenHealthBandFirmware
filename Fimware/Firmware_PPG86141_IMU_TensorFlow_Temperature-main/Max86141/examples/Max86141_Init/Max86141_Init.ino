@@ -42,6 +42,18 @@ int cpt1 = 0, cpt2 = 0;
 long startTime;
 long samplesTaken = 0;
 
+#ifdef PDsLED
+int LedMode[1] = {1/*LED1 (Sequence 1, 0-3)*/};
+#endif
+
+#ifdef PDLEDs
+int LedMode[2] = {4/*LED1 and LED2 simultaneously (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
+#endif
+
+#ifdef PDsLEDs
+int LedMode[4] = {1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/, 5/*LED1 and LED3 simultaneously (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
+#endif
+
 void setup() {
 
   Serial.begin(115200);
@@ -64,17 +76,14 @@ void setup() {
   pulseOx1.setDebug(true);
 
 #ifdef PDsLED
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/};
   pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDLEDs
-  int LedMode[] = {4/*LED1 and LED2 simultaneously (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
   pulseOx1.initialisation(1/*nb_pds*/, LedMode/*LedMode*/, 2/*Number of sequences*/, 2/*Number of LEDs*/, 10/*intensity_LEDs*/, 1/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x3/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDsLEDs
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/, 3/*LED3 (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
   pulseOx1.initialisation(2/*nb_ppg*/, LedMode/*LedMode*/, 4/*Number of sequences*/, 3/*Number of LEDs*/, 4/*intensity_LEDs*/, 0x3/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
