@@ -1,3 +1,15 @@
+/*
+   * Intensity LED  : 0 = 0mA | 255 = 124mA (max)
+   * PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
+   * Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
+   * Led Sequence Control : LED1 (1) // GREEN LED, LED2 (2) //IR LED, LED3 (3) //RED LED, LED1 and LED2 pulsed simultaneously (4),
+   LED1 and LED3 pulsed simultaneously (5), LED2 and LED3 pulsed simultaneously (6), LED1, LED2 and LED3 pulsed simultaneously (7),
+   Pilot on LED1 (8), DIRECT AMBIENT (9), LED4 [external mux control] (10), LED5 [external mux control] (11), LED6 [external mux control] (12)
+   * DIRECT AMBIENT (i.e. normal photodiode measurements)
+   * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
+   * PD: PhotoDiode
+*/
+
 #include <MAX86141.h>
 #include <SPI.h>
 
@@ -16,10 +28,14 @@ uint8_t ptledSeq1APD1[20]; // 4 samples * 5 bytes (timestamp added) = 16
 uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 
 /* Sensor Characteristics */
-/* PD: PhotoDiode */
-# define PDsLED; // 2 PDs - 1 LED
-//# define PDLEDs; // 1 PD - 2 LEDs
-//# define PDsLEDs; // 2 PDs - 3 LEDs
+/* 2 PDs - 1 LED */
+#define PDsLED
+
+/* 1 PD - 2 LEDs */
+//#define PDLEDs
+
+/* 2 PDs - 3 LEDs */
+//#define PDsLEDs
 
 /* Sample Rate taken */
 #define Sample_Rate
@@ -31,9 +47,22 @@ uint8_t ptledSeq1APD2[20]; // 4 samples * 5 bytes = 20
 //#define SS_PIN                19 //(Adafruit)
 #define SS_PIN                10 //(Movuino)
 
-/* Tests */
-//# define SerialTest
-#define BleTest
+
+#ifdef PDsLED
+int LedMode[1] = {1/*LED1 (Sequence 1, 0-3)*/};
+#endif
+
+#ifdef PDLEDs
+int LedMode[2] = {4/*LED1 and LED2 simultaneously (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
+#endif
+
+#ifdef PDsLEDs
+int LedMode[4] = {1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/, 5/*LED1 and LED3 simultaneously (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
+#endif
+
+#ifdef SerialTest
+int LedMode_s[1] = {1/*LED1 (Sequence 1, 0-3)*/};
+#endif
 
 /* Global Variables */
 static int spiClk = 1000000; // 8 MHz Maximum
@@ -42,6 +71,7 @@ int interruptPin = 36;
 bool dataReady = false;
 long startTime;
 long samplesTaken = 0;
+
 
 MAX86141 pulseOx1;
 
@@ -64,30 +94,22 @@ void configurePPG86(void) {
   ///////////////////// Serial Communication //////////////////
 #ifdef SerialTest
 #ifdef PDsLED
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/};
-  //pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 31/*intensity_LEDs*/, 0x0/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
-  pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x2/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
+  pulseOx1.initialisation(2/*nb_pds*/, LedMode_s/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x0/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 #endif
 
   ///////////////////// Bluetooth Communication //////////////////
 #ifdef BleTest
-#ifdef PDsLED
-  //int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/};
   /*Test avec Web BLE*/
-  //pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
+#ifdef PDsLED
   pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 1/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
-
 #endif
 
 #ifdef PDLEDs
-  int LedMode[] = {4/*LED1 and LED2 simultaneously (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
   pulseOx1.initialisation(1/*nb_pds*/, LedMode/*LedMode*/, 2/*Number of sequences*/, 2/*Number of LEDs*/, 15/*intensity_LEDs*/, 1/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x3/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDsLEDs
-  int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/, 5/*LED2 and LED3 simultaneously (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
   pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 4/*Number of sequences*/, 3/*Number of LEDs*/, 0x4/*intensity_LEDs*/, 8/*sample_average*/, 0x0E/*sample_rate*/, 3/*pulse width*/, 0x3/*ADC Range= 16uA*/, spiClk);
 #endif
 #endif
@@ -128,14 +150,16 @@ void updatePPG86(void) {
     //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef PDsLED
-    //Serial.println("Reading all data from PD1: ");
+    Serial.println("----- PPG data ----- :");
+    Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 2; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
     }
-    /*Serial.println("Reading all data from PD2: ");
-      for(int i=0; i<fifo_size/2;i++){
+
+    Serial.println("Reading all data from PD2: ");
+    for (int i = 0; i < fifo_size / 2; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
-      }*/
+    }
 
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);

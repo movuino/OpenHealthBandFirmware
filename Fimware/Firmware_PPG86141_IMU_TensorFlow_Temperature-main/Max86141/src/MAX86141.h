@@ -1,9 +1,21 @@
 #ifndef MAX86141_H
 #define MAX86141_H
-//Modified by Joshua Brewster for Arduino compatibility. Developed on the ESP32, should be compatible with most Arduino boards.
-//I expanded some of the features, improved documentation. More to come. Thank you Michael Lyons for the help getting it to work.
 
-//Found the old code here with the below copyright for the MAX86141 code: https://github.com/jonasgitt/Patient24---Remote-Patient-Monitoring
+
+/*
+*  Modified by Youssouph Ndao for 3 differents types of PPG (2 PhotoDiodes - 1 LED, 1 PhotoDiode - 1 LED, 2 PhotoDiodes - 3 LEDs) 
+*  It can be used with NRF52 boards and Movuino made by Kevin Lhoste (https://github.com/movuino)
+*  To read data, I used software interrupt to detect if FIFO is almost full
+*  Thanks to Joshua Brewster (https://github.com/moothyknight/MAX86141_Arduino) work on which I improved my work
+*/
+
+/*
+*  Modified by Joshua Brewster for Arduino compatibility. Developed on the ESP32, should be compatible with most Arduino boards.
+*  I expanded some of the features, improved documentation. More to come. Thank you Michael Lyons for the help getting it to work.
+*  Found the old code here with the below copyright for the MAX86141 code: https://github.com/jonasgitt/Patient24---Remote-Patient-Monitoring
+*/
+
+
 
 /*******************************************************************************
 * Copyright (C) 2016 Maxim Integrated Products, Inc., All Rights Reserved.
@@ -267,8 +279,6 @@ class MAX86141 {
     int spiClk = 1000000; //8MHz clock on MAX86141 Max, only 200KHz necessary.
     bool debug = false;
     
-    long samplesTaken1 = 0; //Counter for calculating the Hz or read rate
-    long startTime1;
    
     //Buffer to store data for using SNR (Signal to Noise Ratio)   
     int signalData_ledSeq1A_PD1[SIZE],  signalData_ledSeq1A_PD2[SIZE];
@@ -295,7 +305,7 @@ class MAX86141 {
     void setNumbPD(int pd);
     void setLedMode(int *ledMd);
     void setNumLeds(int nb_leds);
-    void setIntensityLed(int intens_led);
+    void setIntensityLed(int intens_led, int *ledMd, int size_led);
     void setSample(int smpl_avr, int smpl_rate);
     void setPulseWidth(int pulse);
     void setADCrange(int adc);

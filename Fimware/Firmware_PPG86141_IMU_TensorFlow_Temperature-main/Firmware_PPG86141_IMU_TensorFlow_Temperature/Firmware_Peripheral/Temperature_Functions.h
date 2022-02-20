@@ -34,12 +34,12 @@ void configureTemp() {
   else {
     Serial.println("Communication failure with the sensor");
   }
-        Serial.println();
+  Serial.println();
 
 }
 
 void updateTemp() {
-  
+
   if (ReadSensor.dataAvailable() == true) {
     ReadSensor.tempBuff();
     tempBuff32[5] = ReadSensor.buff[5];
@@ -105,6 +105,6 @@ void updateTemp() {
     Serial.println(" P_G1 "+String(P_G1));
     Serial.println(" P_R1 "+String(P_R1));
     Serial.println(" P_T1 "+String(P_T1));*/
-    Serial.println();
+  Serial.println();
 
 }

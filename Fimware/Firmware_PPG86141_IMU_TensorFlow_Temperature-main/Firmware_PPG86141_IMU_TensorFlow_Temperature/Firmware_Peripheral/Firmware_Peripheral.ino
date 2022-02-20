@@ -15,8 +15,10 @@ bool errorTens = true;
 //#define Temperature
 //#define TensorFlow
 
+/* Tests */
 /* Print data on Serial Monitor when BLE is unenabled */
-//#define SerialDebug
+//#define SerialTest
+#define BleTest
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -172,21 +174,8 @@ void setup() {
 
 #ifdef PPG_Max86141
   setupPPGMax86();
-  /*ledSeq1A_PPG1Characteristic1.write(pt_ledSeq1A_PD1_1, 4);
-    tagSeq1A_PPG1Characteristic1.write(pt_tagSeq1A_PD1_1, 1);
-    ledSeq1B_PPG1Characteristic1.write(pt_ledSeq1B_PD1_1, 4);
-    tagSeq1B_PPG1Characteristic1.write(pt_tagSeq1B_PD1_1, 1);*/
-
-  ledSeq1A_PPG1Characteristic2.write(ptledSeq1APD1, 20);
-  //ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 8);
-  //tagSeq1A_PPG1Characteristic2.write(pt_tagSeq1A_PD1_2, 1);
-  //ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 4);
+  ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 20);
   ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 20);
-  /*tagSeq1A_PPG2Characteristic2.write(pt_tagSeq1A_PD2_2, 1);
-    ledSeq1B_PPG1Characteristic2.write(pt_ledSeq1B_PD1_2, 4);
-    tagSeq1B_PPG1Characteristic2.write(pt_tagSeq1B_PD1_2, 1);
-    ledSeq1B_PPG2Characteristic2.write(pt_ledSeq1B_PD2_2, 4);
-    tagSeq1B_PPG2Characteristic2.write(pt_tagSeq1B_PD2_2, 1);*/
   SNR1_2PPG1Characteristic2.write(SNR1_2, 4);
   SNR2_2PPG2Characteristic2.write(SNR2_2, 4);
 #endif
@@ -220,7 +209,7 @@ void setup() {
 void loop() {
 
   /* Update Sensors for new values */
-#ifdef SerialDebug
+#ifdef SerialTest
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
@@ -325,14 +314,14 @@ void loop() {
 
 #ifdef PPG_Max86141
 
-      if ( ledSeq1A_PPG1Characteristic2.notify( ptledSeq1APD1, 20) ) {
+      if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 20) ) {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
         //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 
-      if ( ledSeq1A_PPG2Characteristic2.notify( ptledSeq1APD2, 20) ) {
+      if ( ledSeq1A_PPG2Characteristic2.notify( pt_ledSeq1A_PD2_2, 20) ) {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
       } else {
@@ -361,7 +350,6 @@ void loop() {
       } else {
         //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
-
 #endif
 
 #ifdef Temperature

@@ -9,9 +9,7 @@ void startAdv(void)
   Bluefruit.Advertising.addService(TempService);
   Bluefruit.Advertising.addService(hrms);
 
- // Include HRM Service UUID
- // Bluefruit.Advertising.addService(hrms);
-  
+
   // Include Name
   Bluefruit.Advertising.addName();
 

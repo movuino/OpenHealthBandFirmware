@@ -3,7 +3,7 @@
 
 BLEConnection* connection ;
 
-/* Bool Errors*/
+/* Bool Errors */
 bool errorIMU = true;
 bool errorPPG86 = true;
 bool errorTemp = true;
@@ -13,6 +13,12 @@ bool errorTens = true;
 #define IMU9250
 //#define Temperature
 //#define TensorFlow
+
+/* Tests */
+/* Print data on Serial Monitor when BLE is unenabled */
+//#define SerialTest
+#define BleTest
+
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -132,7 +138,7 @@ void setup() {
   blebas.begin();
   blebas.write(100);
 
-      Serial.println();
+  Serial.println();
 
   /*Init Sensors*/
 #ifdef PPG_Max86141
@@ -221,8 +227,9 @@ void setup() {
 }
 
 void loop() {
-
   /* Update Sensors for new values */
+#ifdef SerialTest
+
 #ifdef PPG_Max86141
   if (!errorPPG86) {
     updatePPG86();
@@ -249,15 +256,41 @@ void loop() {
   }
 #endif
 
+#endif
+
   /* Sending data by Bluetooth */
   if ( Bluefruit.connected()) {
 
     ssCommand = StartCharacteristic.read8();
 
     if (ssCommand == 1) { //Received 1 from Central to start sending data
-       // uint32_t start, sent;
-       // start = sent = 0;
-       // start = millis();
+ 
+ /* Update Sensors for new values */
+#ifdef PPG_Max86141
+  if (!errorPPG86) {
+    updatePPG86();
+  }
+#endif
+
+#ifdef IMU9250
+  if (!errorIMU) {
+    updateAcc();
+    updateGyro();
+    updateMag();
+  }
+#endif
+
+#ifdef Temperature
+  if (!errorTemp) {
+    updateTemp();
+  }
+#endif
+
+#ifdef TensorFlow
+  if (!errorTens) {
+    updateTensorFlow();
+  }
+#endif
 
       if (shutdown_or_restart == 1) { // the sensor was shutdown
 #ifdef PPG_Max86141
@@ -273,11 +306,13 @@ void loop() {
 
       if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
         /// Change Intensity leds, sample rate and sample avearge of the Max86141 ///
-        pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8());
+        pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8(), LedMode);
         pulseOx1.setSample(smplAvgCharacteristic.read8(), smplRateCharacteristic.read8());
+        intensityLedsCharacteristic.write8(0);
+        smplRateCharacteristic.write8(0);
+        smplAvgCharacteristic.write8(0);
       }
 
-      //     if (dataReady)  {
 
       if ( ErrorCharacteristic.notify(bufError, 4) ) {
         //Serial.print("IMUCharacteristic updated to: ");
@@ -353,11 +388,7 @@ void loop() {
         Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 #endif
-        //print_speed("Sent ", 76, millis() - start);
 
-      // dataReady = false;
-      //}
-      //else delay(1);
     }
 
     if ( StartCharacteristic.read8() == 2) { //Received 2 from Central to stop sending data
@@ -377,17 +408,4 @@ void loop() {
   /*Put a delay to send to the feather*/
   //delay(50);
 
-}
-
-void print_speed(const char* text, uint32_t count, uint32_t ms)
-{
-  Serial.print(text);
-  Serial.print(count);
-  Serial.print(" bytes in ");
-  Serial.print(ms / 1000.0F, 2);
-  Serial.println(" seconds.");
-
-  Serial.print("Speed : ");
-  Serial.print( (count / 1000.0F) / (ms / 1000.0F), 2);
-  Serial.println(" KB/s.\r\n");  
 }

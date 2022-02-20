@@ -6,7 +6,7 @@ uint8_t*  accelBuf;
 uint8_t*  gyroBuf;
 uint8_t*  magBuf;
 uint8_t   accScale = 16;
-int gyroScale = 2000;
+int   gyroScale = 2000;
 
 float accelRange = 16.0;
 
@@ -27,20 +27,21 @@ void configureIMU() {
   uint8_t sensorId;
 
   if (mySensor.readId(&sensorId) == 0) {
+    Serial.println("MPU9250 connection succeeded !");
     Serial.println("sensorId: " + String(sensorId));
     errorIMU = false;
   }
   else {
     Serial.println("Error cannot read sensor ID");
   }
-  
+
   /*Begin IMU*/
   if (!errorIMU) {
     mySensor.beginAccel();
     mySensor.beginGyro();
     mySensor.beginMag();
   }
-    Serial.println();
+  Serial.println();
 
 }
 void updateAcc() {
@@ -57,7 +58,7 @@ void updateAcc() {
 
     for (int i = 5; i <= 10; i++) {
       bufAcc[i] = accelBuf[i - 5];
-      
+
 #ifdef debugAcc2
       Serial.print(String(i));
       Serial.print(":");
@@ -65,7 +66,7 @@ void updateAcc() {
       Serial.print(" ");
 #endif
     }
-    
+
     int16_t v = ((int16_t) accelBuf[0]) << 8 | accelBuf[1];
     aX = ((float) - v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
 
@@ -74,7 +75,7 @@ void updateAcc() {
 
     v = ((int16_t) accelBuf[4]) << 8 | accelBuf[5];
     aZ = ((float) - v) * accelRange / (float) 0x8000; // (float) 0x8000 == 32768.0
-    
+
 #ifdef debugAcc1
     Serial.println("----- Accelerometer data ----- :");
     Serial.print(String(aX));
@@ -85,7 +86,7 @@ void updateAcc() {
     Serial.println(" ");
 #endif
 
-  } 
+  }
   else {
     Serial.println("Cannot read accel values");
   }
@@ -107,10 +108,10 @@ void updateGyro() {
 
     int16_t v = ((int16_t) gyroBuf[0]) << 8 | gyroBuf[1];
     gX = ((float) - v) * gyroScale / (float) 0x8000;
-    
+
     v = ((int16_t) gyroBuf[2]) << 8 | gyroBuf[3];
     gY = ((float) - v) * gyroScale / (float) 0x8000;
-    
+
     v = ((int16_t) gyroBuf[4]) << 8 | gyroBuf[5];
     gZ = ((float) - v) * gyroScale / (float) 0x8000;
 
@@ -137,20 +138,20 @@ void updateMag() {
     bufMag[2] = (uint8_t)(timestamp >>= 8);
     bufMag[1] = (uint8_t)(timestamp >>= 8);
     bufMag[0] = (uint8_t)(timestamp >>= 8);
-    
+
     for (int i = 4; i <= 9; i++) {
       bufMag[i] = magBuf[i - 4];
-          }
-          
+    }
+
     int16_t v = ((int16_t) magBuf[1]) << 8 | magBuf[0];
     mX = ((float) v);
-    
+
     v = ((int16_t) magBuf[3]) << 8 | magBuf[2];
     mY = ((float) v);
-    
+
     v = ((int16_t) magBuf[5]) << 8 | magBuf[4];
     mZ = ((float) v);
-    
+
 #ifdef debugMag
     Serial.println("----- Magnetometer data ----- :");
     Serial.print(String(mX));
@@ -165,6 +166,6 @@ void updateMag() {
   } else {
     Serial.println("Cannod read accel values");
   }
-        Serial.println();
+  Serial.println();
 
 }

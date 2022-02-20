@@ -93,7 +93,7 @@ void updateTensorFlow() {
   int samplesRead = 50;
 
   while (samplesRead == numSamples) {
-   
+
     float aSum = fabs(aX) + fabs(aY) + fabs(aZ);
     //Serial.println("aSum: "+String(aSum));
     if (aSum >= accelerationThreshold) {
@@ -126,7 +126,7 @@ void updateTensorFlow() {
     poss[i]  = tflOutputTensor->data.f[i] * 10000;
     p = (uint8_t*)&poss;
     if (i == 0)
-    { 
+    {
       int tp1;
       tp1 = p[3];
       tp1 = (tp1  << 8) + p[2];
@@ -135,7 +135,7 @@ void updateTensorFlow() {
       //Serial.println("--- " + String(tp1));
     }
     if (i == 1)
-    { 
+    {
       int tp2;
       tp2 = p[7];
       tp2 = (tp2  << 8) + p[6];
@@ -144,7 +144,7 @@ void updateTensorFlow() {
       //Serial.println("--- " + String(tp2));
     }
     if (i == 2)
-    { 
+    {
       int tp3;
       tp3 = p[11];
       tp3 = (tp3  << 8) + p[10];

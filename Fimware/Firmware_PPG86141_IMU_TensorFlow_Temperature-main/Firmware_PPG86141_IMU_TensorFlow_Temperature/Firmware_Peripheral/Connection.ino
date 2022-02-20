@@ -1,5 +1,4 @@
 
-
 void connect_callback(uint16_t conn_handle)
 {
   // Get the reference to current connection
@@ -8,9 +7,9 @@ void connect_callback(uint16_t conn_handle)
   connection = Bluefruit.Connection(conn_handle);
   char central_name[32] = { 0 };
   connection->getPeerName(central_name, sizeof(central_name));
-    // request mtu exchange
-  Serial.println("Request to change MTU "+String(connection->requestMtuExchange(247)));
-  
+  // request mtu exchange
+  Serial.println("Request to change MTU " + String(connection->requestMtuExchange(247)));
+
   Serial.print("MTU: ");
   Serial.print(connection->getMtu());
   Serial.println(" ");
@@ -19,14 +18,13 @@ void connect_callback(uint16_t conn_handle)
   Serial.println(" ");
   Serial.print("PHY length: ");
   Serial.print(connection->getPHY());
-  Serial.println("data lenght "+String(connection->getDataLength()));
+  Serial.println("data lenght " + String(connection->getDataLength()));
   Serial.println(" ");
   Serial.print("Connected to ");
   Serial.println(central_name);
   printConnParams();
   start_stop_Sending = "send";
 }
-
 void printConnParams() {
   Serial.println("____________________________");
   Serial.print("MTU: ");
@@ -48,7 +46,7 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
   Serial.println("Advertising!");
-    start_stop_Sending = "stop";
+  start_stop_Sending = "stop";
 }
 
 
@@ -114,15 +112,13 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
       Serial.println("Service 'Notify' disabled");
     }
   }
-
   else if (chr->uuid == hrmc.uuid) {
-        if (chr->notifyEnabled(conn_hdl)) {
-            Serial.println("Heart Rate Measurement 'Notify' enabled");
-        } else {
-            Serial.println("Heart Rate Measurement 'Notify' disabled");
-        }
+    if (chr->notifyEnabled(conn_hdl)) {
+      Serial.println("Heart Rate Measurement 'Notify' enabled");
+    } else {
+      Serial.println("Heart Rate Measurement 'Notify' disabled");
     }
-   
+  }
 }
 
 void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_value) {
@@ -156,6 +152,7 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
            Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
        }
     }
+
     else if (chr->uuid == tagSeq1B_PPG1Characteristic1.uuid) {
        if (chr->notifyEnabled(conn_hdl)) {
            Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
@@ -200,6 +197,7 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
            Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
        }
     }
+
     else if (chr->uuid == tagSeq1B_PPG1Characteristic2.uuid) {
        if (chr->notifyEnabled(conn_hdl)) {
            Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
