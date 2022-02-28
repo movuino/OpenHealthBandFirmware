@@ -183,7 +183,7 @@ void setup() {
   //ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 8);
   //tagSeq1A_PPG1Characteristic2.write(pt_tagSeq1A_PD1_2, 1);
   //ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 4);
-  ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 20);
+  ledSeq1A_PPG2Characteristic2.write(ptledSeq1APD2, 20);
   /*tagSeq1A_PPG2Characteristic2.write(pt_tagSeq1A_PD2_2, 1);
     ledSeq1B_PPG1Characteristic2.write(pt_ledSeq1B_PD1_2, 4);
     tagSeq1B_PPG1Characteristic2.write(pt_tagSeq1B_PD1_2, 1);
