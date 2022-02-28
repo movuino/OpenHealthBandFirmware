@@ -17,8 +17,8 @@ bool errorTens = true;
 
 /* Tests */
 /* Print data on Serial Monitor when BLE is unenabled */
-//#define SerialTest
-#define BleTest
+#define SerialTest
+//#define BleTest
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"

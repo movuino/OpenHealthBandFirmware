@@ -96,6 +96,7 @@ This library is use to measure temperature.
 
 
 ## Installation
++ **Max86141** : **version 1.0.3**
 + **TensorFlow**: Arduino_TensorFlowLite librairie version **1.15.0-ALPHA**
 + **MPU9250_asukiaaa** : **version 1.5.11**
 
