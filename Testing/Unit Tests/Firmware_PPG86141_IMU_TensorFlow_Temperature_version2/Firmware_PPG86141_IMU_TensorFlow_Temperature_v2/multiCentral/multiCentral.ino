@@ -52,10 +52,10 @@ BLEClientCharacteristic PossCharacteristic(0x1501);
 /* PPG Sensor Configurations */
 
 // Sensor composed with 1 PD and 2 LEDs //
-#define PDLEDs
+//#define PDLEDs
 
 // Sensor composed with 2 PDs and 1 LED //
-//#define PDsLED
+#define PDsLED
 
 // Sensor composed with 2 PDs and 3 LEDs //
 //#define PDsLEDs

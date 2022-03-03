@@ -133,6 +133,9 @@ This library is use to measure temperature.
 + **MPU9250_asukiaaa** : **version 1.5.11**
 
 ## Use
+
++ Choose your sensor type (PDLEDs, PDsLED or PDsLEDs) by activating the #define
+
 + To read data from PPG, IMU, Temperature, TensorFlow activate the #define from peripheral and central
 <p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156010773-e1a3c952-65e3-4916-afef-292665ef7b79.png"></p>
 
