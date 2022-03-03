@@ -63,28 +63,28 @@ void cccd_callback2(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_val
       Serial.println("Error Characteristcis 'Notify' disabled");
     }
   }
-  else if (chr->uuid == StartCharacteristic.uuid) {
+  if (chr->uuid == StartCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       //Serial.println("Error Characteristcis 'Notify' enabled");
     } else {
       //Serial.println("Error Characteristcis 'Notify' disabled");
     }
   }
-  else if (chr->uuid == intensityLedsCharacteristic.uuid) {
+  if (chr->uuid == intensityLedsCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
       //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  else if (chr->uuid == smplRateCharacteristic.uuid) {
+  if (chr->uuid == smplRateCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
       //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  else if (chr->uuid == smplAvgCharacteristic.uuid) {
+  if (chr->uuid == smplAvgCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
@@ -111,30 +111,16 @@ void cccd_callback(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_valu
       Serial.println("Service 'Notify' disabled");
     }
   }
-  else if (chr->uuid == GyroCharacteristic.uuid) {
+  if (chr->uuid == GyroCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("Gyro Characteristcis 'Notify' enabled");
     } else {
       Serial.println("Service 'Notify' disabled");
     }
   }
-  else if (chr->uuid == MagCharacteristic.uuid) {
+  if (chr->uuid == MagCharacteristic.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("Mag Characteristcis 'Notify' enabled");
-    } else {
-      Serial.println("Service 'Notify' disabled");
-    }
-  }
-  else if (chr->uuid == TempCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      Serial.println("Temp Characteristcis 'Notify' enabled");
-    } else {
-      Serial.println("Service 'Notify' disabled");
-    }
-  }
-  else if (chr->uuid == PossCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      Serial.println("Poss Characteristcis 'Notify' enabled");
     } else {
       Serial.println("Service 'Notify' disabled");
     }
@@ -147,39 +133,7 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
   Serial.print(cccd_value);
   Serial.println("");
 
-  // Check the characteristic this CCCD update is associated with in case
-  // this handler is used for multiple CCCD records.
-  /* if (chr->uuid == ledSeq1A_PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-
-    else if (chr->uuid == tagSeq1A_PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-    else if (chr->uuid == ledSeq1B_PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-
-    else if (chr->uuid == tagSeq1B_PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-  */
+  #ifdef PDsLED
   if (chr->uuid == ledSeq1A_PPG1Characteristic2.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
@@ -187,72 +141,29 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  /* else if (chr->uuid == tagSeq1A_PPG1Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }*/
 
-  else if (chr->uuid == ledSeq1A_PPG2Characteristic2.uuid) {
+  if (chr->uuid == ledSeq1A_PPG2Characteristic2.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  /* else if (chr->uuid == tagSeq1A_PPG2Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-    else if (chr->uuid == ledSeq1B_PPG1Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-
-    else if (chr->uuid == tagSeq1B_PPG1Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-
-    else if (chr->uuid == ledSeq1B_PPG2Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }
-
-    else if (chr->uuid == tagSeq1B_PPG2Characteristic2.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
-    }*/
-  else if (chr->uuid == SNR1_2PPG1Characteristic2.uuid) {
+  
+  if (chr->uuid == SNR1_2PPG1Characteristic2.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  else if (chr->uuid == SNR2_2PPG2Characteristic2.uuid) {
+  if (chr->uuid == SNR2_2PPG2Characteristic2.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
     } else {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
+#endif
 
 }

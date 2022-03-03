@@ -16,8 +16,10 @@ bool errorTens = true;
 //#define TensorFlow
 
 /* Tests */
+
 /* Print data on Serial Monitor when BLE is unenabled */
 //#define SerialTest
+
 /* Sending data when BLE is enabled */
 #define BleTest
 
@@ -59,23 +61,38 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 
 /* PPG Max 86140 - 86141 Service & Characteristics*/
 BLEService PPG86Service = BLEService(0x1300);
-////// PDLEDs (1 PD - 2 LEDs) ////////////
-/*BLECharacteristic ledSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1301);
-  BLECharacteristic tagSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1302);
-  BLECharacteristic ledSeq1B_PPG1Characteristic1 = BLECharacteristic(0x1303);
-  BLECharacteristic tagSeq1B_PPG1Characteristic1 = BLECharacteristic(0x1304);*/
 
-///// PDsLED (2 PDs - 1 LED) ///////////
+#ifdef PDLEDs
+////// PDLEDs (1 PD - 2 LEDs) //////
+BLECharacteristic ledSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1301);
+//BLECharacteristic tagSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1302);
+////// SNR (Signal Noise Ratio) //////
+BLECharacteristic SNR1_1PPG1Characteristic1 = BLECharacteristic(0x1315);
+#endif
+
+#ifdef PDsLED
+///// PDsLED (2 PDs - 1 LED) //////
 BLECharacteristic ledSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1305);
 //BLECharacteristic tagSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1306);
 BLECharacteristic ledSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1307);
-/*BLECharacteristic tagSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1308);
-  BLECharacteristic ledSeq1B_PPG1Characteristic2 = BLECharacteristic(0x1309);
-  BLECharacteristic tagSeq1B_PPG1Characteristic2 = BLECharacteristic(0x1310);
-  BLECharacteristic ledSeq1B_PPG2Characteristic2 = BLECharacteristic(0x1311);
-  BLECharacteristic tagSeq1B_PPG2Characteristic2 = BLECharacteristic(0x1312);*/
+//BLECharacteristic tagSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1308);
+////// SNR (Signal Noise Ratio) //////
 BLECharacteristic SNR1_2PPG1Characteristic2 = BLECharacteristic(0x1313);
 BLECharacteristic SNR2_2PPG2Characteristic2 = BLECharacteristic(0x1314);
+#endif
+
+#ifdef PDsLEDs
+////// PDsLEDs (2 PDs - 3 LEDs) //////
+BLECharacteristic ledSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1309);
+//BLECharacteristic tagSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1310);
+BLECharacteristic ledSeq1A_PPG2Characteristic3 = BLECharacteristic(0x1311);
+//BLECharacteristic tagSeq1B_PPG2Characteristic3 = BLECharacteristic(0x1312);
+////// SNR (Signal Noise Ratio) //////
+BLECharacteristic SNR1_3PPG1Characteristic3 = BLECharacteristic(0x1317);
+BLECharacteristic SNR2_3PPG2Characteristic3 = BLECharacteristic(0x1318);
+#endif
+
+
 
 /*TEMP Service & characteristics*/
 BLEService TempService = BLEService(UUID16_SVC_HEALTH_THERMOMETER );
@@ -175,10 +192,25 @@ void setup() {
 
 #ifdef PPG_Max86141
   setupPPGMax86();
+  
+  #ifdef PDLEDs
+  ledSeq1A_PPG1Characteristic1.write(pt_ledSeq1A_PD1_1, 20);
+  SNR1_1PPG1Characteristic1.write(SNR1_1, 4);
+  #endif
+  
+  #ifdef PDsLED
   ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 12);
   ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 12);
   SNR1_2PPG1Characteristic2.write(SNR1_2, 4);
   SNR2_2PPG2Characteristic2.write(SNR2_2, 4);
+  #endif
+
+  #ifdef PDsLEDs
+  ledSeq1A_PPG1Characteristic3.write(pt_ledSeq1A_PD1_3, 12);
+  ledSeq1A_PPG2Characteristic3.write(pt_ledSeq1A_PD2_3, 12);
+  SNR1_3PPG1Characteristic3.write(SNR1_3, 4);
+  SNR2_3PPG2Characteristic3.write(SNR2_3, 4);
+  #endif
 #endif
 
 #ifdef IMU9250
@@ -314,7 +346,7 @@ void loop() {
 #endif
 
 #ifdef PPG_Max86141
-
+  #ifdef PDsLED
       if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 12) ) {
         //Serial.print("IMUCharacteristic updated to: ");
         //Serial.println(timeStampValue);
@@ -341,6 +373,52 @@ void loop() {
       } else {
         // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
+  #endif
+
+  #ifdef PDLEDs
+      if ( ledSeq1A_PPG1Characteristic1.notify( pt_ledSeq1A_PD1_1, 20) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+
+      if (  SNR1_1PPG1Characteristic1.notify( SNR1_1, 4) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+  #endif
+
+  #ifdef PDsLEDs
+      if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+
+      if ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+
+      if (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+      if (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+  #endif
 
 #endif
 

@@ -27,6 +27,7 @@ void configureIMU() {
   uint8_t sensorId;
 
   if (mySensor.readId(&sensorId) == 0) {
+    Serial.println("MPU9250 connection succeeded !");
     Serial.println("sensorId: " + String(sensorId));
     errorIMU = false;
   }

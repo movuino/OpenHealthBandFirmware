@@ -10,26 +10,27 @@
  * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
  * PD: PhotoDiode
  * 1 LED is RGB or just 1 color
-*/
+ */
 
 #include <MAX86141.h>
 #include <SPI.h>
 
+/* PPG Sensor Configurations */
 
-//////////// Pointers for PDsLED use to send 4 samples by Bluetooth /////////////
-uint8_t pt_ledSeq1A_PD1_2[12];
-uint8_t pt_ledSeq1A_PD2_2[12];
-uint8_t SNR1_2[4], SNR2_2[4];
-
-/* Sensor Configurations */
 // Sensor composed with 2 PDs and 1 LED //
 #define PDsLED
 
+#ifdef PDsLED
+//////////// Pointers used to send timestamp, 2 samples PD1, 2 samples PD2 and SNR by Bluetooth /////////////
+uint8_t pt_ledSeq1A_PD1_2[12];
+uint8_t pt_ledSeq1A_PD2_2[12];
+uint8_t SNR1_2[4], SNR2_2[4];
+#endif
 
 /* Inculde LED configuration */
 int ledMode[10];
 
-#include "Configuration_Sensor.h"
+#include "LEDsConfiguration_Sensor.h"
 
 /* Sample Rate taken */
 #define Sample_Rate
@@ -68,20 +69,9 @@ void configurePPG86(void) {
   delay(100);
   pulseOx1.setDebug(true);
 
-  ///////////////////// Serial Communication //////////////////
-#ifdef SerialTest
 #ifdef PDsLED
-  sequences_size = config(LED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
+  sequences_size = config(rgbLED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
   pulseOx1.initialisation(2/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
-#endif
-#endif
-
-  ///////////////////// Bluetooth Communication //////////////////
-#ifdef BleTest
-#ifdef PDsLED
-  sequences_size = config(LED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
-  pulseOx1.initialisation(2/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
-#endif
 #endif
 
   Serial.println("--Read Register-- System Control");

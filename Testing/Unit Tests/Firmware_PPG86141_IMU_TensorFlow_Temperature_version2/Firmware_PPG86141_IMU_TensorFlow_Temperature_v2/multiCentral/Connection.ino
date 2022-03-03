@@ -142,6 +142,7 @@ void connect_callback(uint16_t conn_handle)
   }
   Serial.println("PPG86Service service found");
 
+  #ifdef PDsLED
   ////////////////////// PDsLED /////////////////////////////////////
   if ( !ledSeq1A_PPG1Characteristic2.discover() )
   {
@@ -218,9 +219,132 @@ void connect_callback(uint16_t conn_handle)
   {
     Serial.println("Couldn't enable notify SNR2_2_Characteristic2 characteristic. Increase DEBUG LEVEL for troubleshooting");
   }
-    Serial.println("##############################");
-
+    #endif
   //////////////////////////////////////////////////////////////////
+
+   #ifdef PDLEDs
+  ////////////////////// PDLEDs /////////////////////////////////////
+  if ( !ledSeq1A_PPG1Characteristic1.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("ledSeq1A_PPG1Characteristic1 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("ledSeq1A_PPG1Characteristic1 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (ledSeq1A_PPG1Characteristic1.enableNotify() )
+  {
+    Serial.println("Ready to receive ledSeq1A_PPG1Characteristic1 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify ledSeq1A_PPG1Characteristic1 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+
+  if ( !SNR1_1_Characteristic1.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("SNR1_1_Characteristic1 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("SNR1_1_Characteristic1 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (SNR1_1_Characteristic1.enableNotify() )
+  {
+    Serial.println("Ready to receive SNR1_1_Characteristic1 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify SNR1_1_Characteristic1 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+    #endif
+  //////////////////////////////////////////////////////////////////
+  
+  #ifdef PDsLEDs
+  ////////////////////// PDsLEDs /////////////////////////////////////
+  if ( !ledSeq1A_PPG1Characteristic3.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("ledSeq1A_PPG1Characteristic3 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("ledSeq1A_PPG1Characteristic3 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (ledSeq1A_PPG1Characteristic3.enableNotify() )
+  {
+    Serial.println("Ready to receive ledSeq1A_PPG1Characteristic3 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify ledSeq1A_PPG1Characteristic3 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+
+    if ( !ledSeq1A_PPG2Characteristic3.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("ledSeq1A_PPG2Characteristi32 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("ledSeq1A_PPG2Characteristic3 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (ledSeq1A_PPG2Characteristic3.enableNotify() )
+  {
+    Serial.println("Ready to receive ledSeq1A_PPG2Characteristic3 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify ledSeq1A_PPG2Characteristic3 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+
+  if ( !SNR1_3_Characteristic3.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("SNR1_3_Characteristic3 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("SNR1_3_Characteristic3 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (SNR1_3_Characteristic3.enableNotify() )
+  {
+    Serial.println("Ready to receive SNR1_3_Characteristic3 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify SNR1_3_Characteristic3 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+
+  if ( !SNR2_3_Characteristic3.discover() )
+  {
+    // Measurement chr is mandatory, if it is not found (valid), then disconnect
+    Serial.println("SNR2_3_Characteristic3 characteristic not found !!!");
+    Bluefruit.disconnect(conn_handle);
+    return;
+  }
+  Serial.println("SNR2_3_Characteristic3 characteristic found");
+  delay(20);
+  // Reaching here means we are ready to go, let's enable notification on measurement chr
+  if (SNR2_3_Characteristic3.enableNotify() )
+  {
+    Serial.println("Ready to receive SNR2_3_Characteristic3 characteristic data");
+  }
+  else
+  {
+    Serial.println("Couldn't enable notify SNR2_3_Characteristic3 characteristic. Increase DEBUG LEVEL for troubleshooting");
+  }
+    #endif
+  //////////////////////////////////////////////////////////////////
+  Serial.println("##############################");
+
 #endif
 
 #ifdef Temperature

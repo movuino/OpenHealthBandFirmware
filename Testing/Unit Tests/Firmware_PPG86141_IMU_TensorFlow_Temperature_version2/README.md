@@ -1,4 +1,4 @@
-# Firmware_PPG86141_IMU_TensorFlow_Temperature-main
+# Firmware_PPG86141_IMU_TensorFlow_Temperature-v2
 
 This firmware allows to send by BLE data from PPG (photo-diode(s), SNR), IMU (accel, gyro, mag), TensorFlow and Temperature between peripherals (NRF52 boards or wearable with movuino) and centrals (NRF52 boards, HTML page or app).
 
@@ -29,7 +29,21 @@ MagCharacteristic = **0x1104**
 
 #### PPG Max 86140 - 86141 Service & Characteristics
 
-With the PPG Service and characteristics, data from PPG can be send by BLE. We are using here 2 photo-diodes so the data format will be as describe below.
+With the PPG Service and characteristics, data from PPG can be send by BLE. We can have these type of sensor configuartions :
+
++ 1 PD - 2 LEDS
+
+ledSeq1A_PPG1Characteristic1 = characteristic for data taken from photo-diode
+
+ledSeq1A_PPG1Characteristic1 (20-bytes) : [0-3] = timestamp [4], [4-7] = sample 1, [8-11] = sample 2, [12-15] = sample 3, [16-19] = sample 4
+
+SNR1_2PPG1Characteristic2 (4-bytes) : [0-3] = SNR photo-diode
+
+PPG86Service = **0x1300**,
+ledSeq1A_PPG1Characteristic2 = **0x1301**,
+SNR1_2PPG1Characteristic2 = **0x1315**,
+
++ 2 PDs - 1 LED
 
 ledSeq1A_PPG1Characteristic2 = characteristic for data taken from photo-diode 1
 ledSeq1A_PPG2Characteristic2 = characteristic for data taken from photo-diode 2
@@ -48,6 +62,24 @@ ledSeq1A_PPG2Characteristic2 = **0x1307**,
 SNR1_2PPG1Characteristic2 = **0x1313**,
 SNR2_2PPG2Characteristic2 = **0x1314**
 
++ 2 PDs - 3 LEDs
+
+ledSeq1A_PPG1Characteristic3 = characteristic for data taken from photo-diode 1
+ledSeq1A_PPG2Characteristic3 = characteristic for data taken from photo-diode 2
+
+ledSeq1A_PPG1Characteristic3 (12-bytes) : [0-3] = timestamp [4], [4-7] = sample 1 , [8-11] = sample 2
+
+ledSeq1A_PPG2Characteristic3 (12-bytes) : [0-3] = timestamp [4], [4-7] = sample 1 , [8-11] = sample 2
+
+SNR1_3PPG1Characteristic3 (4-bytes) : [0-3] = SNR photo-diode 1
+
+SNR2_3PPG1Characteristic3 (4-bytes) : [0-3] = SNR photo-diode 2
+
+PPG86Service = **0x1300**,
+ledSeq1A_PPG1Characteristic2 = **0x1309**,
+ledSeq1A_PPG2Characteristic2 = **0x1311**,
+SNR1_2PPG1Characteristic2 = **0x1317**,
+SNR2_2PPG2Characteristic2 = **0x1318**
 
 #### Temperature Service & characteristics
 
@@ -96,7 +128,7 @@ This library is use to measure temperature.
 
 
 ## Installation
-+ **Max86141** : **version 1.0.3**
++ **Max86141** : **version 1.0.4**
 + **TensorFlow**: Arduino_TensorFlowLite librairie version **1.15.0-ALPHA**
 + **MPU9250_asukiaaa** : **version 1.5.11**
 

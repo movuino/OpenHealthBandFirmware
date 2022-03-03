@@ -3,25 +3,30 @@
 BLEClientService        ErrorService(0x1200);
 BLEClientCharacteristic ErrorCharacteristic(0x1201);
 
+
 /*PPG 86140 - 86141 & characteristics*/
 BLEClientService PPG86Service(0x1300);
-////// PDLEDS ////////////
-/*BLEClientCharacteristic ledSeq1A_PPG1Characteristic1(0x1301);
-BLEClientCharacteristic tagSeq1A_PPG1Characteristic1(0x1302);
-BLEClientCharacteristic ledSeq1B_PPG1Characteristic1(0x1303);
-BLEClientCharacteristic tagSeq1B_PPG1Characteristic1(0x1304);*/
 
-///// PDsLED ///////////
+////// PDLEDS (1 PD - 2 LEDs) ////////////
+BLEClientCharacteristic ledSeq1A_PPG1Characteristic1(0x1301);
+//BLEClientCharacteristic tagSeq1A_PPG1Characteristic1(0x1302);
+BLEClientCharacteristic SNR1_1_Characteristic1(0x1315);
+
+///// PDsLED (2 PDs - 1 LED) ///////////
 BLEClientCharacteristic ledSeq1A_PPG1Characteristic2(0x1305);
 //BLEClientCharacteristic tagSeq1A_PPG1Characteristic2(0x1306);
 BLEClientCharacteristic ledSeq1A_PPG2Characteristic2(0x1307);
-/*BLEClientCharacteristic tagSeq1A_PPG2Characteristic2(0x1308);
-BLEClientCharacteristic ledSeq1B_PPG1Characteristic2(0x1309);
-BLEClientCharacteristic tagSeq1B_PPG1Characteristic2(0x1310);
-BLEClientCharacteristic ledSeq1B_PPG2Characteristic2(0x1311);
-BLEClientCharacteristic tagSeq1B_PPG2Characteristic2(0x1312);*/
+//BLEClientCharacteristic tagSeq1A_PPG2Characteristic2(0x1308);
 BLEClientCharacteristic SNR1_2_Characteristic2(0x1313);
 BLEClientCharacteristic SNR2_2_Characteristic2(0x1314);
+
+///// PDsLEDs (2 PDs - 3 LEDs) ///////////
+BLEClientCharacteristic ledSeq1A_PPG1Characteristic3(0x1309);
+//BLEClientCharacteristic tagSeq1A_PPG1Characteristic2(0x1310);
+BLEClientCharacteristic ledSeq1A_PPG2Characteristic3(0x1311);
+//BLEClientCharacteristic tagSeq1A_PPG2Characteristic2(0x1312);
+BLEClientCharacteristic SNR1_3_Characteristic3(0x1317);
+BLEClientCharacteristic SNR2_3_Characteristic3(0x1318);
 
 /*IMU Service & characteristics*/
 BLEClientService IMUService(0x1101);
@@ -43,6 +48,17 @@ BLEClientCharacteristic PossCharacteristic(0x1501);
 #define IMU9250
 //#define Temperature
 //#define TensorFlow
+
+/* PPG Sensor Configurations */
+
+// Sensor composed with 1 PD and 2 LEDs //
+#define PDLEDs
+
+// Sensor composed with 2 PDs and 1 LED //
+//#define PDsLED
+
+// Sensor composed with 2 PDs and 3 LEDs //
+//#define PDsLEDs
 
 
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
@@ -72,7 +88,16 @@ void setup() {
 
 #ifdef PPG_Max86141
  PPG86Service.begin();
- ///// PDsLED ///////////
+
+ #ifdef PDLEDs
+ledSeq1A_PPG1Characteristic1.setNotifyCallback(PPGMax86_ledSeq1A_PPG1_1_notify_callback);
+ledSeq1A_PPG1Characteristic1.begin();
+
+SNR1_1_Characteristic1.setNotifyCallback(PPGMax86_SNR1_1_notify_callback);
+SNR1_1_Characteristic1.begin();
+ #endif
+ 
+ #ifdef PDsLED
 ledSeq1A_PPG1Characteristic2.setNotifyCallback(PPGMax86_ledSeq1A_PPG1_2_notify_callback);
 ledSeq1A_PPG1Characteristic2.begin();
 
@@ -84,6 +109,22 @@ SNR1_2_Characteristic2.begin();
 
 SNR2_2_Characteristic2.setNotifyCallback(PPGMax86_SNR2_2_notify_callback);
 SNR2_2_Characteristic2.begin();
+ #endif
+
+ #ifdef PDsLEDs
+ledSeq1A_PPG1Characteristic3.setNotifyCallback(PPGMax86_ledSeq1A_PPG1_3_notify_callback);
+ledSeq1A_PPG1Characteristic3.begin();
+
+ledSeq1A_PPG2Characteristic3.setNotifyCallback(PPGMax86_ledSeq1A_PPG2_3_notify_callback);
+ledSeq1A_PPG2Characteristic3.begin();
+
+SNR1_3_Characteristic3.setNotifyCallback(PPGMax86_SNR1_3_notify_callback);
+SNR1_3_Characteristic3.begin();
+
+SNR2_3_Characteristic3.setNotifyCallback(PPGMax86_SNR2_3_notify_callback);
+SNR2_3_Characteristic3.begin();
+ #endif
+ 
 #endif
 
 #ifdef IMU9250

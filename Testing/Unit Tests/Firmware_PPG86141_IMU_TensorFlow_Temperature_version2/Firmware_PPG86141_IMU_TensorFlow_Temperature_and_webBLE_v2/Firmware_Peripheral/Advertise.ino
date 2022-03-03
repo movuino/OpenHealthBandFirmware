@@ -5,8 +5,7 @@ void startAdv(void)
   Bluefruit.Advertising.addTxPower();
 
 
-  Bluefruit.Advertising.addService(ErrorService, PPG86Service, IMUService, TensorFlowService);
-  Bluefruit.Advertising.addService(TempService);
+  Bluefruit.Advertising.addService(ErrorService, PPG86Service, IMUService);
 
   // Include Name
   Bluefruit.Advertising.addName();

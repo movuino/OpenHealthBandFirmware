@@ -9,27 +9,48 @@
  * DIRECT AMBIENT : DA (i.e. normal photodiode measurements)
  * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
  * PD: PhotoDiode
- * 1 LED is RGB or just 1 color
+ * 1 LED is RGB or 1 color
 */
 
 #include <MAX86141.h>
 #include <SPI.h>
 
+/* PPG Sensor Configurations */
 
-//////////// Pointers for PDsLED use to send 4 samples by Bluetooth /////////////
-uint8_t pt_ledSeq1A_PD1_2[12];
-uint8_t pt_ledSeq1A_PD2_2[12];
-uint8_t SNR1_2[4], SNR2_2[4];
+// Sensor composed with 1 PD and 2 LEDs //
+//#define PDLEDs
 
-/* Sensor Configurations */
 // Sensor composed with 2 PDs and 1 LED //
 #define PDsLED
 
+// Sensor composed with 2 PDs and 3 LEDs //
+//#define PDsLEDs
+
+
+#ifdef PDLEDs
+//////////// Pointers used to send timestamp, 4 samples PD1 and SNR by Bluetooth /////////////
+uint8_t pt_ledSeq1A_PD1_1[20];
+uint8_t SNR1_1[4];
+#endif
+
+#ifdef PDsLED
+//////////// Pointers used to send timestamp, 2 samples PD1, 2 samples PD2 and SNR by Bluetooth /////////////
+uint8_t pt_ledSeq1A_PD1_2[12];
+uint8_t pt_ledSeq1A_PD2_2[12];
+uint8_t SNR1_2[4], SNR2_2[4];
+#endif
+
+#ifdef PDsLEDs
+//////////// Pointers used to send timestamp, 2 samples PD1, 2 samples PD2 and SNR by Bluetooth /////////////
+uint8_t pt_ledSeq1A_PD1_3[12];
+uint8_t pt_ledSeq1A_PD2_3[12];
+uint8_t SNR1_3[4], SNR2_3[4];
+#endif
 
 /* Inculde LED configuration */
 int ledMode[10];
 
-#include "Configuration_Sensor.h"
+#include "LEDsConfiguration_Sensor.h"
 
 /* Sample Rate taken */
 #define Sample_Rate
@@ -68,20 +89,19 @@ void configurePPG86(void) {
   delay(100);
   pulseOx1.setDebug(true);
 
-  ///////////////////// Serial Communication //////////////////
-#ifdef SerialTest
-#ifdef PDsLED
-  sequences_size = config(LED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
-  pulseOx1.initialisation(2/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
-#endif
+#ifdef PDLEDs
+  sequences_size = config(rgbLED_G/*Green LED (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 1B, 4-9)*/);
+  pulseOx1.initialisation(1/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
-  ///////////////////// Bluetooth Communication //////////////////
-#ifdef BleTest
 #ifdef PDsLED
-  sequences_size = config(LED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
+  sequences_size = config(rgbLED_G /*Green LED selected (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
   pulseOx1.initialisation(2/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
+
+#ifdef PDsLEDs
+  sequences_size = config(rgbLED_G/*Green LED (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 1B, 4-9)*/);
+  pulseOx1.initialisation(2/*nb_ppg*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
   Serial.println("--Read Register-- System Control");
@@ -128,12 +148,37 @@ void updatePPG86(void) {
 
   /////// if there is 8 data in the FIFO ///////
   if (flagA_full) {
-    samplesTaken = samplesTaken + 2;
     int fifo_size = pulseOx1.device_data_read1();
 
     //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef PDsLED
+    Serial.println("----- PPG data ----- :");
+    Serial.println("Reading all data from PD1: ");
+    for (int i = 0; i < fifo_size / 4; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+    }
+
+    Serial.println("Reading all data from PD2: ");
+    for (int i = 0; i < fifo_size / 4; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
+    }
+
+    free(pulseOx1.tab_ledSeq1A_PD1);
+    free(pulseOx1.tab_ledSeq1A_PD2);
+#endif
+
+#ifdef PDLEDs
+    Serial.println("----- PPG data ----- :");
+    Serial.println("Reading all data from PD1: ");
+    for (int i = 0; i < fifo_size / 2; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+    }
+
+    free(pulseOx1.tab_ledSeq1A_PD1);
+#endif
+
+#ifdef PDsLEDs
     Serial.println("----- PPG data ----- :");
     Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 4; i++) {
@@ -154,6 +199,8 @@ void updatePPG86(void) {
 #ifdef BleTest
 
 #ifdef PDsLED
+    samplesTaken = samplesTaken + 2;
+
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 4; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
@@ -226,7 +273,6 @@ void updatePPG86(void) {
 
       }
 
-
       if ((pulseOx1.tab_ledSeq1A_PD2[0] != 0) && (pulseOx1.tab_ledSeq1A_PD2[1] != 0)) {
 
         ///////////// Addition data of PD2 in buffer to measure SNR (Signal Noise Ratio) //////////
@@ -268,6 +314,213 @@ void updatePPG86(void) {
             SNR2_2[2] = (uint8_t)(var >>= 8);
             SNR2_2[1] = (uint8_t)(var >>= 8);
             SNR2_2[0] = (uint8_t)(var >>= 8);
+          }
+          cpt2 = 0;
+        }
+      }
+
+      ////////// Detect saturation and with SNR set the led intensity to correct the measurement //////////
+      if ((snr_pd1 > 80.0) || (snr_pd2 > 80.0)) {
+        Serial.println("############################ SATURATION #########################");
+        /// Regulate led instensity to 20 ///
+        pulseOx1.setIntensityLed(20, ledMode);
+      }
+
+    }
+    free(pulseOx1.tab_ledSeq1A_PD1);
+    free(pulseOx1.tab_ledSeq1A_PD2);
+#endif
+
+#ifdef PDLEDs
+    Serial.println("----- PPG data ----- :");
+    for (int i = 0; i < fifo_size / 2; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+    }
+
+    ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
+    uint8_t InterruptStatus_without_AFull_DataReady = pulseOx1.read_reg(REG_INT_STAT_1) << 2;
+    bool InterruptStatus_with_ALC = pulseOx1.read_reg(REG_INT_STAT_1) >> 8;
+    //Serial.println("############## Reading ALC bit ############ " + String(InterruptStatus_with_ALC));
+
+    if (InterruptStatus_with_ALC == 0) {
+      ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
+      if ((pulseOx1.tab_ledSeq1A_PD1[0] != 0) && (pulseOx1.tab_ledSeq1A_PD1[1] != 0) && (pulseOx1.tab_ledSeq1A_PD1[2] != 0) && (pulseOx1.tab_ledSeq1A_PD1[3] != 0)) {
+
+        ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 1] = pulseOx1.tab_ledSeq1A_PD1[1];
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 2] = pulseOx1.tab_ledSeq1A_PD1[2];
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 3] = pulseOx1.tab_ledSeq1A_PD1[3];
+
+        ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
+        uint32_t timestamp1 = millis();
+        pt_ledSeq1A_PD1_1[3] = (uint8_t)timestamp1;
+        pt_ledSeq1A_PD1_1[2] = (uint8_t)(timestamp1 >>= 8);
+        pt_ledSeq1A_PD1_1[1] = (uint8_t)(timestamp1 >>= 8);
+        pt_ledSeq1A_PD1_1[0] = (uint8_t)(timestamp1 >>= 8);
+
+
+        pt_ledSeq1A_PD1_1[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
+        pt_ledSeq1A_PD1_1[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+        pt_ledSeq1A_PD1_1[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+        pt_ledSeq1A_PD1_1[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+
+        pt_ledSeq1A_PD1_1[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
+        pt_ledSeq1A_PD1_1[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+        pt_ledSeq1A_PD1_1[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+        pt_ledSeq1A_PD1_1[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+
+        pt_ledSeq1A_PD1_1[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[2];
+        pt_ledSeq1A_PD1_1[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+        pt_ledSeq1A_PD1_1[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+        pt_ledSeq1A_PD1_1[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+
+        pt_ledSeq1A_PD1_1[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[3];
+        pt_ledSeq1A_PD1_1[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+        pt_ledSeq1A_PD1_1[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+        pt_ledSeq1A_PD1_1[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+        
+        cpt1 += 4;
+        if (cpt1 == SIZE) {
+          Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
+          snr_pd1 = pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE);
+          int var = 0;
+          var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
+          if (var < 0) {
+            int a = -100 * var;
+            SNR1_1[3] = (uint8_t)a;
+            SNR1_1[2] = (uint8_t)(a >>= 8);
+            SNR1_1[1] = (uint8_t)(a >>= 8);
+            SNR1_1[0] = (uint8_t)(a >>= 8);
+          }
+          else {
+            SNR1_1[3] = (uint8_t)var;
+            SNR1_1[2] = (uint8_t)(var >>= 8);
+            SNR1_1[1] = (uint8_t)(var >>= 8);
+            SNR1_1[0] = (uint8_t)(var >>= 8);
+          }
+          cpt1 = 0;
+        }
+      }
+
+      ////////// Detect saturation and with SNR set the led intensity to correct the measurement //////////
+      if ((snr_pd1 > 80.0)) {
+        Serial.println("############################ SATURATION #########################");
+        /// Regulate led instensity to 20 ///
+        pulseOx1.setIntensityLed(20, ledMode);
+      }
+      
+    }
+    free(pulseOx1.tab_ledSeq1A_PD1);
+#endif
+
+#ifdef PDsLEDs
+    Serial.println("----- PPG data ----- :");
+    for (int i = 0; i < fifo_size / 4; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+    }
+
+    for (int i = 0; i < fifo_size / 4; i++) {
+      Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
+    }
+
+    ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
+    uint8_t InterruptStatus_without_AFull_DataReady = pulseOx1.read_reg(REG_INT_STAT_1) << 2;
+    bool InterruptStatus_with_ALC = pulseOx1.read_reg(REG_INT_STAT_1) >> 8;
+    //Serial.println("############## Reading ALC bit ############ " + String(InterruptStatus_with_ALC));
+
+    if (InterruptStatus_with_ALC == 0) {
+      ///////////// Pointer to send only 2 samples by Bluetooth (PD1) ////////////
+      if ((pulseOx1.tab_ledSeq1A_PD1[0] != 0) && (pulseOx1.tab_ledSeq1A_PD1[1] != 0)) {
+
+        ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
+        pulseOx1.signalData_ledSeq1A_PD1[cpt1 + 1] = pulseOx1.tab_ledSeq1A_PD1[1];
+
+        ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
+        uint32_t timestamp1 = millis();
+        pt_ledSeq1A_PD1_3[3] = (uint8_t)timestamp1;
+        pt_ledSeq1A_PD1_3[2] = (uint8_t)(timestamp1 >>= 8);
+        pt_ledSeq1A_PD1_3[1] = (uint8_t)(timestamp1 >>= 8);
+        pt_ledSeq1A_PD1_3[0] = (uint8_t)(timestamp1 >>= 8);
+
+
+        pt_ledSeq1A_PD1_3[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
+        pt_ledSeq1A_PD1_3[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+        pt_ledSeq1A_PD1_3[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+        pt_ledSeq1A_PD1_3[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+
+        pt_ledSeq1A_PD1_3[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
+        pt_ledSeq1A_PD1_3[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+        pt_ledSeq1A_PD1_3[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+        pt_ledSeq1A_PD1_3[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+
+        cpt1 += 2;
+        if (cpt1 == SIZE) {
+          Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
+          snr_pd1 = pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE);
+          int var = 0;
+          var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
+          if (var < 0) {
+            int a = -100 * var;
+            SNR1_3[3] = (uint8_t)a;
+            SNR1_3[2] = (uint8_t)(a >>= 8);
+            SNR1_3[1] = (uint8_t)(a >>= 8);
+            SNR1_3[0] = (uint8_t)(a >>= 8);
+          }
+          else {
+            SNR1_3[3] = (uint8_t)var;
+            SNR1_3[2] = (uint8_t)(var >>= 8);
+            SNR1_3[1] = (uint8_t)(var >>= 8);
+            SNR1_3[0] = (uint8_t)(var >>= 8);
+          }
+          cpt1 = 0;
+        }
+
+      }
+
+
+      if ((pulseOx1.tab_ledSeq1A_PD2[0] != 0) && (pulseOx1.tab_ledSeq1A_PD2[1] != 0)) {
+
+        ///////////// Addition data of PD2 in buffer to measure SNR (Signal Noise Ratio) //////////
+        pulseOx1.signalData_ledSeq1A_PD2[cpt2] = pulseOx1.tab_ledSeq1A_PD2[0];
+        pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 1] = pulseOx1.tab_ledSeq1A_PD2[1];
+
+        ///////////// Pointer to send only 4 samples by Bluetooth (PD2) ////////////
+        uint32_t timestamp2 = millis();
+        pt_ledSeq1A_PD2_3[3] = (uint8_t)timestamp2;
+        pt_ledSeq1A_PD2_3[2] = (uint8_t)(timestamp2 >>= 8);
+        pt_ledSeq1A_PD2_3[1] = (uint8_t)(timestamp2 >>= 8);
+        pt_ledSeq1A_PD2_3[0] = (uint8_t)(timestamp2 >>= 8);
+
+        pt_ledSeq1A_PD2_3[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
+        pt_ledSeq1A_PD2_3[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+        pt_ledSeq1A_PD2_3[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+        pt_ledSeq1A_PD2_3[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+
+        pt_ledSeq1A_PD2_3[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[1];
+        pt_ledSeq1A_PD2_3[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+        pt_ledSeq1A_PD2_3[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+        pt_ledSeq1A_PD2_3[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+
+        cpt2 += 2;
+        if (cpt2 == SIZE) {
+          Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
+          snr_pd2 = pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE);
+          int var = 0;
+          var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
+          if (var < 0) {
+            int a = -100 * var;
+            SNR2_3[3] = (uint8_t)a;
+            SNR2_3[2] = (uint8_t)(a >>= 8);
+            SNR2_3[1] = (uint8_t)(a >>= 8);
+            SNR2_3[0] = (uint8_t)(a >>= 8);
+          }
+          else {
+            SNR2_3[3] = (uint8_t)var;
+            SNR2_3[2] = (uint8_t)(var >>= 8);
+            SNR2_3[1] = (uint8_t)(var >>= 8);
+            SNR2_3[0] = (uint8_t)(var >>= 8);
           }
           cpt2 = 0;
         }
