@@ -153,6 +153,7 @@ void updatePPG86(void) {
     //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef PDsLED
+    samplesTaken = samplesTaken + 2;
     Serial.println("----- PPG data ----- :");
     Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 4; i++) {
@@ -166,9 +167,18 @@ void updatePPG86(void) {
 
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);
+
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 #endif
 
 #ifdef PDLEDs
+    samplesTaken = samplesTaken + 4;
     Serial.println("----- PPG data ----- :");
     Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 2; i++) {
@@ -176,9 +186,18 @@ void updatePPG86(void) {
     }
 
     free(pulseOx1.tab_ledSeq1A_PD1);
+
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 #endif
 
 #ifdef PDsLEDs
+    samplesTaken = samplesTaken + 2;
     Serial.println("----- PPG data ----- :");
     Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 4; i++) {
@@ -192,6 +211,14 @@ void updatePPG86(void) {
 
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);
+
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 #endif
 #endif
 
@@ -200,7 +227,6 @@ void updatePPG86(void) {
 
 #ifdef PDsLED
     samplesTaken = samplesTaken + 2;
-
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 4; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
@@ -332,10 +358,19 @@ void updatePPG86(void) {
 #endif
 
 #ifdef PDLEDs
+    samplesTaken = samplesTaken + 4;
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 2; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
     }
+
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 
     ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
     uint8_t InterruptStatus_without_AFull_DataReady = pulseOx1.read_reg(REG_INT_STAT_1) << 2;
@@ -415,6 +450,7 @@ void updatePPG86(void) {
 #endif
 
 #ifdef PDsLEDs
+    samplesTaken = samplesTaken + 2;
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 4; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
@@ -423,6 +459,14 @@ void updatePPG86(void) {
     for (int i = 0; i < fifo_size / 4; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
     }
+    
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 
     ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
     uint8_t InterruptStatus_without_AFull_DataReady = pulseOx1.read_reg(REG_INT_STAT_1) << 2;

@@ -105,7 +105,6 @@ void configurePPG86(void) {
   startTime = millis();
 
   Serial.println();
-
 }
 
 
@@ -118,12 +117,12 @@ void updatePPG86(void) {
 
   /////// if there is 8 data in the FIFO ///////
   if (flagA_full) {
-    samplesTaken = samplesTaken + 2;
     int fifo_size = pulseOx1.device_data_read1();
 
     //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef PDsLED
+    samplesTaken = samplesTaken + 2;
     Serial.println("----- PPG data ----- :");
     Serial.println("Reading all data from PD1: ");
     for (int i = 0; i < fifo_size / 4; i++) {
@@ -137,6 +136,14 @@ void updatePPG86(void) {
 
     free(pulseOx1.tab_ledSeq1A_PD1);
     free(pulseOx1.tab_ledSeq1A_PD2);
+
+    #ifdef Sample_Rate
+    Serial.print("Sample Rate : Hz[");
+    Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
+    Serial.print("]");
+    Serial.println();
+    Serial.println();
+    #endif
 #endif
 #endif
 
@@ -144,6 +151,7 @@ void updatePPG86(void) {
 #ifdef BleTest
 
 #ifdef PDsLED
+    samplesTaken = samplesTaken + 2;
     Serial.println("----- PPG data ----- :");
     for (int i = 0; i < fifo_size / 4; i++) {
       Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);

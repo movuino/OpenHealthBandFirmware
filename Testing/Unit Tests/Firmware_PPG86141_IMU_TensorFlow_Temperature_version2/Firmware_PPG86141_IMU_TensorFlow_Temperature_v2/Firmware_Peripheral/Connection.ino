@@ -22,21 +22,7 @@ void connect_callback(uint16_t conn_handle)
   Serial.println(" ");
   Serial.print("Connected to ");
   Serial.println(central_name);
-  printConnParams();
   start_stop_Sending = "send";
-}
-void printConnParams() {
-  Serial.println("____________________________");
-  Serial.print("MTU: ");
-  Serial.print(connection->getMtu());
-  Serial.println(" ");
-  Serial.print("Connection interval: ");
-  Serial.print(connection->getConnectionInterval());
-  Serial.println(" ");
-  Serial.print("PHY length: ");
-  Serial.print(connection->getPHY());
-  Serial.println(" ");
-  Serial.println("____________________________");
 }
 
 void disconnect_callback(uint16_t conn_handle, uint8_t reason)
