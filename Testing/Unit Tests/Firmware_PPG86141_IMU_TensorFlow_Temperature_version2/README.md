@@ -134,7 +134,8 @@ This library is use to measure temperature.
 
 ## Use
 
-+ Choose your sensor type (PDLEDs, PDsLED or PDsLEDs) by activating the #define
++ Choose your PPG sensor type (PDLEDs, PDsLED or PDsLEDs) by activating the #define
+<p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156622531-7f8c6de8-a089-4c18-8624-6c1727f6303c.png"></p>
 
 + To read data from PPG, IMU, Temperature, TensorFlow activate the #define from peripheral and central
 <p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156010773-e1a3c952-65e3-4916-afef-292665ef7b79.png"></p>
