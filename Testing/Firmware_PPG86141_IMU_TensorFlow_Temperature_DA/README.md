@@ -36,6 +36,7 @@ With the IMU Service and characteristics, data from accelerometer, gyrometer and
 With the PPG Service and characteristics, data from PPG can be send by BLE. We can have these type of sensor configuartions :
 
 + 1 PD - 2 LEDS
+
 **ledSeq1A_PPG1Characteristic1** = characteristic for data taken from photo-diode
 
 
