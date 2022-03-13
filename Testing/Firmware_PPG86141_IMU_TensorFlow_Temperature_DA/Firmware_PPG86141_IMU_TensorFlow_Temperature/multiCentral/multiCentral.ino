@@ -73,7 +73,7 @@ int errorFlag=0;
 
 void setup() {
   Serial.begin(115200);
-  while ( !Serial )
+  //while ( !Serial )
   delay(10);   // for nrf52840 with native usb
   
   Serial.println("Initialise the Bluefruit nRF52 module");

@@ -97,7 +97,7 @@ BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 void setup() {
 
   Serial.begin(115200);
-  while ( !Serial )
+  //while ( !Serial )
     delay(10);   // for nrf52840 with native usb
 
   // Initialise the Bluefruit module
