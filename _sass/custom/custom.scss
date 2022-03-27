@@ -1,0 +1,12 @@
+td, th {
+    min-width: 0 !important;
+}
+
+td, th {
+    border-right: $border $border-color;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}

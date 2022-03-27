@@ -1,0 +1,27 @@
+name: Copy README to /docs
+on:
+  push:
+    paths:
+      - 'docs'
+      - 'README.md'
+  workflow_dispatch:
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: copy
+        env:
+          FILE_PATH: 'README.md'
+          CPY_PATH: 'docs/index.md'
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git fetch                         # fetch branches
+          cp $FILE_PATH $CPY_PATH
+          git add -A
+          git diff-index --quiet HEAD ||  git commit -am "deploy README.md to index.md"  # commit to the repository (ignore if no modification)
+          git push origin main
