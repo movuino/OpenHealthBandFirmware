@@ -1,0 +1,6 @@
+{
+    "sketch": "new_firmware.ino",
+    "port": "COM1",
+    "configuration": "softdevice=s140v6,debug=l0",
+    "board": "movuino:movuino:movuinoOHB274"
+}
