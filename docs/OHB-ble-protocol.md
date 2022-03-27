@@ -321,22 +321,62 @@ UUID: 0x1300
 
 # Utils Service
 UUID: 0x1400
-| Characteristic  | UUID  | Buffer size | Permissions |
-|---|---|---|---|
-|  Start/Stop |  0x1401 |  1 |  READ &#124; WRITE |
-|  Led intensity |  0x1402 |  1 |  READ &#124; WRITE &#124; NOTIFY |
-|  Sample rate |  0x1403 |  1 |  READ &#124; WRITE |
-|  Sample average |  0x1404 |  1 |  READ &#124; WRITE |
-|  Calibration trigger |  0x1405 |  1 |  READ &#124; WRITE |
+
+<table>
+    <thead>
+        <tr>
+            <th>Characteristic</th>
+            <th>UUID</th>
+            <th>Buffer size</th>
+            <th>Permissions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Start/Stop</td>
+            <td>0x1401</td>
+            <td>1</td>
+            <td>READ | WRITE</td>
+        </tr>
+            <td>Led intensity</td>
+            <td>0x1402</td>
+            <td>1</td>
+            <td>READ | WRITE | NOTIFY</td>
+        </tr>
+        </tr>
+            <td>Sample rate</td>
+            <td>0x1403</td>
+            <td>1</td>
+            <td>READ | WRITE</td>
+        </tr>
+        </tr>
+            <td>Calibration trigger</td>
+            <td>0x1404</td>
+            <td>1</td>
+            <td>READ | WRITE</td>
+        </tr>
+    </tbody>
+</table>
 
 ## Start/Stop Characteristic
 Writing to the first byte of this chracteristic toggles the acquisition state of the OHB. Zero will stop the acquisition while a non-zero value will start it.
 
 ## Led Intensity Characteristic
 Writing to the first byte of this chracteristic sets the led instensity of the PPG leds.
-| min value | max value |
-| --- | --- |
-| 1 | 255 | 
+<table>
+    <thead>
+        <tr>
+            <th>min value</th>
+            <th>max value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>255</td>
+        </tr>
+    </tbody>
+</table>
 
 This charcteristic can be monitored to track the change in intensity induced by the auto callibration process.
 
