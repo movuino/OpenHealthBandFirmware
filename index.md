@@ -35,5 +35,5 @@ Documentation for the project is available at [movuino.github.io/OpenHealthBandF
 - [OHB BLE protocol](https://movuino.github.io/OpenHealthBandFirmware/OHB-ble-protocol)
 
 ## Integration
-OHB firmware can integrate with the [Open Health Band Visualization](https://github.com/movuino/OpenHealthBandVisualization) project which provide real time monitoring of the OHB sensors in a web browser.
+OHB firmware can integrate with the [Open Health Band Visualization](https://github.com/movuino/OpenHealthBandVisualization) project which provide real time monitoring of the OHB sensors in a web browser. 
 
