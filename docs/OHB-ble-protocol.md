@@ -11,7 +11,7 @@ UUID: 0x1200
 
 | Characteristic  | UUID  | Buffer size | Permissions |
 |---|---|---|---|
-|  Error |  0x1201 |  4 |  READ \| NOTIFY |
+|  Error |  0x1201 |  4 |  READ &#124; NOTIFY |
 
 ## Error characteristic
 Characteristic containing the current state of each sensor. The values are updated only once during initialization and should not change during runtime.
@@ -57,9 +57,9 @@ Zero signify that the sensor initialization was successfull, while a non-zero va
 UUID: 0x1200
 | Characteristic  | UUID  | Buffer size | Permissions |
 |---|---|---|---|
-|  Acceleromter |  0x1102 |  11 |  READ \| NOTIFY |
-|  Gyroscope |  0x1103 |  11 |  READ \| NOTIFY |
-|  Magnetometer |  0x1104 |  10 |  READ \| NOTIFY |
+|  Acceleromter |  0x1102 |  11 |  READ &#124; NOTIFY |
+|  Gyroscope |  0x1103 |  11 |  READ &#124; NOTIFY |
+|  Magnetometer |  0x1104 |  10 |  READ &#124; NOTIFY |
 ## Accelerometer Characteristic
 <table>
     <thead>
@@ -176,10 +176,10 @@ UUID: 0x1200
 UUID: 0x1300
 | Characteristic  | UUID  | Buffer size | Permissions |
 |---|---|---|---|
-|  PPG1 |  0x1305 |  12 |  READ \| NOTIFY |
-|  PPG2 |  0x1307 |  12 |  READ \| NOTIFY |
-|  SNR1 |  0x1313 |  4 |  READ \| NOTIFY |
-|  SNR2 |  0x1314 |  4 |  READ \| NOTIFY |
+|  PPG1 |  0x1305 |  12 |  READ &#124; NOTIFY |
+|  PPG2 |  0x1307 |  12 |  READ &#124; NOTIFY |
+|  SNR1 |  0x1313 |  4 |  READ &#124; NOTIFY |
+|  SNR2 |  0x1314 |  4 |  READ &#124; NOTIFY |
 
 ## PPG1 Characteristic
 <table>
@@ -323,11 +323,11 @@ UUID: 0x1300
 UUID: 0x1400
 | Characteristic  | UUID  | Buffer size | Permissions |
 |---|---|---|---|
-|  Start/Stop |  0x1401 |  1 |  READ \| WRITE |
-|  Led intensity |  0x1402 |  1 |  READ \| WRITE \| NOTIFY |
-|  Sample rate |  0x1403 |  1 |  READ \| WRITE |
-|  Sample average |  0x1404 |  1 |  READ \| WRITE |
-|  Calibration trigger |  0x1405 |  1 |  READ \| WRITE |
+|  Start/Stop |  0x1401 |  1 |  READ &#124; WRITE |
+|  Led intensity |  0x1402 |  1 |  READ &#124; WRITE &#124; NOTIFY |
+|  Sample rate |  0x1403 |  1 |  READ &#124; WRITE |
+|  Sample average |  0x1404 |  1 |  READ &#124; WRITE |
+|  Calibration trigger |  0x1405 |  1 |  READ &#124; WRITE |
 
 ## Start/Stop Characteristic
 Writing to the first byte of this chracteristic toggles the acquisition state of the OHB. Zero will stop the acquisition while a non-zero value will start it.
