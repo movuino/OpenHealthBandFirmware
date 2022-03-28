@@ -1,3 +1,9 @@
+---
+layout: page
+title: Bootloader
+permalink: /bootloader/
+---
+
 ## Burn the bootloader with a Segger J-link
 
 - Install the [JLink Software and Documentation Pack](https://www.segger.com/downloads/jlink) from Segger.
