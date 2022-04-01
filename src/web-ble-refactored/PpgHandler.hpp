@@ -14,7 +14,7 @@
 #  define SS_PIN 19
 # endif
 
-# define SPICLK 1000000
+# define SPICLK 100000 // 1 MHz doesn't work when the watch is not on the debug board, reverting to 100 KHz
 # define CORRECTION_MIN_INTERVAL 50
 # define PPG_VAL_TAB_SIZE 12
 # define PPG_SNR_TAB_SIZE 4
