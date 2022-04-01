@@ -34,7 +34,6 @@ extern BLECharacteristic intensityLedsCharacteristic;
 extern BLECharacteristic smplRateCharacteristic;
 extern BLECharacteristic smplAvgCharacteristic;
 extern BLECharacteristic calibrationCharacteristic;
-extern BLECharacteristic globalCharacteristic;
 
 extern PpgHandler PPG;
 extern ImuHandler IMU;

@@ -47,7 +47,6 @@ BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
 BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
 BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
 BLECharacteristic calibrationCharacteristic = BLECharacteristic(0x1405);
-BLECharacteristic globalCharacteristic = BLECharacteristic(0x1406);
 
 PpgHandler PPG;
 ImuHandler IMU;
@@ -161,14 +160,14 @@ void loop()
   if (!isAcquisitionStarted) return;
   // If acquisition started...
 
-  if (!IMU.getError()) {
+  if (true) {
     IMU.update();
     AccCharacteristic.notify(IMU.getAccTab(), IMU_ACC_TAB_SIZE);
     GyroCharacteristic.notify(IMU.getGyrTab(), IMU_GYR_TAB_SIZE);
     MagCharacteristic.notify(IMU.getMagTab(), IMU_MAG_TAB_SIZE);
   }
 
-  if (!PPG.getError()) {
+  if (true) {
     PPG.update();
     ledSeq1A_PPG1Characteristic2.notify(PPG.getPD1Tab(), PPG_VAL_TAB_SIZE);
     ledSeq1A_PPG2Characteristic2.notify(PPG.getPD2Tab(), PPG_VAL_TAB_SIZE);

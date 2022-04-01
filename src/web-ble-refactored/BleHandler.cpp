@@ -141,10 +141,6 @@ void setupUtilsService(void)
   calibrationCharacteristic.setFixedLen(1);
   calibrationCharacteristic.begin();
 
-  globalCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
-  globalCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
-  globalCharacteristic.begin();
-
   StartCharacteristic.write8(0);
   intensityLedsCharacteristic.write8(0);
   smplRateCharacteristic.write8(0);
