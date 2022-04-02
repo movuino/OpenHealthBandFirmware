@@ -27,7 +27,7 @@ The following librairies are required to build the firmware and tests:
 - [Adafruit Bluefruit nRF52](https://github.com/adafruit/Adafruit_nRF52_Arduino/tree/master/libraries/Bluefruit52Lib) : **version 0.21.0**
 - [Max86141](https://github.com/MakerLabCRI/Max86141) : **version 1.0.4**
 
-Those libraries are all available in the Arduino Library manager.
+Those libraries are all available in the Arduino Library manager except MPU9250 that we should add in Arduino Librairie.
 
 #### Services and Characteristics for BLE
 
