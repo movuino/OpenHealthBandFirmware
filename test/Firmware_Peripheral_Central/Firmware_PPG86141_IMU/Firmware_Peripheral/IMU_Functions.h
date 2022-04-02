@@ -13,6 +13,14 @@ uint8_t*  magBuf;
 uint8_t*  raw_data;
 uint8_t*  raw_data_mag;
 
+float acc_resolution = 0.00049;
+float gyro_resolution = 0.06;
+float mag_resolution = 1.50;
+float mag_bias_factory_0 = 1.18, mag_bias_factory_1 = 1.19, mag_bias_factory_2 = 1.14;
+float mag_scale_0 = 1.00, mag_scale_1 = 1.00, mag_scale_2 = 1.00;
+float mag_bias_0 = 0.00, mag_bias_1 = 0.00, mag_bias_2 = 0.00;
+float bias_to_current_bits = 1.00;
+
 uint8_t bufAcc[11];
 uint8_t bufGyro[11];
 uint8_t bufMag[10];
@@ -25,7 +33,7 @@ uint8_t bufMag[10];
 
 void configureIMU() {
 
-  Serial.println("####  IMU CONFIG  ####");
+  Serial.println("####  IMU CONFIG ####");
   Wire.begin();
 
   setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
@@ -58,6 +66,23 @@ void updateIMU() {
 
     raw_data =  mpu.raw_data;
 
+    /*
+      Serial.println("Acc resolution : " + String(mpu.get_acc_resolution(setting.accel_fs_sel)));
+      Serial.println("Gyro resolution: " + String(mpu.get_gyro_resolution(setting.gyro_fs_sel)));
+      Serial.println("Mag resolution: " + String(mpu.get_mag_resolution(setting.mag_output_bits)));
+      Serial.println("Mag bias factory 0: " + String(mpu.mag_bias_factory[0]));
+      Serial.println("Mag bias 0: " + String(mpu.mag_bias[0]));
+      Serial.println("Mag scale 0: " + String(mpu.mag_scale[0]));
+
+      Serial.println("Mag bias factory 1: " + String(mpu.mag_bias_factory[1]));
+      Serial.println("Mag bias 1: " + String(mpu.mag_bias[1]));
+      Serial.println("Mag scale 1: " + String(mpu.mag_scale[1]));
+
+      Serial.println("Mag bias factory 2: " + String(mpu.mag_bias_factory[2]));
+      Serial.println("Mag bias 2: " + String(mpu.mag_bias[2]));
+      Serial.println("Mag scale 2: " + String(mpu.mag_scale[2]));
+    */
+
     uint32_t timestamp = millis();
     bufAcc[3] = (uint8_t)timestamp;
     bufAcc[2] = (uint8_t)(timestamp >>= 8);
@@ -71,13 +96,13 @@ void updateIMU() {
 
 #ifdef debugAcc
     int16_t v_acc = ((int16_t) raw_data[0] << 8) | (int16_t)raw_data[1];
-    aX = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+    aX = (float)v_acc * acc_resolution;
 
     v_acc = ((int16_t) raw_data[2] << 8) | (int16_t)raw_data[3];
-    aY = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+    aY = (float)v_acc * acc_resolution;
 
     v_acc = ((int16_t) raw_data[4] << 8) | (int16_t)raw_data[5];
-    aZ = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+    aZ = (float)v_acc * acc_resolution;
 
     Serial.println("----- Accelerometer data ----- :");
     Serial.print(String(aX));
@@ -101,13 +126,13 @@ void updateIMU() {
 
 #ifdef debugGyr
     int16_t v_gyr = ((int16_t) raw_data[8] << 8) | (int16_t)raw_data[9];
-    gX = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+    gX = (float)v_gyr * gyro_resolution;
 
     v_gyr = ((int16_t) raw_data[10] << 8) | (int16_t)raw_data[11];
-    gY = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+    gY = (float)v_gyr * gyro_resolution;
 
     v_gyr = ((int16_t) raw_data[12] << 8) | (int16_t)raw_data[13];
-    gZ = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+    gZ = (float)v_gyr * gyro_resolution;
 
     Serial.println("----- Gyrometer data ----- :");
     Serial.print(String(gX));
@@ -131,15 +156,17 @@ void updateIMU() {
     }
 
 #ifdef debugMag
-    float bias_to_current_bits = mpu.get_mag_resolution(setting.mag_output_bits) / mpu.get_mag_resolution(MAG_OUTPUT_BITS::M16BITS);
+    //float bias_to_current_bits = mpu.get_mag_resolution(setting.mag_output_bits) / mpu.get_mag_resolution(MAG_OUTPUT_BITS::M16BITS);
+    //Serial.println("bias_to_current_bits : " + String(bias_to_current_bits));
+
     int16_t v_mag = ((int16_t) raw_data_mag[1] << 8) | (int16_t)raw_data_mag[0];
-    mX = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[0] - mpu.mag_bias[0] * bias_to_current_bits) * mpu.mag_scale[0];
+    mX = (float) (v_mag * mag_resolution * mag_bias_factory_0 - mag_bias_0 * bias_to_current_bits) * mag_scale_0;
 
     v_mag = ((int16_t) raw_data_mag[3] << 8) | (int16_t)raw_data_mag[2];
-    mY = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[1] - mpu.mag_bias[1] * bias_to_current_bits) * mpu.mag_scale[1];
+    mY = (float) (v_mag * mag_resolution * mag_bias_factory_1 - mag_bias_1 * bias_to_current_bits) * mag_scale_1;
 
     v_mag = ((int16_t) raw_data_mag[5] << 8) | (int16_t)raw_data_mag[4];
-    mZ = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[2] - mpu.mag_bias[2] * bias_to_current_bits) * mpu.mag_scale[2];
+    mZ = (float) (v_mag * mag_resolution * mag_bias_factory_2 - mag_bias_2 * bias_to_current_bits) * mag_scale_2;
 
     Serial.println("----- Magnetometer data ----- :");
     Serial.print(String(mX));

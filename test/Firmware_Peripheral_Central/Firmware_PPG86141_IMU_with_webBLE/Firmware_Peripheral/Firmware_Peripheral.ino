@@ -172,9 +172,7 @@ void loop() {
 
 #ifdef IMU9250
   if (!errorIMU) {
-    updateAcc();
-    updateGyro();
-    updateMag();
+    updateIMU();
   }
 #endif
 
@@ -196,9 +194,7 @@ void loop() {
 
 #ifdef IMU9250
       if (!errorIMU) {
-        updateAcc();
-        updateGyro();
-        updateMag();
+    updateIMU();
       }
 #endif
 

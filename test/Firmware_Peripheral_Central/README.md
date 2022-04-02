@@ -1,39 +1,15 @@
-[![docs](https://github.com/movuino/OpenHealthBandFirmware/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/movuino/OpenHealthBandFirmware/actions/workflows/pages/pages-build-deployment)
+# Firmware_PPG86141_IMU_TensorFlow
 
-# Open Health Band Firmware
+This firmware allows to send by BLE data from PPG (photo-diode(s), SNR) and IMU (accel, gyro, mag) between peripheral (OHB) and central (NRF52 boards).
 
-Firmware for Open Health Band
+# Firmware_PPG86141_IMU_with_webBLE
+This firmware allows to send by BLE data from PPG (photo-diode(s), SNR) and IMU (accel, gyro, mag) between peripheral (OHB) and central (HTML page).
 
-## Description
-
-This repository regroups all the firmware and tests which run on Open Health Band.  
-For hardware plans and schematics see [movuino/OpenHealthBand](https://github.com/movuino/OpenHealthBand). For the web BLE GUI see [movuino/OpenHealthBandVisualization](https://github.com/movuino/OpenHealthBandVisualization)
-
-## Getting Started
-
-### Dependencies
-
-All OHB firmware make use of [Arduino Integrated Development Environment](https://www.arduino.cc/en/software).
-
-#### Board definition
-
-- Open the Arduino IDE
-- Navigate to `Preferences`
-- Add `https://movuino.github.io/movuino-board-index/package_movuino_index.json` as an 'Additional Board Manager URL'.
-
-#### Libraries
-The following librairies are required to build the firmware and tests:
-- [MPU9250]((https://github.com/movuino/OpenHealthBandFirmware/Librairies/MPU9250) by [hideakitai](https://github.com/hideakitai/MPU9250) : **place the version provided in Arduino Librairies**
-- [Adafruit Bluefruit nRF52](https://github.com/adafruit/Adafruit_nRF52_Arduino/tree/master/libraries/Bluefruit52Lib) : **version 0.21.0**
-- [Max86141](https://github.com/MakerLabCRI/Max86141) : **version 1.0.4**
-
-Those libraries are all available in the Arduino Library manager.
-
-#### Services and Characteristics for BLE
+The example provided uses **NRF52 boards**. 
 
 The services and characteristics used for the BLE are :
 
-##### Error Service & characteristic
+#### Error Service & characteristic
 The Error Characteristic allows to send boolean errors from IMU, PPG. Thus, when error is 0 data is detected else 1.
 
 |        | ErrorService | ErrorCharacteristic |
@@ -44,7 +20,7 @@ The Error Characteristic allows to send boolean errors from IMU, PPG. Thus, when
 |:------:|:------:|:------:|
 |ErrorCharacteristic | errorIMU | errorPPG86 |
 
-##### IMU Service & characteristics
+#### IMU Service & characteristics
 
 With the IMU Service and characteristics, data from accelerometer, gyrometer and magnetometer can be send by BLE.
 
@@ -58,7 +34,7 @@ With the IMU Service and characteristics, data from accelerometer, gyrometer and
 |GyroCharacteristic | timestamp | GX | GY | GZ |
 |MagCharacteristic | timestamp | MX | MY | MZ |
 
-##### PPG Max 86140 - 86141 Service & Characteristics
+#### PPG Max 86140 - 86141 Service & Characteristics
 
 With the PPG Service and characteristics, data from PPG can be send by BLE. We can have these type of sensor configuartions :
 
@@ -123,27 +99,29 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 |SNR2_2PPG1Characteristic3 | SNR photo-diode 2 |
 
 
-##### HeartRate Service & characteristics
+#### HeartRate Service & characteristics
 
 In order to detect the peripheral in the Bluetooth Settings for iPhone, we added the HeartRate taken from Adafruit Bluefruit nrf52 librairies --> Peripheral. However, it is not sent by BLE. 
 
-#### Use
+
+### MPU9250 by hideakitai
+This library allows to use the IMU with acc, gyro and mag.
+
+### Max86141
+This library allows to read data from LEDs and Photo-diodes in order to measure Heart Rate or Oxygen Saturation
+
+
+## Installation
++ **Max86141** : **version 1.0.4**
++ **MPU9250** : **place the version provided [here](https://github.com/movuino/OpenHealthBandFirmware/Librairies/MPU9250) in Arduino Librairies**
+
+## Use
 
 + Choose your PPG sensor type (PDLEDs, PDsLED or PDsLEDs) by activating the #define
 <p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156622531-7f8c6de8-a089-4c18-8624-6c1727f6303c.png"></p>
 
-+ To read data from PPG, IMU activated the #define from peripheral and central
++ To read data from PPG, IMU, Temperature, TensorFlow activate the #define from peripheral and central
 <p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156010773-e1a3c952-65e3-4916-afef-292665ef7b79.png"></p>
 
 + To read data on Serial Monitor or send by BLE activate the #define from peripheral
 <p align="center"><img width="200" src="https://user-images.githubusercontent.com/47628329/156010756-466be41c-46be-4552-b925-e32fa0832059.png"></p>
-
-
-## Documentation
-Documentation for the project is available at [movuino.github.io/OpenHealthBandFirmware](https://movuino.github.io/OpenHealthBandFirmware/) or in the `/docs` folder.
-- [How to burn the bootloader](https://movuino.github.io/OpenHealthBandFirmware/bootloader)
-- [OHB BLE protocol](https://movuino.github.io/OpenHealthBandFirmware/OHB-ble-protocol)
-
-## Integration
-OHB firmware can integrate with the [Open Health Band Visualization](https://github.com/movuino/OpenHealthBandVisualization) project which provide real time monitoring of the OHB sensors in a web browser. 
-
