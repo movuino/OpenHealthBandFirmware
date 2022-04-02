@@ -92,7 +92,7 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 |UUID | **0x1300** | **0x1305** | **0x1307** | **0x1313** | **0x1314** |
 
 | 20 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) |   
-|:------:|:------:|:------:|:------:|:------:|:------:|
+|:------:|:------:|:------:|:------:|
 |ledSeq1A_PPG1Characteristic2 | timestamp | sample 1 | sample 2 |
 |ledSeq1A_PPG2Characteristic2 | timestamp | sample 1 | sample 2 |
 
