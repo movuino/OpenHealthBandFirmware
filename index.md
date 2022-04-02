@@ -23,7 +23,7 @@ All OHB firmware make use of [Arduino Integrated Development Environment](https:
 
 #### Libraries
 The following librairies are required to build the firmware and tests:
-- [MPU9250]((https://github.com/movuino/OpenHealthBandFirmware/Librairies/MPU9250) by [hideakitai](https://github.com/hideakitai/MPU9250) : **place the version provided in Arduino Librairies**
+- [MPU9250](https://github.com/movuino/OpenHealthBandFirmware/Librairies/MPU9250) by [hideakitai](https://github.com/hideakitai/MPU9250) : **place the version provided in Arduino Librairies**
 - [Adafruit Bluefruit nRF52](https://github.com/adafruit/Adafruit_nRF52_Arduino/tree/master/libraries/Bluefruit52Lib) : **version 0.21.0**
 - [Max86141](https://github.com/MakerLabCRI/Max86141) : **version 1.0.4**
 
