@@ -88,6 +88,9 @@ BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
+#include "Advertise.h"
+#include "Connection.h"
+#include "Services.h"
 
 void setup() {
 
