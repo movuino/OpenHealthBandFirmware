@@ -14,6 +14,9 @@
 #include "PpgHandler.hpp"
 #include "ImuHandler.hpp"
 
+#include "../version.h"
+
+
 
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
