@@ -113,7 +113,7 @@ This library allows to read data from LEDs and Photo-diodes in order to measure 
 
 ## Installation
 + **Max86141** : **version 1.0.4**
-+ **MPU9250** : **place the version provided [here](https://github.com/movuino/OpenHealthBandFirmware/Librairies/MPU9250) in Arduino Librairies**
++ **MPU9250** : **place the version provided [here](https://github.com/movuino/OpenHealthBandFirmware/tree/main/Libraires/MPU9250) in Arduino Librairies**
 
 ## Use
 
