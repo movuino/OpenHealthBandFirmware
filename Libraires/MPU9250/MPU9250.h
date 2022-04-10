@@ -320,6 +320,25 @@ public:
     uint8_t raw_data[14];                                                 // x/y/z accel register data stored here
     uint8_t raw_data_mag[7];                                                 // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
 
+    void write_byte(uint8_t address, uint8_t subAddress, uint8_t data) {
+        wire->beginTransmission(address);    // Initialize the Tx buffer
+        wire->write(subAddress);             // Put slave register address in Tx buffer
+        wire->write(data);                   // Put data in Tx buffer
+        i2c_err_ = wire->endTransmission();  // Send the Tx buffer
+        if (i2c_err_) print_i2c_error();
+    }
+
+    uint8_t read_byte(uint8_t address, uint8_t subAddress) {
+        uint8_t data = 0;                         // `data` will store the register data
+        wire->beginTransmission(address);         // Initialize the Tx buffer
+        wire->write(subAddress);                  // Put slave register address in Tx buffer
+        i2c_err_ = wire->endTransmission(false);  // Send the Tx buffer, but send a restart to keep connection alive
+        if (i2c_err_) print_i2c_error();
+        wire->requestFrom(address, (size_t)1);       // Read one byte from slave register address
+        if (wire->available()) data = wire->read();  // Fill Rx buffer with result
+        return data;                                 // Return data read from slave register
+    }
+
 private:
     void initMPU9250() {
         acc_resolution = get_acc_resolution(setting.accel_fs_sel);
@@ -866,24 +885,7 @@ private:
         return b;
     }
 
-    void write_byte(uint8_t address, uint8_t subAddress, uint8_t data) {
-        wire->beginTransmission(address);    // Initialize the Tx buffer
-        wire->write(subAddress);             // Put slave register address in Tx buffer
-        wire->write(data);                   // Put data in Tx buffer
-        i2c_err_ = wire->endTransmission();  // Send the Tx buffer
-        if (i2c_err_) print_i2c_error();
-    }
 
-    uint8_t read_byte(uint8_t address, uint8_t subAddress) {
-        uint8_t data = 0;                         // `data` will store the register data
-        wire->beginTransmission(address);         // Initialize the Tx buffer
-        wire->write(subAddress);                  // Put slave register address in Tx buffer
-        i2c_err_ = wire->endTransmission(false);  // Send the Tx buffer, but send a restart to keep connection alive
-        if (i2c_err_) print_i2c_error();
-        wire->requestFrom(address, (size_t)1);       // Read one byte from slave register address
-        if (wire->available()) data = wire->read();  // Fill Rx buffer with result
-        return data;                                 // Return data read from slave register
-    }
 
    float get_acc_resolution(const ACCEL_FS_SEL accel_af_sel) const {
         switch (accel_af_sel) {
