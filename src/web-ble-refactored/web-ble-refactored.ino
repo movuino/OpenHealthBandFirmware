@@ -14,7 +14,7 @@
 #include "PpgHandler.hpp"
 #include "ImuHandler.hpp"
 
-#include "../version.h"
+#include "version.h"
 
 
 

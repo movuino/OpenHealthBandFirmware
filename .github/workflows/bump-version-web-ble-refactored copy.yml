@@ -5,11 +5,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'src/**'
+      - 'src/web-ble-refactored/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'src/**'
+      - 'src/web-ble-refactored/**'
       
   workflow_dispatch:
 
@@ -20,13 +20,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Edit version.h
-        working-directory: ./src
+        working-directory: ./src/web-ble-refactored
         id: udpate-version
         run: |
           CURRENT_VERSION=$(cat version.h | sed -nEr 's/^.*"([0-9]+.[0-9]+.[0-9]+).*$/\1/p') # Get current version ex: 1.2.3
-          MINOR=$(echo $CURRENT_VERSION | sed -nEr 's/^[0-9]+.[0-9]+.([0-9]+)$/\1/p')        # Get minor version ex: 3
-          MINOR=$(($MINOR+1))                                                                # Increment minor
-          sed -i -Er "s/[0-9]+\"$/$MINOR\"/g" version.h                                      # Replace version in version.h on MacOS run sed -i "" -Er "s/[0-9]+\"$/$MINOR\"/g" version.h
+          PATCH=$(echo $CURRENT_VERSION | sed -nEr 's/^[0-9]+.[0-9]+.([0-9]+)$/\1/p')        # Get PATCH version ex: 3
+          PATCH=$(($PATCH+1))                                                                # Increment PATCH
+          sed -i -Er "s/[0-9]+\"$/$PATCH\"/g" version.h                                      # Replace version in version.h on MacOS run sed -i "" -Er "s/[0-9]+\"$/$PATCH\"/g" version.h
           
           NEW_VERSION=$(cat version.h | sed -nEr 's/^.*"([0-9]+.[0-9]+.[0-9]+).*$/\1/p')     # Read new version
           echo "::set-output name=new_version::$NEW_VERSION"                                 # Store new version for commit message

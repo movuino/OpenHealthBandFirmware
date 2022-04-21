@@ -1,0 +1,43 @@
+
+name: Bump version
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/firmwarePeripheral/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/firmwarePeripheral/**'
+      
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Edit version.h
+        working-directory: ./src/firmwarePeripheral
+        id: udpate-version
+        run: |
+          CURRENT_VERSION=$(cat version.h | sed -nEr 's/^.*"([0-9]+.[0-9]+.[0-9]+).*$/\1/p') # Get current version ex: 1.2.3
+          PATCH=$(echo $CURRENT_VERSION | sed -nEr 's/^[0-9]+.[0-9]+.([0-9]+)$/\1/p')        # Get PATCH version ex: 3
+          PATCH=$(($PATCH+1))                                                                # Increment PATCH
+          sed -i -Er "s/[0-9]+\"$/$PATCH\"/g" version.h                                      # Replace version in version.h on MacOS run sed -i "" -Er "s/[0-9]+\"$/$PATCH\"/g" version.h
+          
+          NEW_VERSION=$(cat version.h | sed -nEr 's/^.*"([0-9]+.[0-9]+.[0-9]+).*$/\1/p')     # Read new version
+          echo "::set-output name=new_version::$NEW_VERSION"                                 # Store new version for commit message
+          
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add -A
+          git commit -m "Updated version to ${{ steps.udpate-version.outputs.new_version }}"
+          git push
+          
+
+        
