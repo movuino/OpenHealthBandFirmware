@@ -72,6 +72,7 @@ void setup()
   Serial.begin(115200);
   delay(1000); // Wait for Serial without blocking
 
+  Serial.printf("VERSION %s\n", FIRMWARE_VERSION);
   Serial.println(F("Initialise the OHB module"));
   Serial.println(F("-----------------------"));
   Serial.println();
