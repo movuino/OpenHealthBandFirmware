@@ -1,5 +1,5 @@
 
-name: Bump version
+name: Bump version FirmwarePeripheral
 
 on:
   push:
@@ -12,7 +12,8 @@ on:
       - 'src/firmwarePeripheral/**'
       
   workflow_dispatch:
-
+concurrency:
+  group: bumb-version
 jobs:
   build:
     runs-on: ubuntu-latest

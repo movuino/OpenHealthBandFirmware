@@ -1,5 +1,5 @@
 
-name: Bump version
+name: Bump version web-ble-refactored
 
 on:
   push:
@@ -12,7 +12,8 @@ on:
       - 'src/web-ble-refactored/**'
       
   workflow_dispatch:
-
+concurrency:
+  group: bumb-version
 jobs:
   build:
     runs-on: ubuntu-latest
