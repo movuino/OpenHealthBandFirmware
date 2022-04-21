@@ -20,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: 'main'
       - name: Edit version.h
         working-directory: ./src/firmwarePeripheral
         id: udpate-version
