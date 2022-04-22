@@ -3,7 +3,7 @@ void setupErrorService(void) {
   ErrorService.begin();
   ErrorCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
   ErrorCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ErrorCharacteristic.setFixedLen(4);
+  ErrorCharacteristic.setFixedLen(2);
   ErrorCharacteristic.setCccdWriteCallback(cccd_callback2);  // Optionally capture CCCD updates
   ErrorCharacteristic.begin();
 }
@@ -13,7 +13,7 @@ void setupIMUService(void)
   IMUService.begin();
   AccCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   AccCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  AccCharacteristic.setFixedLen(32);
+  AccCharacteristic.setFixedLen(11);
   AccCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
   AccCharacteristic.begin();
   /*Gyro*/

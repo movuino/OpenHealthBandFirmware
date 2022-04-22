@@ -77,13 +77,12 @@ void updateIMU() {
     if ( Bluefruit.connected()) {
       if (start_stop_Sending == "send") {
 
-        if ( ErrorCharacteristic.notify(bufError, 4) ) {
+        if ( ErrorCharacteristic.notify(bufError, 2) ) {
           //Serial.print("IMUCharacteristic updated to: ");
           //Serial.println(timeStampValue);
         } else {
           //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
-
 
         if ( AccCharacteristic.notify(bufAcc, 11) ) {
           //Serial.print("IMUCharacteristic updated to: ");
@@ -236,28 +235,17 @@ void testingSampleRateIMU() {
       getDataAcc_Gyr();
       getDataMag();
     }
-    /*
-      }
 
-      long endTimeIMU = micros();
-
-      Serial.print("IMU samples[");
-      Serial.print(samplesTakenIMU);
-      Serial.print("]");
-      Serial.println();
-      Serial.print("IMU Sample Rate : Hz[");
-      Serial.print((float)(samplesTakenIMU) / ((endTimeIMU - startTimeIMU) / 1000000.0), 2);
-      Serial.print("]");
-      Serial.println();
-      Serial.print("Elapsed Time : Us[");
-      Serial.print(endTimeIMU - startTimeIMU);
-      Serial.print("]");
-      Serial.println();
-      Serial.println();
-    */
 #ifdef BleTest
     if ( Bluefruit.connected()) {
       if (start_stop_Sending == "send") {
+
+        if ( ErrorCharacteristic.notify(bufError, 2) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
 
         if ( AccCharacteristic.notify(bufAcc, 11) ) {
           //Serial.print("IMUCharacteristic updated to: ");

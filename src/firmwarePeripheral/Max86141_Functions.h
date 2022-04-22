@@ -88,7 +88,6 @@ int ledMode[10];
 #include "LEDsConfiguration_Sensor.h"
 
 /* Sample Rate taken */
-//#define Sample_Rate
 #define SampleRatePPG
 
 /* Pin Definitions  */
@@ -444,14 +443,6 @@ void getDataPDsLEDs() {
   free(pulseOx1.tab_ledSeq1A_PD1);
   free(pulseOx1.tab_ledSeq1A_PD2);
 #endif
-
-#ifdef Sample_Rate
-  Serial.print("Sample Rate : Hz[");
-  Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
-  Serial.print("]");
-  Serial.println();
-  Serial.println();
-#endif
 }
 #endif
 
@@ -470,14 +461,6 @@ void getDataPDLEDs() {
   }
 
   free(pulseOx1.tab_ledSeq1A_PD1);
-#endif
-
-#ifdef Sample_Rate
-  Serial.print("Sample Rate : Hz[");
-  Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
-  Serial.print("]");
-  Serial.println();
-  Serial.println();
 #endif
 
   //---------------------------- Bluetooth Communication ----------------------------------//
@@ -582,13 +565,6 @@ void getDataPDsLED() {
   free(pulseOx1.tab_ledSeq1A_PD2);
 #endif
 
-#ifdef Sample_Rate
-  Serial.print("Sample Rate : Hz[");
-  Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
-  Serial.print("]");
-  Serial.println();
-  Serial.println();
-#endif
 
   //---------------------------- Bluetooth Communication ----------------------------------//
 #ifdef BleTest
@@ -727,24 +703,6 @@ void testingSampleRatePPG() {
       getDataPDsLEDs();
 #endif
     }
-    /*
-      }
-
-      long endTimePPG = micros();
-      Serial.print("PPG samples[");
-      Serial.print(samplesTakenPPG);
-      Serial.print("]");
-      Serial.println();
-      Serial.print("PPG Sample Rate : Hz[");
-      Serial.print((float)(samplesTakenPPG) / ((endTimePPG - startTimePPG) / 1000000.0), 2);
-      Serial.print("]");
-      Serial.println();
-      Serial.print("Elapsed Time : Us[");
-      Serial.print(endTimePPG - startTimePPG);
-      Serial.print("]");
-      Serial.println();
-      Serial.println();
-    */
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
@@ -760,14 +718,7 @@ void testingSampleRatePPG() {
           }
           shutdown_or_restart = 0;
         }
-/*
-        if ( ErrorCharacteristic.notify(bufError, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-*/
+
         if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
           //Serial.print("IMUCharacteristic updated to: ");
           //Serial.println(timeStampValue);
