@@ -18,6 +18,8 @@ void connect_callback(uint16_t conn_handle)
 {
   Serial.println("Connected");
   Serial.println();
+
+  
   Serial.println("##############################");
   Serial.print("Discovering Error Service ... ");
 
@@ -53,7 +55,8 @@ void connect_callback(uint16_t conn_handle)
   }
     Serial.println("##############################");
 
-
+  
+  
 #ifdef IMU9250
   Serial.println();
   Serial.println("##############################");

@@ -13,7 +13,7 @@ void setupIMUService(void)
   IMUService.begin();
   AccCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   AccCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  AccCharacteristic.setFixedLen(32);
+  AccCharacteristic.setFixedLen(11);
   AccCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
   AccCharacteristic.begin();
   /*Gyro*/
