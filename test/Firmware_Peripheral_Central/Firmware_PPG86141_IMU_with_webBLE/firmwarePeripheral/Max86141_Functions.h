@@ -88,7 +88,7 @@ int ledMode[10];
 #include "LEDsConfiguration_Sensor.h"
 
 /* Sample Rate taken */
-#define SampleRatePPG
+//#define SampleRatePPG
 
 /* Pin Definitions  */
 // #define MISO_PIN              19
@@ -177,7 +177,7 @@ void configurePPG86(void) {
 
 void updatePPG86(void) {
 
-    uint8_t intStatus;
+      uint8_t intStatus;
     //Read Status
     intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
     bool flagA_full = (intStatus & 0x80) >> 7;
@@ -202,8 +202,11 @@ void updatePPG86(void) {
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_SendingPPG == "send") {
 
+      ssCommand = StartCharacteristic.read8();
+
+      if (ssCommand == 1) { //Received 1 from Central to start sending data
+        
         if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
           //Init PPG 86140 - 86141/
           configurePPG86();
@@ -307,11 +310,19 @@ void updatePPG86(void) {
           // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
 #endif
+
+        if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
+          /// Change Intensity leds, sample rate and sample avearge of the Max86141 ///
+          pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8(), ledMode);
+          pulseOx1.setSample(smplAvgCharacteristic.read8(), smplRateCharacteristic.read8());
+          intensityLedsCharacteristic.write8(0);
+          smplRateCharacteristic.write8(0);
+          smplAvgCharacteristic.write8(0);
+        }
       }
     }
 
 #endif
-  
 
 }
 
@@ -719,8 +730,11 @@ void testingSampleRatePPG() {
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_SendingPPG == "send") {
 
+      ssCommand = StartCharacteristic.read8();
+
+      if (ssCommand == 1) { //Received 1 from Central to start sending data
+        
         if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
           //Init PPG 86140 - 86141/
           configurePPG86();
@@ -824,6 +838,15 @@ void testingSampleRatePPG() {
           // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
 #endif
+
+        if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
+          /// Change Intensity leds, sample rate and sample avearge of the Max86141 ///
+          pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8(), ledMode);
+          pulseOx1.setSample(smplAvgCharacteristic.read8(), smplRateCharacteristic.read8());
+          intensityLedsCharacteristic.write8(0);
+          smplRateCharacteristic.write8(0);
+          smplAvgCharacteristic.write8(0);
+        }
       }
     }
 

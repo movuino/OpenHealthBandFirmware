@@ -167,3 +167,27 @@ void setupHRM(void)
   bslc.begin();
   bslc.write8(2);    // Set the characteristic to 'Wrist' (2)
 }
+
+void setupStart_StopService(void) {
+  Start_StopService.begin();
+
+  StartCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  StartCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  StartCharacteristic.setFixedLen(1);
+  StartCharacteristic.begin();
+
+  intensityLedsCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  intensityLedsCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  intensityLedsCharacteristic.setFixedLen(1);
+  intensityLedsCharacteristic.begin();
+
+  smplRateCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  smplRateCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  smplRateCharacteristic.setFixedLen(1);
+  smplRateCharacteristic.begin();
+
+  smplAvgCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  smplAvgCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  smplAvgCharacteristic.setFixedLen(1);
+  smplAvgCharacteristic.begin();
+}

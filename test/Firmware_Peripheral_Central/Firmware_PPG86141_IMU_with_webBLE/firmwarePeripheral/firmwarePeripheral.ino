@@ -19,12 +19,11 @@ uint8_t bufError[2];
 #define BleTest
 
 
-/* Send or stop bluetooth communication */
-String start_stop_SendingPPG, start_stop_SendingIMU;
-
 /* Shutdown or restart the sensor */
 bool shutdown_or_restartPPG = 0, shutdown_or_restartIMU = 0;
 
+/*Start or Stop command received from Central*/
+bool ssCommand = 0;
 
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
@@ -37,6 +36,11 @@ BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
+BLEService Start_StopService = BLEService(0x1400);
+BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
+BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
+BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
+BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -146,6 +150,12 @@ void setup() {
   MagCharacteristic.write(bufMag, 10);
 #endif
 
+  setupStart_StopService();
+  StartCharacteristic.write8(0);
+  intensityLedsCharacteristic.write8(0);
+  smplRateCharacteristic.write8(0);
+  smplAvgCharacteristic.write8(0);
+
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
@@ -182,7 +192,7 @@ void loop() {
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
-    //updatePPG86();
+    updatePPG86();
 
 #ifdef SampleRatePPG
     testingSampleRatePPG();
@@ -193,7 +203,7 @@ void loop() {
 
 #ifdef IMU9250
   if (!errorIMU) {
-    //updateIMU();
+    updateIMU();
 
 #ifdef SampleRateIMU
     testingSampleRateIMU();
@@ -202,9 +212,9 @@ void loop() {
   }
 #endif
 
-  if (!Bluefruit.connected()) {
+  if (Bluefruit.connected()) {
     //Serial.println("No connected device");
-    if ( start_stop_SendingIMU == "stop" && start_stop_SendingPPG == "stop") {
+    if ( StartCharacteristic.read8() == 2) { //Received 2 from Central to stop sending data
       Serial.println("Device disconnected, data IMU & PPG not sent");
 
       // sleep device
@@ -215,10 +225,9 @@ void loop() {
       pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
 
       shutdown_or_restartIMU = 1;
-      start_stop_SendingIMU = "send";
-
       shutdown_or_restartPPG = 1;
-      start_stop_SendingPPG = "send";
+
+      StartCharacteristic.write8(0);
     }
   }
 #endif

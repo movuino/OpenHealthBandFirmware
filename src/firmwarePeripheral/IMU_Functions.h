@@ -11,7 +11,7 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 #define debugAcc
 #define debugGyr
 #define debugMag
-#define SampleRateIMU
+//#define SampleRateIMU
 
 MPU9250 mpu;
 MPU9250Setting setting;
@@ -74,7 +74,9 @@ void updateIMU() {
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_SendingIMU == "send") {
+      ssCommand = StartCharacteristic.read8();
+
+      if (ssCommand == 1) { //Received 1 from Central to start sending data
 
         if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
           //Init IMU/
@@ -117,9 +119,10 @@ void updateIMU() {
         }
 
       }
+
     }
 #endif
-  
+
 }
 
 void getDataAcc_Gyr() {
@@ -252,7 +255,9 @@ void testingSampleRateIMU() {
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_SendingIMU == "send") {
+      ssCommand = StartCharacteristic.read8();
+
+      if (ssCommand == 1) { //Received 1 from Central to start sending data
 
         if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
           //Init IMU/
@@ -295,6 +300,7 @@ void testingSampleRateIMU() {
         }
 
       }
+
     }
 #endif
   }

@@ -31,7 +31,7 @@ Those libraries are all available in the Arduino Library manager except MPU9250 
 
 #### Services and Characteristics for BLE
 
-The services and characteristics used for the BLE are :
+The following services and characteristics use **Notification** properties :
 
 ##### Error Service & characteristic
 The Error Characteristic allows to send boolean errors from IMU, PPG. Thus, when error is 0 data is detected else 1.
@@ -56,6 +56,9 @@ With the IMU Service and characteristics, data from accelerometer, gyrometer and
 |:------:|:------:|:------:|:------:|:------:|
 |AccCharacteristic | timestamp | AccX | AccY | AccZ |
 |GyroCharacteristic | timestamp | GX | GY | GZ |
+
+|10 bytes        | 4 bytes (0-3) | 2 bytes (4-5) | 2 bytes (6-7) | 2 bytes (8-9) |    
+|:------:|:------:|:------:|:------:|:------:|
 |MagCharacteristic | timestamp | MX | MY | MZ |
 
 ##### PPG Max 86140 - 86141 Service & Characteristics
@@ -109,15 +112,15 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 
 
 |        | PPG86Service | ledSeq1A_PPG1Characteristic3 | ledSeq1A_PPG2Characteristic3 | SNR1_2PPG1Characteristic3 | SNR2_2PPG2Characteristic3 |
-|:------:|:------:|:------:|:------:|:------:|:------:|
-|UUID | **0x1300** | **0x1309** | **0x1311** | **0x1317** | **0x1318** |
+|:------:|:------:		|:------:					   |:------:					  |:------:					  |:------:					  |
+|UUID 	 | **0x1300** 	| **0x1309** 				   | **0x1311** 				  | **0x1317** 				  | **0x1318** 				  |
 
 | 12 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) |    
 |:------:|:------:|:------:|:------:|
 |ledSeq1A_PPG1Characteristic3 | timestamp | sample 1 | sample 2 | 
 |ledSeq1A_PPG2Characteristic3 | timestamp | sample 1 | sample 2 |
 
-|4 bytes | 4 bytes (0-3) |
+|4 bytes 				   | 4 bytes (0-3) |
 |:------:|:------:|
 |SNR1_2PPG1Characteristic3 | SNR photo-diode 1 |
 |SNR2_2PPG1Characteristic3 | SNR photo-diode 2 |
@@ -126,6 +129,64 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 ##### HeartRate Service & characteristics
 
 In order to detect the peripheral in the Bluetooth Settings for iPhone, we added the HeartRate taken from Adafruit Bluefruit nrf52 librairies --> Peripheral. However, it is not sent by BLE. 
+
+The following service and characteristics use **READ and Write** properties :
+
+##### Start_Stop Service & characteristics
+
+With the Start_Stop Service and characteristics, central BLE can decide when to start or stop data transfert and change leds intensity, sample rate and sample average.
+
+|        | Start_StopService | StartCharacteristic | intensityLedsCharacteristic | smplRateCharacteristic | smplAvgCharacteristic |
+|:------:|:------:			 |:------:             |:------:                     |:------:                |:------:               |
+|UUID    | **0x1400**        | **0x1401**          | **0x1402**                  | **0x1403**             |**0x1404**             |
+
+|1 byte| 1 byte (0)     | 
+|:------:|:------:      |
+|StartCharacteristic | 1 (start) or 2 (stop)  |
+|intensityLedsCharacteristic | leds intensity |
+|smplRateCharacteristic | PPG sample rate     |
+|smplAvgCharacteristic | PPG sample average   |
+
+|Values  | leds intensity   | 
+|:------:|:------:          |
+|0 - 255 | leds off (min value) - leds on (max value) |
+
+|Values (integer) 	| PPG sample rate (Hz)  | 
+|:------:			|:------:      			|
+| 0 	 			|25   					| 
+|:------:			|:------:      			|
+| 1 	 			|50   					| 
+|:------:			|:------:      			|
+| 2 	 			|84   					| 
+|:------:			|:------:      			|
+| 3 	 			|100   					| 
+|:------:			|:------:      			|
+| 4 	 			|200   					| 
+|:------:			|:------:      			|
+| 5 	 			|400   					| 
+|:------:			|:------:      			|
+| 14 	 			|128   					| 
+|:------:			|:------:      			|
+| 15 	 			|256   					| 
+|:------:			|:------:      			|
+| 16 	 			|512   					| 
+
+|Values (integer)   | PG sample average (Hz)| 
+|:------:			|:------:      			|
+| 0 	 			|1   					| 
+|:------:			|:------:      			|
+| 1 	 			|2   					| 
+|:------:			|:------:      			|
+| 2 	 			|4   					| 
+|:------:			|:------:      			|
+| 3 	 			|8   					| 
+|:------:			|:------:      			|
+| 4 	 			|16   					| 
+|:------:			|:------:      			|
+| 5 	 			|32   					| 
+|:------:			|:------:      			|
+| 6 	 			|64   					| 
+
 
 #### Use
 
