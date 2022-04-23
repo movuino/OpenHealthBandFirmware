@@ -177,40 +177,61 @@ void configurePPG86(void) {
 
 void updatePPG86(void) {
 
-  uint8_t intStatus;
-  //Read Status
-  intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
-  bool flagA_full = (intStatus & 0x80) >> 7;
+    uint8_t intStatus;
+    //Read Status
+    intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+    bool flagA_full = (intStatus & 0x80) >> 7;
 
-  /////// if there is 8 data in the FIFO ///////
-  if (flagA_full) {
-    int fifo_size = pulseOx1.device_data_read1();
+    /////// if there is 8 data in the FIFO ///////
+    if (flagA_full) {
+      int fifo_size = pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+      getDataPDsLEDs();
+#endif
 
 #ifdef PDsLED
-    getDataPDsLED();
+      getDataPDsLED();
 #endif
 
 #ifdef PDLEDs
-    getDataPDLEDs();
+      getDataPDLEDs();
 #endif
 
-#ifdef PDsLEDs
-    getDataPDsLEDs();
-#endif
+    }
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_Sending == "send") {
+      if (start_stop_SendingPPG == "send") {
 
-        if (shutdown_or_restart == 1) { // the sensor was shutdown
+        if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
           //Init PPG 86140 - 86141/
-          samplesTaken = 0;
           configurePPG86();
 
           if (!errorPPG86) {
-            updatePPG86();
+            uint8_t intStatus;
+            //Read Status
+            intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+            bool flagA_full = (intStatus & 0x80) >> 7;
+
+            /////// if there is 8 data in the FIFO ///////
+            if (flagA_full) {
+              int fifo_size = pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+              getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+              getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+              getDataPDLEDs();
+#endif
+            }
           }
-          shutdown_or_restart = 0;
+          shutdown_or_restartPPG = 0;
         }
 
 #ifdef PDsLED
@@ -286,31 +307,16 @@ void updatePPG86(void) {
           // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
 #endif
-
       }
     }
-    else {
-      //Serial.println("No connected device");
-      if ( start_stop_Sending == "stop" ) {
-        Serial.println("Device disconnected, data not sent");
 
-        //#ifdef PPG_Max86141
-        //Shutdown PPG/
-        pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-        //#endif
-
-        shutdown_or_restart = 1;
-        start_stop_Sending = "send";
-      }
-    }
 #endif
-  }
-  Serial.println();
+  
+
 }
 
 #ifdef PDsLEDs
 void getDataPDsLEDs() {
-  samplesTaken = samplesTaken + 2;
 
   //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
@@ -449,11 +455,8 @@ void getDataPDsLEDs() {
 #ifdef PDLEDs
 void getDataPDLEDs() {
 
-  samplesTaken = samplesTaken + 4;
-
   //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
-  samplesTaken = samplesTaken + 4;
   Serial.println("----- PPG data ----- :");
   Serial.println("Reading all data from PD1: ");
   for (int i = 0; i < fifo_size / 2; i++) {
@@ -546,7 +549,6 @@ void getDataPDLEDs() {
 
 #ifdef PDsLED
 void getDataPDsLED() {
-  samplesTaken = samplesTaken + 2;
   //---------------------------- Serial Communication -------------------------------------//
 
 #ifdef SerialTest
@@ -702,23 +704,99 @@ void testingSampleRatePPG() {
       samplesTakenPPG += 2;
       getDataPDsLEDs();
 #endif
+
+#ifdef PDsLED
+      samplesTakenPPG += 2;
+      getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+      samplesTakenPPG += 4;
+      getDataPDLEDs();
+#endif
+
     }
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_Sending == "send") {
+      if (start_stop_SendingPPG == "send") {
 
-        if (shutdown_or_restart == 1) { // the sensor was shutdown
+        if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
           //Init PPG 86140 - 86141/
-          samplesTaken = 0;
           configurePPG86();
 
           if (!errorPPG86) {
-            updatePPG86();
+            uint8_t intStatus;
+            //Read Status
+            intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+            bool flagA_full = (intStatus & 0x80) >> 7;
+
+            /////// if there is 8 data in the FIFO ///////
+            if (flagA_full) {
+              int fifo_size = pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+              getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+              getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+              getDataPDLEDs();
+#endif
+            }
           }
-          shutdown_or_restart = 0;
+          shutdown_or_restartPPG = 0;
         }
 
+#ifdef PDsLED
+        if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 12) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+
+        if ( ledSeq1A_PPG2Characteristic2.notify( pt_ledSeq1A_PD2_2, 12) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+
+        if (  SNR1_2PPG1Characteristic2.notify( SNR1_2, 4) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+        if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+#endif
+
+#ifdef PDLEDs
+        if ( ledSeq1A_PPG1Characteristic1.notify( pt_ledSeq1A_PD1_1, 20) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+
+        if (  SNR1_1PPG1Characteristic1.notify( SNR1_1, 4) ) {
+          //Serial.print("IMUCharacteristic updated to: ");
+          //Serial.println(timeStampValue);
+        } else {
+          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        }
+#endif
+
+#ifdef PDsLEDs
         if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
           //Serial.print("IMUCharacteristic updated to: ");
           //Serial.println(timeStampValue);
@@ -745,23 +823,10 @@ void testingSampleRatePPG() {
         } else {
           // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
+#endif
       }
     }
 
-    else {
-      //Serial.println("No connected device");
-      if ( start_stop_Sending == "stop" ) {
-        Serial.println("Device disconnected, data not sent");
-
-        //#ifdef PPG_Max86141
-        //Shutdown PPG/
-        pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-        //#endif
-
-        shutdown_or_restart = 1;
-        start_stop_Sending = "send";
-      }
-    }
 #endif
   }
 

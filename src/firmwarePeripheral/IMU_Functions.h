@@ -41,7 +41,7 @@ void configureIMU() {
   setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
   setting.gyro_fs_sel = GYRO_FS_SEL::G2000DPS;
   setting.mag_output_bits = MAG_OUTPUT_BITS::M16BITS;
-  setting.fifo_sample_rate = FIFO_SAMPLE_RATE::SMPL_333HZ;
+  setting.fifo_sample_rate = FIFO_SAMPLE_RATE::SMPL_125HZ;
   setting.gyro_fchoice = 0x00;
   setting.gyro_dlpf_cfg = GYRO_DLPF_CFG::DLPF_184HZ;
   setting.accel_fchoice = 0x01;
@@ -58,24 +58,36 @@ void configureIMU() {
     errorIMU = false;
   }
 
-  /*Low Power Mode Acc, 10 => 250Hz Output Rate Data*/
-  uint8_t waking_up_frequencyLPM = 10;
+  /*Low Power Mode Acc, 9 => 125Hz Output Rate Data*/
+  uint8_t waking_up_frequencyLPM = 9;
   mpu.write_byte(0x69, LP_ACCEL_ODR, waking_up_frequencyLPM);
-  Serial.println(mpu.read_byte(0x69, LP_ACCEL_ODR));
 
   Serial.println();
 }
 
 void updateIMU() {
 
-  if (mpu.update()) {
-
-    getDataAcc_Gyr();
-    getDataMag();
+    if (mpu.update()) {
+      getDataAcc_Gyr();
+      getDataMag();
+    }
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_Sending == "send") {
+      if (start_stop_SendingIMU == "send") {
+
+        if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
+          //Init IMU/
+          configureIMU();
+
+          if (!errorIMU) {
+            if (mpu.update()) {
+              getDataAcc_Gyr();
+              getDataMag();
+            }
+          }
+          shutdown_or_restartIMU = 0;
+        }
 
         if ( ErrorCharacteristic.notify(bufError, 2) ) {
           //Serial.print("IMUCharacteristic updated to: ");
@@ -96,16 +108,18 @@ void updateIMU() {
         } else {
           //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
+
         if ( MagCharacteristic.notify(bufMag, 10) ) {
           //Serial.print("IMUCharacteristic updated to: ");
           //Serial.println(timeStampValue);
         } else {
           //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
+
       }
     }
 #endif
-  }
+  
 }
 
 void getDataAcc_Gyr() {
@@ -238,7 +252,20 @@ void testingSampleRateIMU() {
 
 #ifdef BleTest
     if ( Bluefruit.connected()) {
-      if (start_stop_Sending == "send") {
+      if (start_stop_SendingIMU == "send") {
+
+        if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
+          //Init IMU/
+          configureIMU();
+
+          if (!errorIMU) {
+            if (mpu.update()) {
+              getDataAcc_Gyr();
+              getDataMag();
+            }
+          }
+          shutdown_or_restartIMU = 0;
+        }
 
         if ( ErrorCharacteristic.notify(bufError, 2) ) {
           //Serial.print("IMUCharacteristic updated to: ");
@@ -259,6 +286,7 @@ void testingSampleRateIMU() {
         } else {
           //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
         }
+
         if ( MagCharacteristic.notify(bufMag, 10) ) {
           //Serial.print("IMUCharacteristic updated to: ");
           //Serial.println(timeStampValue);

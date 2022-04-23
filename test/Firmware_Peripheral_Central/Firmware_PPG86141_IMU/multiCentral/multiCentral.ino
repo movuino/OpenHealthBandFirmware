@@ -76,7 +76,7 @@ int errorFlag = 0;
 
 void setup() {
   Serial.begin(115200);
-  while ( !Serial )
+  //while ( !Serial )
   delay(10);   // for nrf52840 with native usb
 
   Serial.println("Initialise the Bluefruit nRF52 module");
@@ -137,10 +137,13 @@ void setup() {
   // set up callback for receiving measurement
   AccCharacteristic.setNotifyCallback(AccCharacteristic_notify_callback);
   AccCharacteristic.begin();
+  
   GyroCharacteristic.setNotifyCallback(GyroCharacteristic_notify_callback);
   GyroCharacteristic.begin();
+
   MagCharacteristic.setNotifyCallback(MagCharacteristic_notify_callback);
   MagCharacteristic.begin();
+  
 #endif
 
   // Increase Blink rate to different from PrPh advertising mode
@@ -153,7 +156,7 @@ void setup() {
   Bluefruit.Scanner.setRxCallback(scan_callback);
   Bluefruit.Scanner.restartOnDisconnect(true);
   Bluefruit.Scanner.setInterval(160, 80); // in unit of 0.625 ms
-  //Bluefruit.Scanner.filterUuid(ErrorService.uuid);
+  Bluefruit.Scanner.filterUuid(ErrorService.uuid);
   Bluefruit.Scanner.useActiveScan(false);
   Bluefruit.Scanner.start(0);
 }

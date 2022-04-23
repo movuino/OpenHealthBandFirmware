@@ -109,6 +109,7 @@ void connect_callback(uint16_t conn_handle)
     Serial.println("Couldn't enable notify GyroCharacteristic. Increase DEBUG LEVEL for troubleshooting");
   }
 
+
   if ( !MagCharacteristic.discover() )
   {
     // Measurement chr is mandatory, if it is not found (valid), then disconnect
@@ -125,8 +126,9 @@ void connect_callback(uint16_t conn_handle)
   }
   else
   {
-    Serial.println("Couldn't enable notify GyroCharacteristic. Increase DEBUG LEVEL for troubleshooting");
+    Serial.println("Couldn't enable notify MagCharacteristic. Increase DEBUG LEVEL for troubleshooting");
   }
+
     Serial.println("##############################");
 
 #endif
