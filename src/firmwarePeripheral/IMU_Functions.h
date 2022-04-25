@@ -17,6 +17,15 @@ MPU9250 mpu;
 MPU9250Setting setting;
 
 float aX, aY, aZ, gX, gY, gZ, mX, mY, mZ;
+
+float acc_resolution = 0.00049;
+float gyro_resolution = 0.06;
+float mag_resolution = 1.50;
+float mag_bias_factory_0 = 1.18, mag_bias_factory_1 = 1.19, mag_bias_factory_2 = 1.14;
+float mag_scale_0 = 1.00, mag_scale_1 = 1.00, mag_scale_2 = 1.00;
+float mag_bias_0 = 0.00, mag_bias_1 = 0.00, mag_bias_2 = 0.00;
+float bias_to_current_bits = 1.00;
+
 uint8_t*  accelBuf;
 uint8_t*  gyroBuf;
 uint8_t*  magBuf;
@@ -67,60 +76,60 @@ void configureIMU() {
 
 void updateIMU() {
 
-    if (mpu.update()) {
-      getDataAcc_Gyr();
-      getDataMag();
-    }
+  if (mpu.update()) {
+    getDataAcc_Gyr();
+    getDataMag();
+  }
 
 #ifdef BleTest
-    if ( Bluefruit.connected()) {
-      ssCommand = StartCharacteristic.read8();
+  if ( Bluefruit.connected()) {
+    ssCommand = StartCharacteristic.read8();
 
-      if (ssCommand == 1) { //Received 1 from Central to start sending data
+    if (ssCommand == 1) { // Received 1 from Central to start sending data
 
-        if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
-          //Init IMU/
-          configureIMU();
+      if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
+        //Init IMU/
+        configureIMU();
 
-          if (!errorIMU) {
-            if (mpu.update()) {
-              getDataAcc_Gyr();
-              getDataMag();
-            }
+        if (!errorIMU) {
+          if (mpu.update()) {
+            getDataAcc_Gyr();
+            getDataMag();
           }
-          shutdown_or_restartIMU = 0;
         }
+        shutdown_or_restartIMU = 0;
+      }
 
-        if ( ErrorCharacteristic.notify(bufError, 2) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
+      if ( ErrorCharacteristic.notify(bufError, 2) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
 
-        if ( AccCharacteristic.notify(bufAcc, 11) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-        if ( GyroCharacteristic.notify(bufGyro, 11) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
+      if ( AccCharacteristic.notify(bufAcc, 11) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
+      if ( GyroCharacteristic.notify(bufGyro, 11) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+      }
 
-        if ( MagCharacteristic.notify(bufMag, 10) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
+      if ( MagCharacteristic.notify(bufMag, 10) ) {
+        //Serial.print("IMUCharacteristic updated to: ");
+        //Serial.println(timeStampValue);
+      } else {
+        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
       }
 
     }
+
+  }
 #endif
 
 }
@@ -145,13 +154,13 @@ void getDataAcc_Gyr() {
 #ifdef SerialTest
 #ifdef debugAcc
   int16_t v_acc = ((int16_t) raw_data[0] << 8) | (int16_t)raw_data[1];
-  aX = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+  aX = (float)v_acc * acc_resolution;
 
   v_acc = ((int16_t) raw_data[2] << 8) | (int16_t)raw_data[3];
-  aY = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+  aY = (float)v_acc * acc_resolution;
 
   v_acc = ((int16_t) raw_data[4] << 8) | (int16_t)raw_data[5];
-  aZ = (float)v_acc * mpu.get_acc_resolution(setting.accel_fs_sel);
+  aZ = (float)v_acc * acc_resolution;
 
   Serial.println("----- Accelerometer data ----- :");
   Serial.print(String(aX));
@@ -180,13 +189,13 @@ void getDataAcc_Gyr() {
 #ifdef SerialTest
 #ifdef debugGyr
   int16_t v_gyr = ((int16_t) raw_data[8] << 8) | (int16_t)raw_data[9];
-  gX = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+  gX = (float)v_gyr * gyro_resolution;
 
   v_gyr = ((int16_t) raw_data[10] << 8) | (int16_t)raw_data[11];
-  gY = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+  gY = (float)v_gyr * gyro_resolution;
 
   v_gyr = ((int16_t) raw_data[12] << 8) | (int16_t)raw_data[13];
-  gZ = (float)v_gyr * mpu.get_gyro_resolution(setting.gyro_fs_sel);
+  gZ = (float)v_gyr * gyro_resolution;
 
   Serial.println("----- Gyrometer data ----- :");
   Serial.print(String(gX));
@@ -218,15 +227,14 @@ void getDataMag() {
   //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef debugMag
-  float bias_to_current_bits = mpu.get_mag_resolution(setting.mag_output_bits) / mpu.get_mag_resolution(MAG_OUTPUT_BITS::M16BITS);
   int16_t v_mag = ((int16_t) raw_data_mag[1] << 8) | (int16_t)raw_data_mag[0];
-  mX = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[0] - mpu.mag_bias[0] * bias_to_current_bits) * mpu.mag_scale[0];
+  mX = (float) (v_mag * mag_resolution * mag_bias_factory_0 - mag_bias_0 * bias_to_current_bits) * mag_scale_0;
 
   v_mag = ((int16_t) raw_data_mag[3] << 8) | (int16_t)raw_data_mag[2];
-  mY = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[1] - mpu.mag_bias[1] * bias_to_current_bits) * mpu.mag_scale[1];
+  mY = (float) (v_mag * mag_resolution * mag_bias_factory_1 - mag_bias_1 * bias_to_current_bits) * mag_scale_1;
 
   v_mag = ((int16_t) raw_data_mag[5] << 8) | (int16_t)raw_data_mag[4];
-  mZ = (float) (v_mag * mpu.get_mag_resolution(setting.mag_output_bits) * mpu.mag_bias_factory[2] - mpu.mag_bias[2] * bias_to_current_bits) * mpu.mag_scale[2];
+  mZ = (float) (v_mag * mag_resolution * mag_bias_factory_2 - mag_bias_2 * bias_to_current_bits) * mag_scale_2;
 
   Serial.println("----- Magnetometer data ----- :");
   Serial.print(String(mX));
@@ -235,6 +243,8 @@ void getDataMag() {
   Serial.print(" ");
   Serial.print(String(mZ));
   Serial.println(" ");
+  Serial.println();  
+  Serial.println();
 #endif
 #endif
 }

@@ -14,7 +14,7 @@ uint8_t bufError[2];
 
 /* Tests */
 /* Print data on Serial Monitor when BLE is unenabled */
-//#define SerialTest
+#define SerialTest
 /* Sending data when BLE is enabled */
 #define BleTest
 
