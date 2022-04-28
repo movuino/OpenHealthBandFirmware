@@ -26,6 +26,9 @@
 // Sensor composed with 2 PDs and 3 LEDs //
 #define PDsLEDs
 
+extern BLECharacteristic SNR1_3PPG1Characteristic3;
+extern BLECharacteristic SNR2_3PPG2Characteristic3;
+#define CHECK_NOTIFICATION(condition) if (!condition) Serial.printf("Notification failed on line %d\n", __LINE__);
 
 #ifdef PDLEDs
 //////////// Pointers used to send timestamp, 4 samples PD1 and SNR by Bluetooth /////////////
@@ -134,7 +137,7 @@ void configurePPG86(void) {
 
   startTime = millis();
 
-  Serial.println();
+  //Serial.println();
 
 }
 
@@ -172,8 +175,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 #endif
 
@@ -191,8 +194,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 #endif
 
@@ -216,8 +219,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 #endif
 #endif
@@ -242,8 +245,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 
     ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
@@ -371,8 +374,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 
     ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
@@ -453,7 +456,7 @@ void updatePPG86(void) {
 #endif
 
 #ifdef PDsLEDs
-    samplesTaken = samplesTaken + 2;
+    // samplesTaken = samplesTaken + 2;
     /*
       Serial.println("----- PPG data ----- :");
       for (int i = 0; i < fifo_size / 4; i++) {
@@ -468,8 +471,8 @@ void updatePPG86(void) {
     Serial.print("Sample Rate : Hz[");
     Serial.print((float)(samplesTaken) / ((millis() - startTime) / 1000.0), 2);
     Serial.print("]");
-    Serial.println();
-    Serial.println();
+    //Serial.println();
+    //Serial.println();
 #endif
 
     ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
@@ -507,8 +510,7 @@ void updatePPG86(void) {
         if (cpt1 == SIZE) {
           //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
           snr_pd1 = pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE);
-          int var = 0;
-          var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
+          int var = 100 * snr_pd1;
           if (var < 0) {
             int a = -100 * var;
             SNR1_3[3] = (uint8_t)a;
@@ -523,6 +525,7 @@ void updatePPG86(void) {
             SNR1_3[0] = (uint8_t)(var >>= 8);
           }
           cpt1 = 0;
+          CHECK_NOTIFICATION(SNR1_3PPG1Characteristic3.notify(SNR1_3, 4))
         }
 
       }
@@ -555,8 +558,7 @@ void updatePPG86(void) {
         if (cpt2 == SIZE) {
           //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
           snr_pd2 = pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE);
-          int var = 0;
-          var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
+          int var = 100 * snr_pd2;
           if (var < 0) {
             int a = -100 * var;
             SNR2_3[3] = (uint8_t)a;
@@ -570,6 +572,7 @@ void updatePPG86(void) {
             SNR2_3[1] = (uint8_t)(var >>= 8);
             SNR2_3[0] = (uint8_t)(var >>= 8);
           }
+          CHECK_NOTIFICATION(SNR2_3PPG2Characteristic3.notify(SNR2_3, 4))
           cpt2 = 0;
         }
       }
@@ -588,6 +591,6 @@ void updatePPG86(void) {
 
 #endif
   }
-  Serial.println();
+  //Serial.println();
 
 }
