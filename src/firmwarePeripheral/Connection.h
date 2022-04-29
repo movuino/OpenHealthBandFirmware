@@ -1,4 +1,5 @@
 
+#include <bluefruit.h>
 void connect_callback(uint16_t conn_handle)
 {
   // Get the reference to current connection
@@ -8,19 +9,20 @@ void connect_callback(uint16_t conn_handle)
   char central_name[32] = { 0 };
   connection->getPeerName(central_name, sizeof(central_name));
   // request mtu exchange
-  Serial.println("Request to change MTU " + String(connection->requestMtuExchange(247)));
+  // Serial.println("Request to change MTU " + String(connection->requestMtuExchange(247)));
 
-  Serial.print("MTU: ");
-  Serial.print(connection->getMtu());
-  Serial.println(" ");
-  Serial.print("Connection interval: ");
-  Serial.print(connection->getConnectionInterval());
-  Serial.println(" ");
-  Serial.print("PHY length: ");
-  Serial.print(connection->getPHY());
-  Serial.println("data lenght " + String(connection->getDataLength()));
-  Serial.println(" ");
-  Serial.print("Connected to ");
+  // Serial.print("MTU: ");
+  // Serial.print(connection->getMtu());
+  // Serial.println(" ");
+  // Serial.print("Connection interval: ");
+  // Serial.print(connection->getConnectionInterval());
+  // Serial.println(" ");
+  // Serial.print("PHY length: ");
+  // Serial.print(connection->getPHY());
+  // Serial.println("data lenght " + String(connection->getDataLength()));
+  // Serial.println(" ");
+  // Serial.print("Connected to ");dd
+  connection->requestConnectionParameter(6);
   Serial.println(central_name);
   start_stop_Sending = "send";
 }

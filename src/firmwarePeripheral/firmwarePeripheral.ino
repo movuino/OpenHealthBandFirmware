@@ -1,7 +1,7 @@
 #include <bluefruit.h>
 #include <Wire.h>
 
-BLEConnection* connection;
+BLEConnection *connection;
 
 /* Bool Errors  */
 bool errorIMU = true;
@@ -35,7 +35,6 @@ String start_stop_Sending;
 /* Shutdown or restart the sensor */
 bool shutdown_or_restart;
 
-
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
 BLECharacteristic ErrorCharacteristic = BLECharacteristic(0x1201);
@@ -49,10 +48,18 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 /* PPG Max 86140 - 86141 Service & Characteristics*/
 BLEService PPG86Service = BLEService(0x1300);
 
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
+  if (!condition)                     \
+    Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
+
 #ifdef PDLEDs
 ////// PDLEDs (1 PD - 2 LEDs) //////
 BLECharacteristic ledSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1301);
-//BLECharacteristic tagSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1302);
+// BLECharacteristic tagSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1302);
 ////// SNR (Signal Noise Ratio) //////
 BLECharacteristic SNR1_1PPG1Characteristic1 = BLECharacteristic(0x1315);
 #endif
@@ -60,9 +67,9 @@ BLECharacteristic SNR1_1PPG1Characteristic1 = BLECharacteristic(0x1315);
 #ifdef PDsLED
 ///// PDsLED (2 PDs - 1 LED) //////
 BLECharacteristic ledSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1305);
-//BLECharacteristic tagSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1306);
+// BLECharacteristic tagSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1306);
 BLECharacteristic ledSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1307);
-//BLECharacteristic tagSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1308);
+// BLECharacteristic tagSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1308);
 ////// SNR (Signal Noise Ratio) //////
 BLECharacteristic SNR1_2PPG1Characteristic2 = BLECharacteristic(0x1313);
 BLECharacteristic SNR2_2PPG2Characteristic2 = BLECharacteristic(0x1314);
@@ -71,20 +78,18 @@ BLECharacteristic SNR2_2PPG2Characteristic2 = BLECharacteristic(0x1314);
 #ifdef PDsLEDs
 ////// PDsLEDs (2 PDs - 3 LEDs) //////
 BLECharacteristic ledSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1309);
-//BLECharacteristic tagSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1310);
+// BLECharacteristic tagSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1310);
 BLECharacteristic ledSeq1A_PPG2Characteristic3 = BLECharacteristic(0x1311);
-//BLECharacteristic tagSeq1B_PPG2Characteristic3 = BLECharacteristic(0x1312);
+// BLECharacteristic tagSeq1B_PPG2Characteristic3 = BLECharacteristic(0x1312);
 ////// SNR (Signal Noise Ratio) //////
 BLECharacteristic SNR1_3PPG1Characteristic3 = BLECharacteristic(0x1317);
 BLECharacteristic SNR2_3PPG2Characteristic3 = BLECharacteristic(0x1318);
 #endif
 
+BLEDis bledis; // DIS (Device Information Service) helper class instance
+BLEBas blebas; // BAS (Battery Service) helper class instance
 
-BLEDis bledis;    // DIS (Device Information Service) helper class instance
-BLEBas blebas;    // BAS (Battery Service) helper class instance
-
-
-BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
+BLEService hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
@@ -92,11 +97,12 @@ BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 #include "Connection.h"
 #include "Services.h"
 
-void setup() {
+void setup()
+{
 
   Serial.begin(115200);
-  //while ( !Serial )
-  delay(10);   // for nrf52840 with native usb
+  // while ( !Serial )
+  delay(10); // for nrf52840 with native usb
 
   // Initialise the Bluefruit module
   Serial.println("Setting Device Name to 'Open Health Band'");
@@ -118,6 +124,7 @@ void setup() {
   // Set the connect/disconnect callback handlers
   Bluefruit.Periph.setConnectCallback(connect_callback);
   Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
+  Bluefruit.Periph.setConnInterval(6, 12); // 7.5 - 15 ms
 
   // Configure and Start the Device Information Service
   Serial.println("Configuring the Device Information Service");
@@ -135,7 +142,7 @@ void setup() {
   Serial.println("Configuring the Heart Rate Monitor Service");
   setupHRM();
 
-  Serial.println();
+  // Serial.println();
 
   /*Init Sensors*/
 
@@ -188,48 +195,33 @@ void setup() {
   MagCharacteristic.write(bufMag, 10);
 #endif
 
-
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
 
   Serial.println("Ready Player One!!!");
   Serial.println("\nAdvertising");
-  Serial.println();
-
+  // Serial.println();
 }
 
-void loop() {
-
-  /* Update Sensors for new values */
-#ifdef SerialTest
-
-#ifdef PPG_Max86141
-  if (!errorPPG86) {
-    updatePPG86();
-  }
-#endif
-
-#ifdef IMU9250
-  if (!errorIMU) {
-    updateIMU();
-  }
-#endif
-
-#endif
+void loop()
+{
 
   /* Sending data by Bluetooth */
-  if ( Bluefruit.connected()) {
+  if (Bluefruit.connected())
+  {
 
-    if (start_stop_Sending == "send") {
-
-      if (shutdown_or_restart == 1) { // the sensor was shutdown
+    if (start_stop_Sending == "send")
+    {
+      if (shutdown_or_restart == 1)
+      { // the sensor was shutdown
 #ifdef PPG_Max86141
         /*Init PPG 86140 - 86141*/
         samplesTaken = 0;
         configurePPG86();
 
-        if (!errorPPG86) {
+        if (!errorPPG86)
+        {
           updatePPG86();
         }
 #endif
@@ -237,140 +229,58 @@ void loop() {
       }
 
 #ifdef PPG_Max86141
-      if (!errorPPG86) {
+      if (!errorPPG86)
+      {
         updatePPG86();
       }
 #endif
 
 #ifdef IMU9250
-      if (!errorIMU) {
+      if (!errorIMU)
+      {
         updateIMU();
       }
 #endif
 
-      if ( ErrorCharacteristic.notify(bufError, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
 #ifdef IMU9250
-      if ( AccCharacteristic.notify(bufAcc, 11) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if ( GyroCharacteristic.notify(bufGyro, 11) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if ( MagCharacteristic.notify(bufMag, 10) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
+      CHECK_NOTIFICATION(AccCharacteristic.notify(bufAcc, 11))
+      CHECK_NOTIFICATION(GyroCharacteristic.notify(bufGyro, 11))
+      CHECK_NOTIFICATION(MagCharacteristic.notify(bufMag, 10))
 #endif
+#ifdef PPG_Max86141
+# ifdef PDsLED
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+      CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+      CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+# endif
+
+# ifdef PDLEDs
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+      CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+# endif
+
+# ifdef PDsLEDs
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic3.notify(pt_ledSeq1A_PD1_3, 12))
+      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic3.notify(pt_ledSeq1A_PD2_3, 12))
+# endif
+#endif
+    }
+    else
+    {
+      // Serial.println("No connected device");
+      if (start_stop_Sending == "stop")
+      {
+        Serial.println("Device disconnected, data not sent");
 
 #ifdef PPG_Max86141
-#ifdef PDsLED
-      if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( ledSeq1A_PPG2Characteristic2.notify( pt_ledSeq1A_PD2_2, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_2PPG1Characteristic2.notify( SNR1_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
+        /*Shutdown PPG*/
+        pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); // Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
 #endif
 
-#ifdef PDLEDs
-      if ( ledSeq1A_PPG1Characteristic1.notify( pt_ledSeq1A_PD1_1, 20) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
+        shutdown_or_restart = 1;
+        start_stop_Sending = "send";
       }
-
-      if (  SNR1_1PPG1Characteristic1.notify( SNR1_1, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-#endif
-
-#ifdef PDsLEDs
-      if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-#endif
-
-#endif
-
-    }
-
-  }
-
-  else {
-    //Serial.println("No connected device");
-    if ( start_stop_Sending == "stop" ) {
-      Serial.println("Device disconnected, data not sent");
-
-#ifdef PPG_Max86141
-      /*Shutdown PPG*/
-      pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-#endif
-
-      shutdown_or_restart = 1;
-      start_stop_Sending = "send";
     }
   }
-
 }

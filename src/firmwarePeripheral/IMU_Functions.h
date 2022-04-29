@@ -21,7 +21,7 @@ uint8_t bufMag[10];
 //#define debugAcc
 //#define debugGyr
 //#define debugMag
-#define SampleRateIMU
+// #define SampleRateIMU
 
 void configureIMU() {
 
@@ -57,7 +57,7 @@ void configureIMU() {
   
   startTimeImu = millis();
 
-  Serial.println();
+  // Serial.println();
 
 }
 void updateIMU() {
@@ -67,9 +67,9 @@ void updateIMU() {
 
     uint32_t timestamp = millis();
     bufAcc[3] = (uint8_t)timestamp;
-    bufAcc[2] = (uint8_t)(timestamp >>= 8);
-    bufAcc[1] = (uint8_t)(timestamp >>= 8);
-    bufAcc[0] = (uint8_t)(timestamp >>= 8);
+    bufAcc[2] = (uint8_t)(timestamp >> 8);
+    bufAcc[1] = (uint8_t)(timestamp >> 16);
+    bufAcc[0] = (uint8_t)(timestamp >> 24);
     bufAcc[4] = 16;
 
     for (int i = 5; i <= 10; i++) {
@@ -95,11 +95,11 @@ void updateIMU() {
     Serial.println(" ");
 #endif
 
-    uint32_t timestamp1 = millis();
-    bufGyro[3] = (uint8_t)timestamp1;
-    bufGyro[2] = (uint8_t)(timestamp1 >>= 8);
-    bufGyro[1] = (uint8_t)(timestamp1 >>= 8);
-    bufGyro[0] = (uint8_t)(timestamp1 >>= 8);
+    // uint32_t timestamp1 = millis();
+    bufGyro[3] = (uint8_t)timestamp;
+    bufGyro[2] = (uint8_t)(timestamp >> 8);
+    bufGyro[1] = (uint8_t)(timestamp >> 16);
+    bufGyro[0] = (uint8_t)(timestamp >> 24);
     bufGyro[4] = 16;
 
     for (int i = 5; i <= 10; i++) {
@@ -125,11 +125,11 @@ void updateIMU() {
     Serial.println(" ");
 #endif
 
-    uint32_t timestamp2 = millis();
-    bufMag[3] = (uint8_t)timestamp2;
-    bufMag[2] = (uint8_t)(timestamp2 >>= 8);
-    bufMag[1] = (uint8_t)(timestamp2 >>= 8);
-    bufMag[0] = (uint8_t)(timestamp2 >>= 8);
+    // uint32_t timestamp2 = millis();
+    bufMag[3] = (uint8_t)timestamp;
+    bufMag[2] = (uint8_t)(timestamp >> 8);
+    bufMag[1] = (uint8_t)(timestamp >> 16);
+    bufMag[0] = (uint8_t)(timestamp >> 24);
 
     raw_data_mag =  mpu.raw_data_mag;
 
@@ -158,13 +158,12 @@ void updateIMU() {
 #endif
 
 #ifdef SampleRateIMU
-    samplesTakenImu = samplesTakenImu + 1;
-    Serial.println();
-    Serial.print("Sample Rate : Hz[");
-    Serial.print((float)(samplesTakenImu) / ((millis() - startTimeImu) / 1000.0), 2);
-    Serial.print("]");
-    Serial.println();
-    Serial.println();
+    // samplesTakenImu = samplesTakenImu + 1;
+    // Serial.print("Sample Rate : Hz[");
+    // Serial.print((float)(samplesTakenImu) / ((millis() - startTimeImu) / 1000.0), 2);
+    // Serial.print("]");
+    // Serial.println();
+    // Serial.println();
 #endif
   }
 }
