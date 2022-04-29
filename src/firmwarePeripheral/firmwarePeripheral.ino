@@ -48,9 +48,13 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 /* PPG Max 86140 - 86141 Service & Characteristics*/
 BLEService PPG86Service = BLEService(0x1300);
 
-#define CHECK_NOTIFICATION(condition) \
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
   if (!condition)                     \
     Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
 
 #ifdef PDLEDs
 ////// PDLEDs (1 PD - 2 LEDs) //////
