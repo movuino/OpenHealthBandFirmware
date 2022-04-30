@@ -632,3 +632,123 @@ void getDataPDsLED() {
 #endif
 }
 #endif
+
+void testingSampleRatePPG() {
+
+  long startTimePPG = micros();
+  long samplesTakenPPG = 0;
+
+  while (samplesTakenPPG < 125) {
+    uint8_t intStatus;
+    //Read Status
+    intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+    bool flagA_full = (intStatus & 0x80) >> 7;
+
+    /////// if there is 8 data in the FIFO ///////
+    if (flagA_full) {
+      pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+      samplesTakenPPG += 2;
+      getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+      samplesTakenPPG += 2;
+      getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+      samplesTakenPPG += 4;
+      getDataPDLEDs();
+#endif
+
+    }
+
+
+#ifdef BleTest
+    if ( Bluefruit.connected()) {
+
+      ssCommand = StartCharacteristic.read8();
+
+      if (ssCommand == 1) { //Received 1 from Central to start sending data
+
+        if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
+          //Init PPG 86140 - 86141/
+          configurePPG86();
+
+          if (!errorPPG86) {
+            uint8_t intStatus;
+            //Read Status
+            intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+            bool flagA_full = (intStatus & 0x80) >> 7;
+
+            /////// if there is 8 data in the FIFO ///////
+            if (flagA_full) {
+              pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+              getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+              getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+              getDataPDLEDs();
+#endif
+            }
+          }
+          shutdown_or_restartPPG = 0;
+        }
+
+#ifdef PDsLED
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+      CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+      CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+#endif
+
+#ifdef PDLEDs
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+      CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+#endif
+
+#ifdef PDsLEDs
+      CHECK_NOTIFICATION ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) )
+      CHECK_NOTIFICATION ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) )
+      CHECK_NOTIFICATION (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) )
+      CHECK_NOTIFICATION (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) )
+#endif
+
+        if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
+          /// Change Intensity leds, sample rate and sample avearge of the Max86141 ///
+          pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8(), ledMode);
+          pulseOx1.setSample(smplAvgCharacteristic.read8(), smplRateCharacteristic.read8());
+          intensityLedsCharacteristic.write8(0);
+          smplRateCharacteristic.write8(0);
+          smplAvgCharacteristic.write8(0);
+        }
+      }
+    }
+
+#endif
+  }
+
+  long endTimePPG = micros();
+  Serial.print("PPG samples avec BLE[");
+  Serial.print(samplesTakenPPG);
+  Serial.print("]");
+  Serial.println();
+  Serial.print("PPG Sample Rate : Hz[");
+  Serial.print((float)(samplesTakenPPG) / ((endTimePPG - startTimePPG) / 1000000.0), 2);
+  Serial.print("]");
+  Serial.println();
+  Serial.print("Elapsed Time : Us[");
+  Serial.print(endTimePPG - startTimePPG);
+  Serial.print("]");
+  Serial.println();
+  Serial.println();
+
+}
