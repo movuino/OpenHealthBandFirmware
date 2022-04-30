@@ -11,7 +11,6 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 #define debugAcc
 #define debugGyr
 #define debugMag
-//#define SampleRateIMU
 
 MPU9250 mpu;
 MPU9250Setting setting;
@@ -46,7 +45,6 @@ void configureIMU() {
   Serial.println("####  IMU CONFIG  ####");
   Wire.begin();
 
-  MPU9250Setting setting;
   setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
   setting.gyro_fs_sel = GYRO_FS_SEL::G2000DPS;
   setting.mag_output_bits = MAG_OUTPUT_BITS::M16BITS;
@@ -100,33 +98,10 @@ void updateIMU() {
         shutdown_or_restartIMU = 0;
       }
 
-      if ( ErrorCharacteristic.notify(bufError, 2) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( AccCharacteristic.notify(bufAcc, 11) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if ( GyroCharacteristic.notify(bufGyro, 11) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( MagCharacteristic.notify(bufMag, 10) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
+      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
+      CHECK_NOTIFICATION(AccCharacteristic.notify(bufAcc, 11))
+      CHECK_NOTIFICATION(GyroCharacteristic.notify(bufGyro, 11))
+      CHECK_NOTIFICATION(MagCharacteristic.notify(bufMag, 10))
     }
 
   }
@@ -140,9 +115,9 @@ void getDataAcc_Gyr() {
 #ifdef BleTest
   uint32_t timestamp = millis();
   bufAcc[3] = (uint8_t)timestamp;
-  bufAcc[2] = (uint8_t)(timestamp >>= 8);
-  bufAcc[1] = (uint8_t)(timestamp >>= 8);
-  bufAcc[0] = (uint8_t)(timestamp >>= 8);
+  bufAcc[2] = (uint8_t)(timestamp >> 8);
+  bufAcc[1] = (uint8_t)(timestamp >> 16);
+  bufAcc[0] = (uint8_t)(timestamp >> 24);
   bufAcc[4] = 16;
 
   for (int i = 5; i <= 10; i++) {
@@ -175,9 +150,9 @@ void getDataAcc_Gyr() {
 #ifdef BleTest
   uint32_t timestamp1 = millis();
   bufGyro[3] = (uint8_t)timestamp1;
-  bufGyro[2] = (uint8_t)(timestamp1 >>= 8);
-  bufGyro[1] = (uint8_t)(timestamp1 >>= 8);
-  bufGyro[0] = (uint8_t)(timestamp1 >>= 8);
+  bufGyro[2] = (uint8_t)(timestamp1 >> 8);
+  bufGyro[1] = (uint8_t)(timestamp1 >> 16);
+  bufGyro[0] = (uint8_t)(timestamp1 >> 24);
   bufGyro[4] = 16;
 
   for (int i = 5; i <= 10; i++) {
@@ -215,9 +190,9 @@ void getDataMag() {
 #ifdef BleTest
   uint32_t timestamp2 = millis();
   bufMag[3] = (uint8_t)timestamp2;
-  bufMag[2] = (uint8_t)(timestamp2 >>= 8);
-  bufMag[1] = (uint8_t)(timestamp2 >>= 8);
-  bufMag[0] = (uint8_t)(timestamp2 >>= 8);
+  bufMag[2] = (uint8_t)(timestamp2 >> 8);
+  bufMag[1] = (uint8_t)(timestamp2 >> 16);
+  bufMag[0] = (uint8_t)(timestamp2 >> 24);
 
   for (int i = 4; i <= 9; i++) {
     bufMag[i] = raw_data_mag[i - 4];
@@ -243,7 +218,7 @@ void getDataMag() {
   Serial.print(" ");
   Serial.print(String(mZ));
   Serial.println(" ");
-  Serial.println();  
+  Serial.println();
   Serial.println();
 #endif
 #endif
@@ -282,33 +257,10 @@ void testingSampleRateIMU() {
           shutdown_or_restartIMU = 0;
         }
 
-        if ( ErrorCharacteristic.notify(bufError, 2) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if ( AccCharacteristic.notify(bufAcc, 11) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-        if ( GyroCharacteristic.notify(bufGyro, 11) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if ( MagCharacteristic.notify(bufMag, 10) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
+      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
+      CHECK_NOTIFICATION (AccCharacteristic.notify(bufAcc, 11))
+      CHECK_NOTIFICATION (GyroCharacteristic.notify(bufGyro, 11))
+      CHECK_NOTIFICATION (MagCharacteristic.notify(bufMag, 10))
       }
 
     }

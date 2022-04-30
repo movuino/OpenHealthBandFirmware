@@ -1,16 +1,16 @@
 
 /*
-   Intensity LED  : 0 = 0mA | 255 = 124mA (max). Be careful, data from PD can saturate at 524287 if Intensity LED is too high
-   PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
-   Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
-   Led Sequence Control : LED1 (1), LED2 (2), LED3 (3), LED1 and LED2 pulsed simultaneously (4),
+ * Intensity LED  : 0 = 0mA | 255 = 124mA (max). Be careful, data from PD can saturate at 524287 if Intensity LED is too high
+ * PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
+ * Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
+ * Led Sequence Control : LED1 (1), LED2 (2), LED3 (3), LED1 and LED2 pulsed simultaneously (4),
    LED1 and LED3 pulsed simultaneously (5), LED2 and LED3 pulsed simultaneously (6), LED1, LED2 and LED3 pulsed simultaneously (7),
    Pilot on LED1 (8), DIRECT AMBIENT (9), LED4 [external mux control] (10), LED5 [external mux control] (11), LED6 [external mux control] (12)
-   DIRECT AMBIENT : DA (i.e. normal photodiode measurements)
-   Sequence Control is up to the configuration you wish (page 14-15 datasheet)
-   PD: PhotoDiode
-   1 LED is RGB or 1 color
-*/
+ * DIRECT AMBIENT : DA (i.e. normal photodiode measurements)
+ * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
+ * PD: PhotoDiode
+ * 1 LED is RGB or 1 color
+ */
 
 #include <MAX86141.h>
 #include <SPI.h>
@@ -86,9 +86,6 @@ void testingSampleRatePPG();
 int ledMode[10];
 
 #include "LEDsConfiguration_Sensor.h"
-
-/* Sample Rate taken */
-//#define SampleRatePPG
 
 /* Pin Definitions  */
 // #define MISO_PIN              19
@@ -239,77 +236,22 @@ void updatePPG86(void) {
       }
 
 #ifdef PDsLED
-      if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( ledSeq1A_PPG2Characteristic2.notify( pt_ledSeq1A_PD2_2, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_2PPG1Characteristic2.notify( SNR1_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+      CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+      CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
 #endif
 
 #ifdef PDLEDs
-      if ( ledSeq1A_PPG1Characteristic1.notify( pt_ledSeq1A_PD1_1, 20) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_1PPG1Characteristic1.notify( SNR1_1, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+      CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
 #endif
 
 #ifdef PDsLEDs
-      if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-
-      if (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
-      if (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) ) {
-        //Serial.print("IMUCharacteristic updated to: ");
-        //Serial.println(timeStampValue);
-      } else {
-        // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-      }
+      CHECK_NOTIFICATION ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) )
+      CHECK_NOTIFICATION ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) )
+      CHECK_NOTIFICATION (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) )
+      CHECK_NOTIFICATION (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) )
 #endif
 
       if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
@@ -770,77 +712,22 @@ void testingSampleRatePPG() {
         }
 
 #ifdef PDsLED
-        if ( ledSeq1A_PPG1Characteristic2.notify( pt_ledSeq1A_PD1_2, 12) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if ( ledSeq1A_PPG2Characteristic2.notify( pt_ledSeq1A_PD2_2, 12) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if (  SNR1_2PPG1Characteristic2.notify( SNR1_2, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-        if (  SNR2_2PPG2Characteristic2.notify( SNR2_2, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+      CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+      CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
 #endif
 
 #ifdef PDLEDs
-        if ( ledSeq1A_PPG1Characteristic1.notify( pt_ledSeq1A_PD1_1, 20) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if (  SNR1_1PPG1Characteristic1.notify( SNR1_1, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
+      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+      CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
 #endif
 
 #ifdef PDsLEDs
-        if ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          //Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-
-        if (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
-        if (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) ) {
-          //Serial.print("IMUCharacteristic updated to: ");
-          //Serial.println(timeStampValue);
-        } else {
-          // Serial.println("ERROR: Notify not set in the CCCD or not connected!");
-        }
+      CHECK_NOTIFICATION ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) )
+      CHECK_NOTIFICATION ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) )
+      CHECK_NOTIFICATION (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) )
+      CHECK_NOTIFICATION (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) )
 #endif
 
         if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
