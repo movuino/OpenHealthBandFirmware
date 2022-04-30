@@ -31,7 +31,7 @@ Those libraries are all available in the Arduino Library manager except MPU9250 
 
 #### Services and Characteristics for BLE
 
-The services and characteristics used for the BLE are :
+The following services and characteristics use **Notification** properties :
 
 ##### Error Service & characteristic
 The Error Characteristic allows to send boolean errors from IMU, PPG. Thus, when error is 0 data is detected else 1.
@@ -126,6 +126,50 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 ##### HeartRate Service & characteristics
 
 In order to detect the peripheral in the Bluetooth Settings for iPhone, we added the HeartRate taken from Adafruit Bluefruit nrf52 librairies --> Peripheral. However, it is not sent by BLE. 
+
+The following service and characteristics use **READ and Write** properties :
+
+##### Start_Stop Service & characteristics
+
+With the Start_Stop Service and characteristics, central BLE can decide when to start or stop data transfert and change leds intensity, sample rate and sample average.
+
+|        | Start_StopService | StartCharacteristic | intensityLedsCharacteristic | smplRateCharacteristic | smplAvgCharacteristic |
+|:------:|:------:			 |:------:             |:------:                     |:------:                |:------:               |
+|UUID    | **0x1400**        | **0x1401**          | **0x1402**                  | **0x1403**             |**0x1404**             |
+
+|1 byte| 1 byte (0)     | 
+|:------:|:------:      |
+|StartCharacteristic | 1 (start) or 2 (stop)  |
+|intensityLedsCharacteristic | leds intensity |
+|smplRateCharacteristic | PPG sample rate     |
+|smplAvgCharacteristic | PPG sample average   |
+
+|Values  | leds intensity   | 
+|:------:|:------:          |
+|0 - 255 | leds off (min value) - leds on (max value) |
+
+|Values (integer) 	| PPG sample rate (Hz)  | 
+|:------:			|:------:      			|
+| 0 	 			|25   					| 
+| 1 	 			|50   					| 
+| 2 	 			|84   					| 
+| 3 	 			|100   					| 
+| 4 	 			|200   					| 
+| 5 	 			|400   					| 
+| 14 	 			|128   					| 
+| 15 	 			|256   					| 
+| 16 	 			|512   					| 
+
+|Values (integer)   | PPG sample average (Hz)| 
+|:------:			|:------:      			|
+| 0 	 			|1   					| 
+| 1 	 			|2   					| 
+| 2 	 			|4   					| 
+| 3 	 			|8   					| 
+| 4 	 			|16   					| 
+| 5 	 			|32   					| 
+| 6 	 			|64   					| 
+
 
 #### Use
 
