@@ -1,9 +1,9 @@
 
 void setupErrorService(void) {
   ErrorService.begin();
-  ErrorCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
+  ErrorCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   ErrorCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ErrorCharacteristic.setFixedLen(4);
+  ErrorCharacteristic.setFixedLen(2);
   ErrorCharacteristic.setCccdWriteCallback(cccd_callback2);  // Optionally capture CCCD updates
   ErrorCharacteristic.begin();
 }
@@ -13,7 +13,7 @@ void setupIMUService(void)
   IMUService.begin();
   AccCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   AccCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  AccCharacteristic.setFixedLen(32);
+  AccCharacteristic.setFixedLen(11);
   AccCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
   AccCharacteristic.begin();
   /*Gyro*/
@@ -165,4 +165,28 @@ void setupHRM(void)
   bslc.setFixedLen(1);
   bslc.begin();
   bslc.write8(2);    // Set the characteristic to 'Wrist' (2)
+}
+
+void setupStart_StopService(void) {
+  Start_StopService.begin();
+
+  StartCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  StartCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  StartCharacteristic.setFixedLen(1);
+  StartCharacteristic.begin();
+
+  intensityLedsCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  intensityLedsCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  intensityLedsCharacteristic.setFixedLen(1);
+  intensityLedsCharacteristic.begin();
+
+  smplRateCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  smplRateCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  smplRateCharacteristic.setFixedLen(1);
+  smplRateCharacteristic.begin();
+
+  smplAvgCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_WRITE);
+  smplAvgCharacteristic.setPermission(SECMODE_OPEN, SECMODE_OPEN);
+  smplAvgCharacteristic.setFixedLen(1);
+  smplAvgCharacteristic.begin();
 }

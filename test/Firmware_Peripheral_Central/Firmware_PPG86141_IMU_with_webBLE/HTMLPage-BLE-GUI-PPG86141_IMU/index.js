@@ -17,10 +17,10 @@
   ////// PDLEDs ////////
 
   ////// PDsLED ////////
-  const BLE_LEDSEQ1A_PD1CHARACTERISTIC2_UUID = 0x1305;
-  const BLE_LEDSEQ1A_PD2CHARACTERISTIC2_UUID = 0x1307;
-  const BLE_SNR1_2PD1CHARACTERISTIC2_UUID = 0x1313;
-  const BLE_SNR2_2PD2CHARACTERISTIC2_UUID = 0x1314;
+  const BLE_LEDSEQ1A_PD1CHARACTERISTIC2_UUID = 0x1309;
+  const BLE_LEDSEQ1A_PD2CHARACTERISTIC2_UUID = 0x13011;
+  const BLE_SNR1_2PD1CHARACTERISTIC2_UUID = 0x1317;
+  const BLE_SNR2_2PD2CHARACTERISTIC2_UUID = 0x1318;
 
 
   ///////////////////////////////////////////////////////
@@ -192,22 +192,22 @@
               MAGCharacteristic.startNotifications();
             }
 
-            if(characteristic.uuid== '00001305-0000-1000-8000-00805f9b34fb'){
+            if(characteristic.uuid== '00001309-0000-1000-8000-00805f9b34fb'){
               LEDSEQ1A_PD1CHARACTERISTIC2= characteristic;
               LEDSEQ1A_PD1CHARACTERISTIC2.addEventListener('characteristicvaluechanged',LEDSEQ1A_PD1CHARACTERISTIC2Changed);
               LEDSEQ1A_PD1CHARACTERISTIC2.startNotifications();
             }
-           if(characteristic.uuid== '00001307-0000-1000-8000-00805f9b34fb'){
+           if(characteristic.uuid== '00001311-0000-1000-8000-00805f9b34fb'){
               LEDSEQ1A_PD2CHARACTERISTIC2=  characteristic;
               LEDSEQ1A_PD2CHARACTERISTIC2.addEventListener('characteristicvaluechanged',LEDSEQ1A_PD2CHARACTERISTIC2Changed);
                LEDSEQ1A_PD2CHARACTERISTIC2.startNotifications();
             }
-            if(characteristic.uuid== '00001313-0000-1000-8000-00805f9b34fb'){
+            if(characteristic.uuid== '00001317-0000-1000-8000-00805f9b34fb'){
               SNR1_2PD1CHARACTERISTIC2=  characteristic;
               SNR1_2PD1CHARACTERISTIC2.addEventListener('characteristicvaluechanged',SNR1_2PD1CHARACTERISTIC2Changed);
               SNR1_2PD1CHARACTERISTIC2.startNotifications();
             }
-            if(characteristic.uuid== '00001314-0000-1000-8000-00805f9b34fb'){
+            if(characteristic.uuid== '00001318-0000-1000-8000-00805f9b34fb'){
               SNR1_2PD2CHARACTERISTIC2=  characteristic;
               SNR1_2PD2CHARACTERISTIC2.addEventListener('characteristicvaluechanged',SNR1_2PD2CHARACTERISTIC2Changed);
                SNR1_2PD2CHARACTERISTIC2.startNotifications();
@@ -394,7 +394,7 @@
     const data2 = (value.getUint8(8) << 24) | (value.getUint8(9) << 16) | (value.getUint8(10) << 8) | value.getUint8(11); // shifts 4 Uint8 to make a Uint32
 
     //console.log("timestamp: ", timestamp);
-
+    console.log("data PD1");
     console.log("data1: ", data1,"data2: ", data2);
 
     var tab;
@@ -419,6 +419,8 @@
     const data2 = (value.getUint8(8) << 24) | (value.getUint8(9) << 16) | (value.getUint8(10) << 8) | value.getUint8(11); // shifts 4 Uint8 to make a Uint32
     
       //console.log("timestamp: ", timestamp);
+    console.log("data PD2")
+    console.log("data1: ", data1,"data2: ", data2);
 
     var tab;
     tab = [data1,data2]

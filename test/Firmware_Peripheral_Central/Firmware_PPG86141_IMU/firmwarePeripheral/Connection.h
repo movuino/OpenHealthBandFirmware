@@ -4,25 +4,14 @@ void connect_callback(uint16_t conn_handle)
   // Get the reference to current connection
   BLEConnection* connection = Bluefruit.Connection(conn_handle);
 
-  connection = Bluefruit.Connection(conn_handle);
   char central_name[32] = { 0 };
   connection->getPeerName(central_name, sizeof(central_name));
-  // request mtu exchange
-  Serial.println("Request to change MTU " + String(connection->requestMtuExchange(247)));
-
-  Serial.print("MTU: ");
-  Serial.print(connection->getMtu());
-  Serial.println(" ");
-  Serial.print("Connection interval: ");
-  Serial.print(connection->getConnectionInterval());
-  Serial.println(" ");
-  Serial.print("PHY length: ");
-  Serial.print(connection->getPHY());
-  Serial.println("data lenght " + String(connection->getDataLength()));
-  Serial.println(" ");
+  connection->requestConnectionParameter(6);
+  
   Serial.print("Connected to ");
   Serial.println(central_name);
-  start_stop_Sending = "send";
+  start_stop_SendingIMU = "send";
+  start_stop_SendingPPG = "send";
 }
 
 void disconnect_callback(uint16_t conn_handle, uint8_t reason)
@@ -32,7 +21,8 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
   Serial.println("Advertising!");
-  start_stop_Sending = "stop";
+  start_stop_SendingIMU = "stop";
+  start_stop_SendingPPG = "stop";
 }
 
 
@@ -102,14 +92,14 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
 
 #ifdef PDLEDs
   if (chr->uuid == ledSeq1A_PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
+    if (chr->notifyEnabled(conn_hdl)) {
+      Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
+    } else {
+      Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
+  }
   /*
-   if (chr->uuid == ledSeq1B_PPG1Characteristic1.uuid) {
+    if (chr->uuid == ledSeq1B_PPG1Characteristic1.uuid) {
        if (chr->notifyEnabled(conn_hdl)) {
            Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
        } else {
@@ -117,23 +107,23 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
        }
     }
   */
-   if (chr->uuid == SNR1_1PPG1Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
+  if (chr->uuid == SNR1_1PPG1Characteristic1.uuid) {
+    if (chr->notifyEnabled(conn_hdl)) {
+      Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
+    } else {
+      Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
+  }
 
-   /*
-   if (chr->uuid == SNR2_1PPG2Characteristic1.uuid) {
-       if (chr->notifyEnabled(conn_hdl)) {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-       } else {
-           Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-       }
+  /*
+    if (chr->uuid == SNR2_1PPG2Characteristic1.uuid) {
+      if (chr->notifyEnabled(conn_hdl)) {
+          Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
+      } else {
+          Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
+      }
     }
-   */
+  */
 #endif
 
 #ifdef PDsLED
@@ -152,7 +142,7 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  
+
   if (chr->uuid == SNR1_2PPG1Characteristic2.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
@@ -185,7 +175,7 @@ void cccd_callback_PPG86(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t ccc
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
-  
+
   if (chr->uuid == SNR1_3PPG1Characteristic3.uuid) {
     if (chr->notifyEnabled(conn_hdl)) {
       Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");

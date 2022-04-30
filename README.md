@@ -56,6 +56,9 @@ With the IMU Service and characteristics, data from accelerometer, gyrometer and
 |:------:|:------:|:------:|:------:|:------:|
 |AccCharacteristic | timestamp | AccX | AccY | AccZ |
 |GyroCharacteristic | timestamp | GX | GY | GZ |
+
+|10 bytes        | 4 bytes (0-3) | 2 bytes (4-5) | 2 bytes (6-7) | 2 bytes (8-9) |    
+|:------:|:------:|:------:|:------:|:------:|
 |MagCharacteristic | timestamp | MX | MY | MZ |
 
 ##### PPG Max 86140 - 86141 Service & Characteristics
@@ -109,15 +112,15 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 
 
 |        | PPG86Service | ledSeq1A_PPG1Characteristic3 | ledSeq1A_PPG2Characteristic3 | SNR1_2PPG1Characteristic3 | SNR2_2PPG2Characteristic3 |
-|:------:|:------:|:------:|:------:|:------:|:------:|
-|UUID | **0x1300** | **0x1309** | **0x1311** | **0x1317** | **0x1318** |
+|:------:|:------:		|:------:					   |:------:					  |:------:					  |:------:					  |
+|UUID 	 | **0x1300** 	| **0x1309** 				   | **0x1311** 				  | **0x1317** 				  | **0x1318** 				  |
 
 | 12 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) |    
 |:------:|:------:|:------:|:------:|
 |ledSeq1A_PPG1Characteristic3 | timestamp | sample 1 | sample 2 | 
 |ledSeq1A_PPG2Characteristic3 | timestamp | sample 1 | sample 2 |
 
-|4 bytes | 4 bytes (0-3) |
+|4 bytes 				   | 4 bytes (0-3) |
 |:------:|:------:|
 |SNR1_2PPG1Characteristic3 | SNR photo-diode 1 |
 |SNR2_2PPG1Characteristic3 | SNR photo-diode 2 |
