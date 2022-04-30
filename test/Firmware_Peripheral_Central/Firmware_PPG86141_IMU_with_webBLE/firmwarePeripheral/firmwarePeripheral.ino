@@ -3,14 +3,14 @@
 
 BLEConnection* connection;
 
+/* Enable the data measure */
+#define PPG_Max86141
+#define IMU9250
+
 /* Bool Errors  */
 bool errorIMU = true;
 bool errorPPG86 = true;
 uint8_t bufError[2];
-
-/* Enable the data measure */
-#define PPG_Max86141
-#define IMU9250
 
 /* Tests */
 /* Print data on Serial Monitor when BLE is unenabled */
@@ -18,6 +18,14 @@ uint8_t bufError[2];
 /* Sending data when BLE is enabled */
 #define BleTest
 
+//#define DEBUG
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
+  if (!condition)                     \
+    Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
 
 /* Shutdown or restart the sensor */
 bool shutdown_or_restartPPG = 0, shutdown_or_restartIMU = 0;
@@ -41,7 +49,6 @@ BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
 BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
 BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
 BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
-
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
 #endif
@@ -166,26 +173,6 @@ void setup() {
 }
 
 void loop() {
-  /* Update Sensors for new values */
-
-  //---------------------------- Serial Communication -------------------------------------//
-
-#ifdef SerialTest
-
-#ifdef PPG_Max86141
-  if (!errorPPG86) {
-    updatePPG86();
-  }
-#endif
-
-#ifdef IMU9250
-  if (!errorIMU) {
-    updateIMU();
-  }
-#endif
-
-#endif
-
   //---------------------------- Bluetooth Communication ----------------------------------//
 
 #ifdef BleTest
@@ -193,39 +180,38 @@ void loop() {
 #ifdef PPG_Max86141
   if (!errorPPG86) {
     updatePPG86();
-
-#ifdef SampleRatePPG
-    testingSampleRatePPG();
-#endif
-
   }
 #endif
 
 #ifdef IMU9250
   if (!errorIMU) {
     updateIMU();
-
-#ifdef SampleRateIMU
-    testingSampleRateIMU();
-#endif
-
   }
 #endif
 
   if (Bluefruit.connected()) {
     //Serial.println("No connected device");
+
+    ssCommand = StartCharacteristic.read8();
+    if (ssCommand == 1) { // Received 1 from Central to start sending data
+      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
+    }
+
     if ( StartCharacteristic.read8() == 2) { //Received 2 from Central to stop sending data
       Serial.println("Device disconnected, data IMU & PPG not sent");
 
-      // sleep device
+#ifdef IMU9250
+      /* sleep IMU */
       mpu.write_byte(0x69, PWR_MGMT_1, 0x40);  // Set sleep mode bit (6), unenable all sensors
-      delay(100);                                  // Wait for all registers to reset
-
-      //Shutdown PPG/
-      pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-
       shutdown_or_restartIMU = 1;
+      delay(100);                                  // Wait for all registers to reset
+#endif
+
+#ifdef PPG_Max86141
+      /* Shutdown PPG */
+      pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
       shutdown_or_restartPPG = 1;
+#endif
 
       StartCharacteristic.write8(0);
     }

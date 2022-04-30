@@ -37,6 +37,14 @@ BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
+//#define DEBUG
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
+  if (!condition)                     \
+    Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -156,34 +164,12 @@ void setup() {
 }
 
 void loop() {
-  /* Update Sensors for new values */
-
-  //---------------------------- Serial Communication -------------------------------------//
-
-#ifdef SerialTest
-
-#ifdef PPG_Max86141
-  if (!errorPPG86) {
-    updatePPG86();
-  }
-#endif
-
-#ifdef IMU9250
-  if (!errorIMU) {
-    updateIMU();
-  }
-#endif
-
-#endif
-
-  //---------------------------- Bluetooth Communication ----------------------------------//
+ //---------------------------- Bluetooth Communication ----------------------------------//
 
 #ifdef BleTest
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
-    //updatePPG86();
-
 #ifdef SampleRatePPG
     testingSampleRatePPG();
 #endif
@@ -193,8 +179,6 @@ void loop() {
 
 #ifdef IMU9250
   if (!errorIMU) {
-    //updateIMU();
-
 #ifdef SampleRateIMU
     testingSampleRateIMU();
 #endif
@@ -203,22 +187,31 @@ void loop() {
 #endif
 
   if (!Bluefruit.connected()) {
-    //Serial.println("No connected device");
+
+    if ( start_stop_SendingIMU == "send" && start_stop_SendingPPG == "send") {
+      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
+    }
+
     if ( start_stop_SendingIMU == "stop" && start_stop_SendingPPG == "stop") {
       Serial.println("Device disconnected, data IMU & PPG not sent");
 
+#ifdef IMU9250
       // sleep device
       mpu.write_byte(0x69, PWR_MGMT_1, 0x40);  // Set sleep mode bit (6), unenable all sensors
       delay(100);                                  // Wait for all registers to reset
 
+      shutdown_or_restartIMU = 1;
+      start_stop_SendingIMU = "send";
+#endif
+
+#ifdef PPG_Max86141
+
       //Shutdown PPG/
       pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
 
-      shutdown_or_restartIMU = 1;
-      start_stop_SendingIMU = "send";
-
       shutdown_or_restartPPG = 1;
       start_stop_SendingPPG = "send";
+#endif
     }
   }
 #endif

@@ -7,6 +7,7 @@ void connect_callback(uint16_t conn_handle)
   char central_name[32] = { 0 };
   connection->getPeerName(central_name, sizeof(central_name));
   connection->requestConnectionParameter(6);
+  
   Serial.print("Connected to ");
   Serial.println(central_name);
 }

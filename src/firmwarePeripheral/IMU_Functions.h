@@ -98,7 +98,6 @@ void updateIMU() {
         shutdown_or_restartIMU = 0;
       }
 
-      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
       CHECK_NOTIFICATION(AccCharacteristic.notify(bufAcc, 11))
       CHECK_NOTIFICATION(GyroCharacteristic.notify(bufGyro, 11))
       CHECK_NOTIFICATION(MagCharacteristic.notify(bufMag, 10))
@@ -257,7 +256,6 @@ void testingSampleRateIMU() {
           shutdown_or_restartIMU = 0;
         }
 
-      CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
       CHECK_NOTIFICATION (AccCharacteristic.notify(bufAcc, 11))
       CHECK_NOTIFICATION (GyroCharacteristic.notify(bufGyro, 11))
       CHECK_NOTIFICATION (MagCharacteristic.notify(bufMag, 10))
