@@ -1,5 +1,4 @@
 
-#include <bluefruit.h>
 void connect_callback(uint16_t conn_handle)
 {
   // Get the reference to current connection
@@ -11,6 +10,8 @@ void connect_callback(uint16_t conn_handle)
   
   Serial.print("Connected to ");
   Serial.println(central_name);
+  start_stop_SendingIMU = "send";
+  start_stop_SendingPPG = "send";
 }
 
 void disconnect_callback(uint16_t conn_handle, uint8_t reason)
@@ -20,6 +21,8 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
   Serial.println("Advertising!");
+  start_stop_SendingIMU = "stop";
+  start_stop_SendingPPG = "stop";
 }
 
 
@@ -35,35 +38,6 @@ void cccd_callback2(uint16_t conn_hdl, BLECharacteristic* chr, uint16_t cccd_val
       Serial.println("Error Characteristcis 'Notify' enabled");
     } else {
       Serial.println("Error Characteristcis 'Notify' disabled");
-    }
-  }
-
-  if (chr->uuid == StartCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      //Serial.println("Error Characteristcis 'Notify' enabled");
-    } else {
-      //Serial.println("Error Characteristcis 'Notify' disabled");
-    }
-  }
-  if (chr->uuid == intensityLedsCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-    } else {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-    }
-  }
-  if (chr->uuid == smplRateCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-    } else {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
-    }
-  }
-  if (chr->uuid == smplAvgCharacteristic.uuid) {
-    if (chr->notifyEnabled(conn_hdl)) {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' enabled");
-    } else {
-      //Serial.println("PPG Max 86140 - 86141 Measurement 'Notify' disabled");
     }
   }
 }

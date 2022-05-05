@@ -179,13 +179,13 @@ void loop() {
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
-    updatePPG86();
+    testingSampleRatePPG();
   }
 #endif
 
 #ifdef IMU9250
   if (!errorIMU) {
-    updateIMU();
+    testingSampleRateIMU();
   }
 #endif
 

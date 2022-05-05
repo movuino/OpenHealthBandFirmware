@@ -1,16 +1,16 @@
 
 /*
- * Intensity LED  : 0 = 0mA | 255 = 124mA (max). Be careful, data from PD can saturate at 524287 if Intensity LED is too high
- * PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
- * Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
- * Led Sequence Control : LED1 (1), LED2 (2), LED3 (3), LED1 and LED2 pulsed simultaneously (4),
+   Intensity LED  : 0 = 0mA | 255 = 124mA (max). Be careful, data from PD can saturate at 524287 if Intensity LED is too high
+   PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
+   Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
+   Led Sequence Control : LED1 (1), LED2 (2), LED3 (3), LED1 and LED2 pulsed simultaneously (4),
    LED1 and LED3 pulsed simultaneously (5), LED2 and LED3 pulsed simultaneously (6), LED1, LED2 and LED3 pulsed simultaneously (7),
    Pilot on LED1 (8), DIRECT AMBIENT (9), LED4 [external mux control] (10), LED5 [external mux control] (11), LED6 [external mux control] (12)
- * DIRECT AMBIENT : DA (i.e. normal photodiode measurements)
- * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
- * PD: PhotoDiode
- * 1 LED is RGB or 1 color
- */
+   DIRECT AMBIENT : DA (i.e. normal photodiode measurements)
+   Sequence Control is up to the configuration you wish (page 14-15 datasheet)
+   PD: PhotoDiode
+   1 LED is RGB or 1 color
+*/
 
 #include <MAX86141.h>
 #include <SPI.h>
@@ -79,10 +79,16 @@ uint8_t SNR1_3[4], SNR2_3[4];
 void getDataPDsLEDs();
 #endif
 
+/*Functions*/
+void testingSampleRatePPG();
+
 /* Inculde LED configuration */
 int ledMode[10];
 
 #include "LEDsConfiguration_Sensor.h"
+
+/* Sample Rate taken */
+#define SampleRatePPG
 
 /* Pin Definitions  */
 // #define MISO_PIN              19
@@ -97,9 +103,11 @@ static int spiClk = 1000000; // 8 MHz Maximum
 int cpt1 = 0, cpt2 = 0;
 int interruptPin = 36;
 bool dataReady = false;
+long startTime;
+long samplesTaken = 0;
 int sequences_size = 0;
-float snr_pd1, snr_pd2;
 int fifo_size = 8;
+float snr_pd1, snr_pd2;
 MAX86141 pulseOx1;
 
 
@@ -157,43 +165,23 @@ void configurePPG86(void) {
     Serial.println("Connection failed !");
   }
 
+  bufError[1] = errorPPG86;
+
   delay(1000);
 
   pulseOx1.setDebug(false);
+
+  startTime = millis();
+
+  Serial.println();
 
 }
 
 
 void updatePPG86(void) {
 
-  uint8_t intStatus;
-  //Read Status
-  intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
-  bool flagA_full = (intStatus & 0x80) >> 7;
-
-  /////// if there is 8 data in the FIFO ///////
-  if (flagA_full) {
-    pulseOx1.device_data_read1();
-
-#ifdef PDsLEDs
-    getDataPDsLEDs();
-#endif
-
-#ifdef PDsLED
-    getDataPDsLED();
-#endif
-
-#ifdef PDLEDs
-    getDataPDLEDs();
-#endif
-
-  }
-
-#ifdef BleTest
   if ( Bluefruit.connected()) {
-
-    ssCommand = StartCharacteristic.read8();
-    if (ssCommand == 1) { //Received 1 from Central to start sending data
+    if (start_stop_SendingPPG == "send") {
 
       if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
         //Init PPG 86140 - 86141/
@@ -224,39 +212,54 @@ void updatePPG86(void) {
         }
         shutdown_or_restartPPG = 0;
       }
+      else if (shutdown_or_restartPPG == 3) { // first Start when when central notify
+        // Init PPG 86140 - 86141 //
+        configurePPG86();
+        shutdown_or_restartPPG = 0;
+      }
+
+      if (!errorPPG86) {
+        uint8_t intStatus;
+        //Read Status
+        intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+        bool flagA_full = (intStatus & 0x80) >> 7;
+
+        /////// if there is 8 data in the FIFO ///////
+        if (flagA_full) {
+          pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+          getDataPDsLEDs();
+#endif
 
 #ifdef PDsLED
-      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
-      CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
-      CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
-      CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+          getDataPDsLED();
 #endif
 
 #ifdef PDLEDs
-      CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
-      CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+          getDataPDLEDs();
 #endif
+        }
 
-#ifdef PDsLEDs
-      CHECK_NOTIFICATION ( ledSeq1A_PPG1Characteristic3.notify( pt_ledSeq1A_PD1_3, 12) )
-      CHECK_NOTIFICATION ( ledSeq1A_PPG2Characteristic3.notify( pt_ledSeq1A_PD2_3, 12) )
-      CHECK_NOTIFICATION (  SNR1_3PPG1Characteristic3.notify( SNR1_3, 4) )
-      CHECK_NOTIFICATION (  SNR2_3PPG2Characteristic3.notify( SNR2_3, 4) )
-#endif
+# ifdef PDsLED
+        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+        CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+        CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+        CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+# endif
 
-      if ((intensityLedsCharacteristic.read8() != 0)  && (smplRateCharacteristic.read8() != 0)) {
-        /// Change Intensity leds, sample rate and sample avearge of the Max86141 ///
-        pulseOx1.setIntensityLed(intensityLedsCharacteristic.read8(), ledMode);
-        pulseOx1.setSample(smplAvgCharacteristic.read8(), smplRateCharacteristic.read8());
-        intensityLedsCharacteristic.write8(0);
-        smplRateCharacteristic.write8(0);
-        smplAvgCharacteristic.write8(0);
+# ifdef PDLEDs
+        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+        CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+# endif
+
+# ifdef PDsLEDs
+        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic3.notify(pt_ledSeq1A_PD1_3, 12))
+        CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic3.notify(pt_ledSeq1A_PD2_3, 12))
+# endif
       }
     }
   }
-
-#endif
-
 }
 
 #ifdef PDsLEDs
@@ -274,8 +277,7 @@ void getDataPDsLEDs() {
   for (int i = 0; i < fifo_size / 4; i++) {
     Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
   }
-  Serial.println();
-  Serial.println();
+
   free(pulseOx1.tab_ledSeq1A_PD1);
   free(pulseOx1.tab_ledSeq1A_PD2);
 #endif
@@ -290,7 +292,6 @@ void getDataPDsLEDs() {
   if (InterruptStatus_with_ALC == 0) {
     ///////////// Pointer to send only 2 samples by Bluetooth (PD1) ////////////
     if ((pulseOx1.tab_ledSeq1A_PD1[0] != 0) && (pulseOx1.tab_ledSeq1A_PD1[1] != 0)) {
-
 
       ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
       pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
@@ -408,8 +409,7 @@ void getDataPDLEDs() {
   for (int i = 0; i < fifo_size / 2; i++) {
     Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
   }
-  Serial.println();
-  Serial.println();
+
   free(pulseOx1.tab_ledSeq1A_PD1);
 #endif
 
@@ -509,8 +509,7 @@ void getDataPDsLED() {
   for (int i = 0; i < fifo_size / 4; i++) {
     Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
   }
-  Serial.println();
-  Serial.println();
+
   free(pulseOx1.tab_ledSeq1A_PD1);
   free(pulseOx1.tab_ledSeq1A_PD2);
 #endif
@@ -632,3 +631,111 @@ void getDataPDsLED() {
 #endif
 }
 #endif
+
+void testingSampleRatePPG() {
+
+  if ( Bluefruit.connected()) {
+    if (start_stop_SendingPPG == "send") {
+
+      if (shutdown_or_restartPPG == 1) { // the sensor was shutdown
+        //Init PPG 86140 - 86141/
+        configurePPG86();
+
+        if (!errorPPG86) {
+          uint8_t intStatus;
+          //Read Status
+          intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+          bool flagA_full = (intStatus & 0x80) >> 7;
+
+          /////// if there is 8 data in the FIFO ///////
+          if (flagA_full) {
+            pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+            getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+            getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+            getDataPDLEDs();
+#endif
+          }
+        }
+        shutdown_or_restartPPG = 0;
+      }
+      else if (shutdown_or_restartPPG == 3) { // first Start when when central notify
+        // Init PPG 86140 - 86141 //
+        configurePPG86();
+        shutdown_or_restartPPG = 0;
+      }
+
+      if (!errorPPG86) {
+
+        long startTimePPG = micros();
+        long samplesTakenPPG = 0;
+
+        while (samplesTakenPPG < 125) {
+
+          uint8_t intStatus;
+          //Read Status
+          intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
+          bool flagA_full = (intStatus & 0x80) >> 7;
+
+          /////// if there is 8 data in the FIFO ///////
+          if (flagA_full) {
+            pulseOx1.device_data_read1();
+
+#ifdef PDsLEDs
+            samplesTakenPPG += 2;
+            getDataPDsLEDs();
+#endif
+
+#ifdef PDsLED
+            samplesTakenPPG += 2;
+            getDataPDsLED();
+#endif
+
+#ifdef PDLEDs
+            samplesTakenPPG += 4;
+            getDataPDLEDs();
+#endif
+          }
+
+# ifdef PDsLED
+          CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
+          CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
+          CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
+          CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+# endif
+
+# ifdef PDLEDs
+          CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
+          CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+# endif
+
+# ifdef PDsLEDs
+          CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic3.notify(pt_ledSeq1A_PD1_3, 12))
+          CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic3.notify(pt_ledSeq1A_PD2_3, 12))
+# endif
+        }
+        long endTimePPG = micros();
+        Serial.print("PPG samples avec BLE[");
+        Serial.print(samplesTakenPPG);
+        Serial.print("]");
+        Serial.println();
+        Serial.print("PPG Sample Rate : Hz[");
+        Serial.print((float)(samplesTakenPPG) / ((endTimePPG - startTimePPG) / 1000000.0), 2);
+        Serial.print("]");
+        Serial.println();
+        Serial.print("Elapsed Time : Us[");
+        Serial.print(endTimePPG - startTimePPG);
+        Serial.print("]");
+        Serial.println();
+        Serial.println();
+      }
+    }
+  }
+}

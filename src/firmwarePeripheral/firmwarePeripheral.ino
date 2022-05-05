@@ -1,16 +1,16 @@
 #include <bluefruit.h>
 #include <Wire.h>
 
-BLEConnection *connection;
-
-/* Enable the data measure */
-#define PPG_Max86141
-#define IMU9250
+BLEConnection* connection;
 
 /* Bool Errors  */
 bool errorIMU = true;
 bool errorPPG86 = true;
 uint8_t bufError[2];
+
+/* Enable the data measure */
+#define PPG_Max86141
+#define IMU9250
 
 /* Tests */
 /* Print data on Serial Monitor when BLE is unenabled */
@@ -18,21 +18,13 @@ uint8_t bufError[2];
 /* Sending data when BLE is enabled */
 #define BleTest
 
-//#define DEBUG
-#ifdef DEBUG
-# define CHECK_NOTIFICATION(condition) \
-  if (!condition)                     \
-    Serial.printf("Notification failed on line %d\n", __LINE__);
-#else
-# define CHECK_NOTIFICATION(condition) condition;
-#endif
+
+/* Send or stop bluetooth communication */
+String start_stop_SendingPPG, start_stop_SendingIMU;
 
 /* Shutdown or restart the sensor */
 bool shutdown_or_restartPPG = 0, shutdown_or_restartIMU = 0;
 
-
-/*Start or Stop command received from Central*/
-bool ssCommand = 0;
 
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
@@ -45,11 +37,14 @@ BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
-BLEService Start_StopService = BLEService(0x1400);
-BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
-BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
-BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
-BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
+//#define DEBUG
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
+  if (!condition)                     \
+    Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -67,8 +62,8 @@ BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
 void setup() {
 
   Serial.begin(115200);
-  // while ( !Serial )
-  delay(10); // for nrf52840 with native usb
+  //while ( !Serial )
+  delay(10);   // for nrf52840 with native usb
 
   // Initialise the Bluefruit module
   Serial.println("Setting Device Name to 'Open Health Band'");
@@ -107,24 +102,19 @@ void setup() {
   // BLEService and BLECharacteristic classes
   Serial.println("Configuring the Heart Rate Monitor Service");
   setupHRM();
-  
+
   // Init Sensors //
 
 #ifdef PPG_Max86141
-  // Init PPG 86140 - 86141 //
-  configurePPG86();
+  shutdown_or_restartPPG = 3;
 #endif
 
 #ifdef IMU9250
-  // init IMU //
-  configureIMU();
+  shutdown_or_restartIMU = 3;
 #endif
 
   // Setup services //
   setupErrorService();
-
-  bufError[0] = errorIMU;
-  bufError[1] = errorPPG86;
 
   // Setup the advertising packet(s)
   ErrorCharacteristic.write(bufError, 2);
@@ -159,20 +149,12 @@ void setup() {
   MagCharacteristic.write(bufMag, 10);
 #endif
 
-
-  setupStart_StopService();
-  StartCharacteristic.write8(0);
-  intensityLedsCharacteristic.write8(0);
-  smplRateCharacteristic.write8(0);
-  smplAvgCharacteristic.write8(0);
-
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
 
   Serial.println("Ready Player One!!!");
   Serial.println("\nAdvertising");
-
   Serial.println();
 }
 
@@ -182,42 +164,46 @@ void loop() {
 #ifdef BleTest
 
 #ifdef PPG_Max86141
-  if (!errorPPG86) {
-    updatePPG86();
-  }
+//updatePPG86();
+#ifdef SampleRatePPG
+   testingSampleRatePPG(); /////##########
+#endif
+
 #endif
 
 #ifdef IMU9250
-  if (!errorIMU) {
-    updateIMU();
-  }
+//updateIMU(); 
+#ifdef SampleRateIMU
+  testingSampleRateIMU(); /////##########
 #endif
 
-  if (Bluefruit.connected()) {
-    //Serial.println("No connected device");
+#endif
 
-    ssCommand = StartCharacteristic.read8();
-    if (ssCommand == 1) { // Received 1 from Central to start sending data
+  if (!Bluefruit.connected()) {
+
+    if ( start_stop_SendingIMU == "send" && start_stop_SendingPPG == "send") {
       CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
     }
 
-    if ( StartCharacteristic.read8() == 2) { //Received 2 from Central to stop sending data
+    if ( start_stop_SendingIMU == "stop" && start_stop_SendingPPG == "stop") {
       Serial.println("Device disconnected, data IMU & PPG not sent");
 
 #ifdef IMU9250
-      /* sleep IMU */
+      // sleep device
       mpu.write_byte(0x69, PWR_MGMT_1, 0x40);  // Set sleep mode bit (6), unenable all sensors
-      shutdown_or_restartIMU = 1;
       delay(100);                                  // Wait for all registers to reset
+
+      shutdown_or_restartIMU = 1;
+      start_stop_SendingIMU = "send";
 #endif
 
 #ifdef PPG_Max86141
-      /* Shutdown PPG */
+      //Shutdown PPG/
       pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-      shutdown_or_restartPPG = 1;
-#endif
 
-      StartCharacteristic.write8(0);
+      shutdown_or_restartPPG = 1;
+      start_stop_SendingPPG = "send";
+#endif
     }
   }
 #endif
