@@ -164,17 +164,17 @@ void loop() {
 #ifdef BleTest
 
 #ifdef PPG_Max86141
-//updatePPG86();
+updatePPG86();
 #ifdef SampleRatePPG
-   testingSampleRatePPG(); /////##########
+  //  testingSampleRatePPG(); /////##########
 #endif
 
 #endif
 
 #ifdef IMU9250
-//updateIMU(); 
+updateIMU(); 
 #ifdef SampleRateIMU
-  testingSampleRateIMU(); /////##########
+  // testingSampleRateIMU(); /////##########
 #endif
 
 #endif
