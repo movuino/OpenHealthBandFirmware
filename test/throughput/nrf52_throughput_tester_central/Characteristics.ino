@@ -50,8 +50,8 @@ void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* da
   v_acc = ((int16_t)data[9] << 8) | (int16_t)data[10];
   aZ = (float)v_acc * acc_resolution;
 
-  // Serial.println("----- Accelometer data ----- :");
-  // Serial.println(" A " + String( aX) + " " + String( aY) + " " + String( aZ) + " ");
+  //  Serial.println("----- Accelometer data ----- :");
+  //  Serial.println(" A " + String( aX) + " " + String( aY) + " " + String( aZ) + " ");
 }
 
 void  GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
@@ -70,9 +70,9 @@ void  GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
   v_gyr = ((int16_t) data[9] << 8) | (int16_t)data[10];
   gZ = (float)v_gyr * gyro_resolution;
 
-  // Serial.println("----- Gyrometer data ----- :");
-  // Serial.print(" G " + String( gX) + " " + String( gY) + " " + String( gZ));
-  // Serial.println();
+  //  Serial.println("----- Gyrometer data ----- :");
+  //  Serial.print(" G " + String( gX) + " " + String( gY) + " " + String( gZ));
+  //  Serial.println();
 }
 
 void  MagCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
@@ -91,10 +91,10 @@ void  MagCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* d
   v_mag = ((int16_t) data[9] << 8) | (int16_t)data[8];
   mZ = (float) (v_mag * mag_resolution * mag_bias_factory_2 - mag_bias_2 * bias_to_current_bits) * mag_scale_2;
 
-  // Serial.println("----- Magnetometer data ----- :");
-  // Serial.print(" M " + String( mX) + " " + String( mY) + " " + String( mZ));
-  // Serial.println();
-  // Serial.println();
+  //  Serial.println("----- Magnetometer data ----- :");
+  //  Serial.print(" M " + String( mX) + " " + String( mY) + " " + String( mZ));
+  //  Serial.println();
+  //  Serial.println();
 }
 
 // void PPGMax86_LED1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -182,15 +182,15 @@ void PPGMax86_ledSeq1A_PPG1_1_notify_callback(BLEClientCharacteristic* chr, uint
 
   uint32_t tab[5] = {tp1, tp2, tp3, tp4, tp5};
 
-  // Serial.println("----- PPG data ----- :");
-  // Serial.println("4 samples :");
-  // for (uint32_t i = 1; i < 5; i++) {
-  //   if (tab[i] != 0) {
-  //     Serial.println(tab[i]);
-  //   }
-  // }
-  // Serial.println();
-  // Serial.println();
+  //  Serial.println("----- PPG data ----- :");
+  //  Serial.println("4 samples :");
+  //  for (uint32_t i = 1; i < 5; i++) {
+  //    if (tab[i] != 0) {
+  //      Serial.println(tab[i]);
+  //    }
+  //  }
+  //  Serial.println();
+  //  Serial.println();
 }
 
 void PPGMax86_SNR1_1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -236,13 +236,13 @@ void PPGMax86_ledSeq1A_PPG1_2_notify_callback(BLEClientCharacteristic* chr, uint
 
   uint32_t tab[3] = {tp1, tp2, tp3};
 
-  // Serial.println("----- PPG data ----- :");
-  // Serial.println("4 samples :");
-  // for (uint32_t i = 1; i < 3; i++) {
-  //   if (tab[i] != 0) {
-  //     Serial.println(tab[i]);
-  //   }
-  // }
+  //  Serial.println("----- PPG data ----- :");
+  //  Serial.println("4 samples :");
+  //  for (uint32_t i = 1; i < 3; i++) {
+  //    if (tab[i] != 0) {
+  //      Serial.println(tab[i]);
+  //    }
+  //  }
 }
 
 void PPGMax86_ledSeq1A_PPG2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -268,11 +268,11 @@ void PPGMax86_ledSeq1A_PPG2_2_notify_callback(BLEClientCharacteristic* chr, uint
 
   uint32_t tab[3] = {tp1, tp2, tp3};
 
-  // for (uint32_t i = 1; i < 3; i++) {
-  //   Serial.println(tab[i]);
-  // }
-  // Serial.println();
-  // Serial.println();
+  //  for (uint32_t i = 1; i < 3; i++) {
+  //    Serial.println(tab[i]);
+  //  }
+  //  Serial.println();
+  //  Serial.println();
 }
 
 void PPGMax86_SNR1_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -337,13 +337,13 @@ void PPGMax86_ledSeq1A_PPG1_3_notify_callback(BLEClientCharacteristic* chr, uint
 
   uint32_t tab[3] = {tp1, tp2, tp3};
 
-  // Serial.println("----- PPG data ----- :");
-  // Serial.println("4 samples :");
-  // for (uint32_t i = 1; i < 3; i++) {
-  //   if (tab[i] != 0) {
-  //     Serial.println(tab[i]);
-  //   }
-  // }
+  //  Serial.println("----- PPG data ----- :");
+  //  Serial.println("4 samples :");
+  //  for (uint32_t i = 1; i < 3; i++) {
+  //    if (tab[i] != 0) {
+  //      Serial.println(tab[i]);
+  //    }
+  //  }
 }
 
 void PPGMax86_ledSeq1A_PPG2_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
@@ -369,11 +369,11 @@ void PPGMax86_ledSeq1A_PPG2_3_notify_callback(BLEClientCharacteristic* chr, uint
 
   uint32_t tab[3] = {tp1, tp2, tp3};
 
-  // for (uint32_t i = 1; i < 3; i++) {
-  //   Serial.println(tab[i]);
-  // }
-  // Serial.println();
-  // Serial.println();
+  //  for (uint32_t i = 1; i < 3; i++) {
+  //    Serial.println(tab[i]);
+  //  }
+  //  Serial.println();
+  //  Serial.println();
 }
 
 void PPGMax86_SNR1_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
