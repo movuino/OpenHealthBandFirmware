@@ -18,13 +18,21 @@ uint8_t bufError[2];
 /* Sending data when BLE is enabled */
 #define BleTest
 
-
-/* Send or stop bluetooth communication */
-String start_stop_SendingPPG, start_stop_SendingIMU;
-
 /* Shutdown or restart the sensor */
-bool shutdown_or_restartPPG = 0, shutdown_or_restartIMU = 0;
+uint8_t shutdown_or_restartPPG = 0, shutdown_or_restartIMU = 0;
 
+/*Start or Stop command received from Central*/
+uint8_t ssCommand = 0;
+bool firstStartIMU = 0, firstStartPPG = 0;
+
+//#define DEBUG
+#ifdef DEBUG
+# define CHECK_NOTIFICATION(condition) \
+  if (!condition)                     \
+    Serial.printf("Notification failed on line %d\n", __LINE__);
+#else
+# define CHECK_NOTIFICATION(condition) condition;
+#endif
 
 /*Error Service & characteristic*/
 BLEService ErrorService = BLEService(0x1200);
@@ -37,14 +45,11 @@ BLEService        hrms = BLEService(UUID16_SVC_HEART_RATE);
 BLECharacteristic hrmc = BLECharacteristic(UUID16_CHR_HEART_RATE_MEASUREMENT);
 BLECharacteristic bslc = BLECharacteristic(UUID16_CHR_BODY_SENSOR_LOCATION);
 
-//#define DEBUG
-#ifdef DEBUG
-# define CHECK_NOTIFICATION(condition) \
-  if (!condition)                     \
-    Serial.printf("Notification failed on line %d\n", __LINE__);
-#else
-# define CHECK_NOTIFICATION(condition) condition;
-#endif
+BLEService Start_StopService = BLEService(0x1400);
+BLECharacteristic StartCharacteristic = BLECharacteristic(0x1401);
+BLECharacteristic intensityLedsCharacteristic = BLECharacteristic(0x1402);
+BLECharacteristic smplRateCharacteristic = BLECharacteristic(0x1403);
+BLECharacteristic smplAvgCharacteristic = BLECharacteristic(0x1404);
 
 #ifdef PPG_Max86141
 #include "Max86141_Functions.h"
@@ -149,6 +154,12 @@ void setup() {
   MagCharacteristic.write(bufMag, 10);
 #endif
 
+  setupStart_StopService();
+  StartCharacteristic.write8(0);
+  intensityLedsCharacteristic.write8(0);
+  smplRateCharacteristic.write8(0);
+  smplAvgCharacteristic.write8(0);
+
   // Setup the advertising packet(s)
   Serial.println("Setting up the advertising payload(s)");
   startAdv();
@@ -160,50 +171,44 @@ void setup() {
 
 void loop() {
   //---------------------------- Bluetooth Communication ----------------------------------//
-
 #ifdef BleTest
 
 #ifdef PPG_Max86141
-//updatePPG86();
-#ifdef SampleRatePPG
-   testingSampleRatePPG(); /////##########
-#endif
-
+  updatePPG86();
 #endif
 
 #ifdef IMU9250
-//updateIMU(); 
-#ifdef SampleRateIMU
-  testingSampleRateIMU(); /////##########
+  updateIMU();
 #endif
 
-#endif
+  if (Bluefruit.connected()) {
 
-  if (!Bluefruit.connected()) {
+    ssCommand = StartCharacteristic.read8();
 
-    if ( start_stop_SendingIMU == "send" && start_stop_SendingPPG == "send") {
+    if (ssCommand == 1) { // Received 1 from Central to start sending data
       CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
     }
 
-    if ( start_stop_SendingIMU == "stop" && start_stop_SendingPPG == "stop") {
+    if ( (StartCharacteristic.read8() == 2) ) { //Received 2 from Central to stop sending data
       Serial.println("Device disconnected, data IMU & PPG not sent");
 
+      if (firstStartIMU == 1) {
 #ifdef IMU9250
-      // sleep device
-      mpu.write_byte(0x69, PWR_MGMT_1, 0x40);  // Set sleep mode bit (6), unenable all sensors
-      delay(100);                                  // Wait for all registers to reset
-
-      shutdown_or_restartIMU = 1;
-      start_stop_SendingIMU = "send";
+        // sleep device
+        mpu.write_byte(0x69, PWR_MGMT_1, 0x40);  // Set sleep mode bit (6), unenable all sensors
+        delay(100);                                  // Wait for all registers to reset
+        shutdown_or_restartIMU = 1;
 #endif
+      }
 
+      if (firstStartPPG == 1) {
 #ifdef PPG_Max86141
-      //Shutdown PPG/
-      pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
-
-      shutdown_or_restartPPG = 1;
-      start_stop_SendingPPG = "send";
+        //Shutdown PPG/
+        pulseOx1.write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
+        shutdown_or_restartPPG = 1;
 #endif
+      }
+      StartCharacteristic.write8(0);
     }
   }
 #endif

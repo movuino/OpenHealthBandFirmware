@@ -239,12 +239,14 @@
   function startReceiving(){
      var data = new Uint8Array(1);
      data[0] = 1
+    console.log("################################ Command 1 envoyeeeeeeeeeeee ! ######################")
      BLE_Start_CHARACTERISTIC.writeValue(data)
   }
 
   function stopReceiving(){
      var data = new Uint8Array(1);
      data[0] = 2
+     console.log("################################ Command 2 envoyeeeeeeeeeeee ! ######################")
      BLE_Start_CHARACTERISTIC.writeValue(data)
   }
 
