@@ -66,7 +66,7 @@ void configureIMU() {
   bufError[0] = errorIMU;
 
   /*Low Power Mode Acc, 9 => 125Hz Output Rate Data*/
-  uint8_t waking_up_frequencyLPM = 11;
+  uint8_t waking_up_frequencyLPM = 9;
   mpu.write_byte(0x69, LP_ACCEL_ODR, waking_up_frequencyLPM);
 
   Serial.println();
