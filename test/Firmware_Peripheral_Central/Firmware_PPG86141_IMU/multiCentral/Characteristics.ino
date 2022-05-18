@@ -34,6 +34,18 @@ void ErrorCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
 
 void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
+  recieved_dataAcc++;
+  long endTimeIMU = micros();
+
+  Serial.print("IMU samples received[");
+  Serial.print(recieved_dataAcc);
+  Serial.print("]");
+  Serial.println();
+  Serial.print("IMU Sample Rate : Hz[");
+  Serial.print((float)(recieved_dataAcc) / ((endTimeIMU - startTime) / 1000000.0), 2);
+  Serial.print("]");
+  Serial.println();
+
   uint8_t  timeStamp = data[0];
   timeStamp = (timeStamp  << 8) + data[1];
   timeStamp = (timeStamp << 8) + data[2];
@@ -263,6 +275,18 @@ void PPGMax86_SNR2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data
 }
 
 void PPGMax86_ledSeq1A_PPG1_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
+  recieved_dataPD1++;
+  long endTimeIMU = micros();
+
+  Serial.print("PD1 samples received[");
+  Serial.print(recieved_dataPD1);
+  Serial.print("]");
+  Serial.println();
+  Serial.print("PD1 Sample Rate : Hz[");
+  Serial.print((float)(recieved_dataPD1) / ((endTimeIMU - startTime) / 1000000.0), 2);
+  Serial.print("]");
+  Serial.println();
+
   uint32_t tp1;
   tp1 = data[0];
   tp1 = (tp1  << 8) + data[1];

@@ -69,7 +69,7 @@ int aTensorFlow, bTensorFlow, cTensorFlow;
 int errorFlag = 0;
 
 long last_samplerate;
-int recieved_data = 0;
+int recieved_data = 0, recieved_dataPD1 = 0;
 uint8_t start_payload[] = {1};
 
 void setup() {
@@ -137,7 +137,7 @@ void setup() {
   // set up callback for receiving measurement
   AccCharacteristic.setNotifyCallback(AccCharacteristic_notify_callback);
   AccCharacteristic.begin();
-  
+
   GyroCharacteristic.setNotifyCallback(GyroCharacteristic_notify_callback);
   GyroCharacteristic.begin();
 
@@ -160,13 +160,16 @@ void setup() {
   Bluefruit.Scanner.useActiveScan(false);
   Bluefruit.Scanner.start(0);
   last_samplerate = millis();
-  
 }
 
 void loop() {
+
   if (millis() - last_samplerate > 1000) {
     last_samplerate = millis();
-    Serial.printf("Sampling Rate: %d\n", recieved_data);
+    Serial.printf("Sampling Rate Acc: %d\n", recieved_data);
+    Serial.printf("Sampling Rate PD1: %d\n",recieved_dataPD1);
+    recieved_dataPD1 = 0;
     recieved_data = 0;
   }
+
 }

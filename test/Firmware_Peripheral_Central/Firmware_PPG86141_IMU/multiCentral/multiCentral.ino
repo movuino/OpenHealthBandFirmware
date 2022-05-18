@@ -73,6 +73,11 @@ uint32_t sixRAM, nineRAM;
 int aTensorFlow, bTensorFlow, cTensorFlow;
 int errorFlag = 0;
 
+long last_samplerate;
+int recieved_dataAcc = 0;
+int recieved_dataPD1 = 0;
+long startTime;
+
 
 void setup() {
   Serial.begin(115200);
@@ -143,7 +148,6 @@ void setup() {
 
   MagCharacteristic.setNotifyCallback(MagCharacteristic_notify_callback);
   MagCharacteristic.begin();
-  
 #endif
 
   // Increase Blink rate to different from PrPh advertising mode
@@ -159,8 +163,16 @@ void setup() {
   Bluefruit.Scanner.filterUuid(ErrorService.uuid);
   Bluefruit.Scanner.useActiveScan(false);
   Bluefruit.Scanner.start(0);
+
+  startTime = micros();
 }
 
 void loop() {
-
+  /*
+  if (millis() - last_samplerate > 1000) {
+    last_samplerate = millis();
+    Serial.printf("Sampling Rate: %d\n", recieved_data);
+    recieved_data = 0;
+  }
+  */
 }

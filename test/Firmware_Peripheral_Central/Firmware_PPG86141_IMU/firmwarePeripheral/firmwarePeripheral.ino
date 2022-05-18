@@ -85,7 +85,8 @@ void setup() {
   // Set the connect/disconnect callback handlers
   Bluefruit.Periph.setConnectCallback(connect_callback);
   Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
-  Bluefruit.Periph.setConnInterval(6, 12); // 7.5 - 15 ms
+  //Bluefruit.Periph.setConnInterval(6, 12); // 7.5 - 15 ms
+  Bluefruit.Periph.setConnIntervalMS(15, 30); //min : 15ms, max: multiple of 15 ms for iphone
 
   // Configure and Start the Device Information Service
   Serial.println("Configuring the Device Information Service");
@@ -170,8 +171,9 @@ void loop() {
 
 #ifdef PPG_Max86141
   if (!errorPPG86) {
+    updatePPG86();
 #ifdef SampleRatePPG
-    testingSampleRatePPG();
+    //testingSampleRatePPG();
 #endif
 
   }
@@ -179,19 +181,20 @@ void loop() {
 
 #ifdef IMU9250
   if (!errorIMU) {
+    updateIMU();
 #ifdef SampleRateIMU
-    testingSampleRateIMU();
+    //testingSampleRateIMU();
 #endif
 
   }
 #endif
 
   if (!Bluefruit.connected()) {
-
+    
     if ( start_stop_SendingIMU == "send" && start_stop_SendingPPG == "send") {
       CHECK_NOTIFICATION ( ErrorCharacteristic.notify(bufError, 2) )
     }
-
+    
     if ( start_stop_SendingIMU == "stop" && start_stop_SendingPPG == "stop") {
       Serial.println("Device disconnected, data IMU & PPG not sent");
 

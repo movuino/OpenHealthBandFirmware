@@ -34,7 +34,7 @@ void connect_callback(uint16_t conn_handle)
   ASSERT_CHARACTERISTIC(AccCharacteristic);
   delay(20);
   ENABLE_NOTIFICATIONS(AccCharacteristic);
-
+ 
   ASSERT_CHARACTERISTIC(GyroCharacteristic);
   delay(20);
   ENABLE_NOTIFICATIONS(GyroCharacteristic);

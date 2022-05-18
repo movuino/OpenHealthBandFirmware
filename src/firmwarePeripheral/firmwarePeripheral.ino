@@ -89,8 +89,8 @@ void setup() {
 
   // Set the connect/disconnect callback handlers
   Bluefruit.Periph.setConnectCallback(connect_callback);
-  Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
-  Bluefruit.Periph.setConnInterval(6, 12); // 7.5 - 15 ms
+  Bluefruit.Periph.setDisconnectCallback(disconnect_callback);  
+  Bluefruit.Periph.setConnInterval(12, 12); //min : 15ms, max: multiple of 15 ms for iphone
 
   // Configure and Start the Device Information Service
   Serial.println("Configuring the Device Information Service");

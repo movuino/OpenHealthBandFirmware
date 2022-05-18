@@ -316,6 +316,7 @@ void PPGMax86_SNR2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data
 }
 
 void PPGMax86_ledSeq1A_PPG1_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
+recieved_dataPD1++;
   uint32_t tp1;
   tp1 = data[0];
   tp1 = (tp1  << 8) + data[1];

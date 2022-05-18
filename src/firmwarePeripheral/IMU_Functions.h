@@ -11,7 +11,6 @@ BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
 #define debugAcc
 #define debugGyr
 #define debugMag
-//#define SampleRateIMU
 
 MPU9250 mpu;
 MPU9250Setting setting;
@@ -37,7 +36,6 @@ uint8_t bufGyro[11];
 uint8_t bufMag[10];
 
 /* functions */
-void testingSampleRateIMU();
 void getDataAcc_Gyr();
 void getDataMag();
 
@@ -46,7 +44,6 @@ void configureIMU() {
   Serial.println("####  IMU CONFIG  ####");
   Wire.begin();
 
-  MPU9250Setting setting;
   setting.accel_fs_sel = ACCEL_FS_SEL::A16G;
   setting.gyro_fs_sel = GYRO_FS_SEL::G2000DPS;
   setting.mag_output_bits = MAG_OUTPUT_BITS::M16BITS;
@@ -69,7 +66,7 @@ void configureIMU() {
   bufError[0] = errorIMU;
 
   /*Low Power Mode Acc, 9 => 125Hz Output Rate Data*/
-  uint8_t waking_up_frequencyLPM = 9;
+  uint8_t waking_up_frequencyLPM = 11;
   mpu.write_byte(0x69, LP_ACCEL_ODR, waking_up_frequencyLPM);
 
   Serial.println();
@@ -95,7 +92,7 @@ void updateIMU() {
         }
         shutdown_or_restartIMU = 0;
       }
-      else if (shutdown_or_restartIMU == 3) { // first Start when when central notify
+      else if (shutdown_or_restartIMU == 3) { // first Start when central notify
         // Init IMU //
         configureIMU();
         shutdown_or_restartIMU = 0;
@@ -225,64 +222,5 @@ void getDataMag() {
   Serial.print(String(mZ));
   Serial.println(" ");
 #endif
-#endif
-}
-
-
-void testingSampleRateIMU() {
-
-#ifdef BleTest
-  if ( Bluefruit.connected()) {
-    ssCommand = StartCharacteristic.read8();
-
-    if (ssCommand == 1) { // Received 1 from Central to start sending data
-      if (shutdown_or_restartIMU == 1) { // the sensor was shutdown
-        //Init IMU/
-        configureIMU();
-
-        if (!errorIMU) {
-          if (mpu.update()) {
-            getDataAcc_Gyr();
-            getDataMag();
-          }
-        }
-        shutdown_or_restartIMU = 0;
-      }
-      else if (shutdown_or_restartIMU == 3) { // first Start when when central notify
-        // Init IMU //
-        configureIMU();
-        shutdown_or_restartIMU = 0;
-      }
-      if (!errorIMU) {
-        long startTimeIMU = micros();
-        long samplesTakenIMU = 0;
-        while (samplesTakenIMU < 125) {
-          if (mpu.update()) {
-            samplesTakenIMU = samplesTakenIMU + 1;
-            getDataAcc_Gyr();
-            getDataMag();
-          }
-          CHECK_NOTIFICATION(AccCharacteristic.notify(bufAcc, 11))
-          CHECK_NOTIFICATION(GyroCharacteristic.notify(bufGyro, 11))
-          CHECK_NOTIFICATION(MagCharacteristic.notify(bufMag, 10))
-        }
-        long endTimeIMU = micros();
-
-        Serial.print("IMU samples avec BLE[");
-        Serial.print(samplesTakenIMU);
-        Serial.print("]");
-        Serial.println();
-        Serial.print("IMU Sample Rate : Hz[");
-        Serial.print((float)(samplesTakenIMU) / ((endTimeIMU - startTimeIMU) / 1000000.0), 2);
-        Serial.print("]");
-        Serial.println();
-        Serial.print("Elapsed Time : Us[");
-        Serial.print(endTimeIMU - startTimeIMU);
-        Serial.print("]");
-        Serial.println();
-        Serial.println();
-      }
-    }
-  }
 #endif
 }
