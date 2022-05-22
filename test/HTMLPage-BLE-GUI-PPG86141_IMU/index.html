@@ -1,0 +1,164 @@
+<!doctype html>
+
+<html>
+    <meta charset="utf-8">
+	<head>
+		<title>ChromeBLE</title>
+	    <script src="index.js"></script>
+		<script type="text/javascript" src="smoothie.js"></script>
+		<script src="float16.js"></script>
+		<script src="three.js"></script>
+		<script>
+			const { Float16Array, getFloat16, setFloat16, hfround } = float16;
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
+		<script src="https://unpkg.com/p5ble@0.0.4/dist/p5.ble.js" type="text/javascript"></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <script type="text/javascript">
+	    $(document).ready(function(){
+		$('#start-btn').click(function(){
+			  document.getElementById("start-btn").disabled = true;
+			  document.getElementById("stop-btn").disabled = false;
+		});
+        $('#stop-btn').click(function(){
+			  document.getElementById("start-btn").disabled = false;
+			  document.getElementById("stop-btn").disabled = true;
+		});
+
+	    });
+	    
+        </script>
+	</head>
+
+	<body>
+		<h1>Open Health Band</h1>
+
+		<button id="connect-btn" > Connect</button>
+	    <!--button id="start-btn" > Start </button>
+	    <button id="stop-btn" > Stop </button-->
+	    <input type="button" value="Start" id="start-btn" name="Start" />
+        <input type="button" value="Stop" id="stop-btn" name="Stop" />
+        <br>
+        <br>
+        <table>
+        	<tr>
+        		<td>Leds intensity (min = 0, max = 255) </td>
+        		<td><input type="text" id="intensity" name="intensity"></td>
+        	</tr>
+        	<tr>
+        		<td>Sample rate </td>
+        		<td><!--input type="text" id="smpl_rate" name="smpl_rate"-->
+        			<select name="sampleRate" id="smpl_rate">
+                           <option value="">--Please choose an option--</option>
+                           <option value="25">25</option>
+                           <option value="50">50</option>
+                           <option value="84">84</option>
+                           <option value="100">100</option>
+                           <option value="128">128</option>
+                           <option value="200">200</option>
+                           <option value="256">256</option>
+                           <option value="400">400</option>
+                           <option value="512">512</option>
+                           <option value="1024">1024</option>
+                           <option value="2048">2048</option>
+                           <option value="4096">400</option>
+
+                    </select>
+        		</td>
+        		<td><input type="button" value="Apply" id="apply-btn" name="Apply"/></td>
+        	</tr>
+        	<tr>
+        		<td>Sample average </td>
+        		<td><!--input type="text" id="smpl_avg" name="smpl_avg"-->
+        			<select name="sampleAvg" id="smpl_avg">
+                           <option value="">--Please choose an option--</option>
+                           <option value="1">1</option>
+                           <option value="2">2</option>
+                           <option value="4">4</option>
+                           <option value="8">8</option>
+                           <option value="16">16</option>
+                           <option value="32">32</option>
+                           <option value="64">64</option>
+                           <option value="128">128</option>
+                    </select>
+
+        		</td>
+        	</tr>
+        </table>
+        <br>
+        <br>
+        <br>
+        <br>
+		<div>
+			<br>
+			<br>
+			<h3>Sensors status</h3>
+			<span>IMU </span><span id="IMU-state"></span><br>
+			<span>PPG </span><span id="PPG-state"></span>
+		</div>
+		<table>
+			<tr>
+				<td>LED PD1 </td>
+				<td><canvas class="smoothie" id="smoothie-pd1-led" width="400" height="100"></canvas></td>
+			<td> <blockquote>         SNR:</blockquote>
+			</td> 
+			<td id="snr1_2PD1"></td>
+
+				<td><blockquote>     dB</blockquote> </td>
+			</tr>
+
+			<tr>
+				<td>LED PD2 </td>
+				<td><canvas class="smoothie" id="smoothie-pd2-led" width="400" height="100"></canvas></td>
+
+				<blockquote>
+			<td> <blockquote>         SNR:</blockquote>
+			</td>
+		    <td id="snr2_2PD2"></td>
+				
+				<td> <blockquote>   dB </blockquote></td>
+			</blockquote>
+			</tr>
+		
+		</table>
+		<table>
+			<tr>
+				<td>Acc</td>
+				<td><canvas class="smoothie" id="smoothie-imu-acc" width="400" height="100"></canvas></td>
+			</tr>
+			<tr>
+				<td>Gyr</td>
+				<td><canvas class="smoothie" id="smoothie-imu-gyr" width="400" height="100"></canvas></td>
+			</tr>
+			<tr>
+				<td>Mag</td>
+				<td><canvas class="smoothie" id="smoothie-imu-mag" width="400" height="100"></canvas></td>
+			</tr>
+		</table>
+			
+		<div id="three-container"></div>
+	</body>
+</html>
+
+<style>
+	table {
+		float: left;
+  		width: 50%;
+  		padding: 5px;
+	}
+
+	.status-ok:after {
+		color: green;
+		content: "OK";
+	}
+	.status-ko:after {
+		color: red;
+		content: "KO";
+	}
+	.smoothie {
+		margin: 5px 0;
+	}
+</style>
