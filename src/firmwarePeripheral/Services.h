@@ -1,7 +1,7 @@
 
 void setupErrorService(void) {
   ErrorService.begin();
-  //ErrorCharacteristic.setProperties(CHR_PROPS_READ | CHR_PROPS_NOTIFY);
+
   ErrorCharacteristic.setProperties(CHR_PROPS_NOTIFY);
   ErrorCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
   ErrorCharacteristic.setFixedLen(2);
@@ -12,23 +12,12 @@ void setupErrorService(void) {
 void setupIMUService(void)
 {
   IMUService.begin();
-  AccCharacteristic.setProperties(CHR_PROPS_NOTIFY);
-  AccCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  AccCharacteristic.setFixedLen(11);
-  AccCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
-  AccCharacteristic.begin();
-  /*Gyro*/
-  GyroCharacteristic.setProperties(CHR_PROPS_NOTIFY);
-  GyroCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  GyroCharacteristic.setFixedLen(11);
-  GyroCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
-  GyroCharacteristic.begin();
-  /*Mag*/
-  MagCharacteristic.setProperties(CHR_PROPS_NOTIFY);
-  MagCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  MagCharacteristic.setFixedLen(10);
-  MagCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
-  MagCharacteristic.begin();
+
+  AccGyrMagCharacteristic.setProperties(CHR_PROPS_NOTIFY);
+  AccGyrMagCharacteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  AccGyrMagCharacteristic.setFixedLen(22);
+  AccGyrMagCharacteristic.setCccdWriteCallback(cccd_callback);  // Optionally capture CCCD updates
+  AccGyrMagCharacteristic.begin();
 }
 
 void setupPPGMax86(void) {
@@ -36,72 +25,30 @@ void setupPPGMax86(void) {
 
 #ifdef PDLEDs
   ////////////////////////// PDLEDs ////////////////////////////////////
-  ledSeq1A_PPG1Characteristic1.setProperties(CHR_PROPS_NOTIFY);
-  ledSeq1A_PPG1Characteristic1.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ledSeq1A_PPG1Characteristic1.setFixedLen(20);
-  ledSeq1A_PPG1Characteristic1.setCccdWriteCallback(cccd_callback_PPG86);
-  ledSeq1A_PPG1Characteristic1.begin();
-
-  SNR1_1PPG1Characteristic1.setProperties(CHR_PROPS_NOTIFY);
-  SNR1_1PPG1Characteristic1.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  SNR1_1PPG1Characteristic1.setFixedLen(4);
-  SNR1_1PPG1Characteristic1.setCccdWriteCallback(cccd_callback_PPG86);
-  SNR1_1PPG1Characteristic1.begin();
+  PDLEDs_PD1_SNR1Characteristic.setProperties(CHR_PROPS_NOTIFY);
+  PDLEDs_PD1_SNR1Characteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  PDLEDs_PD1_SNR1Characteristic.setFixedLen(24);
+  PDLEDs_PD1_SNR1Characteristic.setCccdWriteCallback(cccd_callback_PPG86);
+  PDLEDs_PD1_SNR1Characteristic.begin();
 #endif
 
 
 #ifdef PDsLED
   ////////////////////////// PDsLED ////////////////////////////////////
-  ledSeq1A_PPG1Characteristic2.setProperties(CHR_PROPS_NOTIFY);
-  ledSeq1A_PPG1Characteristic2.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ledSeq1A_PPG1Characteristic2.setFixedLen(12);
-  ledSeq1A_PPG1Characteristic2.setCccdWriteCallback(cccd_callback_PPG86);
-  ledSeq1A_PPG1Characteristic2.begin();
-
-  ledSeq1A_PPG2Characteristic2.setProperties(CHR_PROPS_NOTIFY);
-  ledSeq1A_PPG2Characteristic2.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ledSeq1A_PPG2Characteristic2.setFixedLen(12);
-  ledSeq1A_PPG2Characteristic2.setCccdWriteCallback(cccd_callback_PPG86);
-  ledSeq1A_PPG2Characteristic2.begin();
-
-  SNR1_2PPG1Characteristic2.setProperties(CHR_PROPS_NOTIFY);
-  SNR1_2PPG1Characteristic2.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  SNR1_2PPG1Characteristic2.setFixedLen(4);
-  SNR1_2PPG1Characteristic2.setCccdWriteCallback(cccd_callback_PPG86);
-  SNR1_2PPG1Characteristic2.begin();
-
-  SNR2_2PPG2Characteristic2.setProperties(CHR_PROPS_NOTIFY);
-  SNR2_2PPG2Characteristic2.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  SNR2_2PPG2Characteristic2.setFixedLen(4);
-  SNR2_2PPG2Characteristic2.setCccdWriteCallback(cccd_callback_PPG86);
-  SNR2_2PPG2Characteristic2.begin();
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.setProperties(CHR_PROPS_NOTIFY);
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.setFixedLen(28);
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.setCccdWriteCallback(cccd_callback_PPG86);
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.begin();
 #endif
 
 #ifdef PDsLEDs
   ////////////////////////// PDsLEDs ////////////////////////////////////
-  ledSeq1A_PPG1Characteristic3.setProperties(CHR_PROPS_NOTIFY);
-  ledSeq1A_PPG1Characteristic3.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ledSeq1A_PPG1Characteristic3.setFixedLen(12);
-  ledSeq1A_PPG1Characteristic3.setCccdWriteCallback(cccd_callback_PPG86);
-  ledSeq1A_PPG1Characteristic3.begin();
-
-  ledSeq1A_PPG2Characteristic3.setProperties(CHR_PROPS_NOTIFY);
-  ledSeq1A_PPG2Characteristic3.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  ledSeq1A_PPG2Characteristic3.setFixedLen(12);
-  ledSeq1A_PPG2Characteristic3.setCccdWriteCallback(cccd_callback_PPG86);
-  ledSeq1A_PPG2Characteristic3.begin();
-
-  SNR1_3PPG1Characteristic3.setProperties(CHR_PROPS_NOTIFY);
-  SNR1_3PPG1Characteristic3.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  SNR1_3PPG1Characteristic3.setFixedLen(4);
-  SNR1_3PPG1Characteristic3.setCccdWriteCallback(cccd_callback_PPG86);
-  SNR1_3PPG1Characteristic3.begin();
-
-  SNR2_3PPG2Characteristic3.setProperties(CHR_PROPS_NOTIFY);
-  SNR2_3PPG2Characteristic3.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
-  SNR2_3PPG2Characteristic3.setFixedLen(4);
-  SNR2_3PPG2Characteristic3.setCccdWriteCallback(cccd_callback_PPG86);
-  SNR2_3PPG2Characteristic3.begin();
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.setProperties(CHR_PROPS_NOTIFY);
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.setPermission(SECMODE_OPEN, SECMODE_NO_ACCESS);
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.setFixedLen(28);
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.setCccdWriteCallback(cccd_callback_PPG86);
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.begin();
 #endif
 
 }

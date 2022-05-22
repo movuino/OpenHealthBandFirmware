@@ -31,50 +31,30 @@ BLEService PPG86Service = BLEService(0x1300);
 
 #ifdef PDLEDs
 ////// PDLEDs (1 PD - 2 LEDs) //////
-BLECharacteristic ledSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1301);
-//BLECharacteristic tagSeq1A_PPG1Characteristic1 = BLECharacteristic(0x1302);
-////// SNR (Signal Noise Ratio) //////
-BLECharacteristic SNR1_1PPG1Characteristic1 = BLECharacteristic(0x1315);
+BLECharacteristic PDLEDs_PD1_SNR1Characteristic = BLECharacteristic(0x1301);
 
 //////////// Pointers used to send timestamp, 4 samples PD1 and SNR by Bluetooth /////////////
-uint8_t pt_ledSeq1A_PD1_1[20];
-uint8_t SNR1_1[4];
+uint8_t pt_ledSeq1A_PD1_SNR1_1[24];
 
 void getDataPDLEDs();
 #endif
 
 #ifdef PDsLED
 ///// PDsLED (2 PDs - 1 LED) //////
-BLECharacteristic ledSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1305);
-//BLECharacteristic tagSeq1A_PPG1Characteristic2 = BLECharacteristic(0x1306);
-BLECharacteristic ledSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1307);
-//BLECharacteristic tagSeq1A_PPG2Characteristic2 = BLECharacteristic(0x1308);
-////// SNR (Signal Noise Ratio) //////
-BLECharacteristic SNR1_2PPG1Characteristic2 = BLECharacteristic(0x1313);
-BLECharacteristic SNR2_2PPG2Characteristic2 = BLECharacteristic(0x1314);
+BLECharacteristic PDsLED_PD1_PD2_SNR1_SNR2Characteristic = BLECharacteristic(0x1302);
 
 //////////// Pointers used to send timestamp, 2 samples PD1, 2 samples PD2 and SNR by Bluetooth /////////////
-uint8_t pt_ledSeq1A_PD1_2[12];
-uint8_t pt_ledSeq1A_PD2_2[12];
-uint8_t SNR1_2[4], SNR2_2[4];
+uint8_t pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[28];
 
 void getDataPDsLED();
 #endif
 
 #ifdef PDsLEDs
 ////// PDsLEDs (2 PDs - 3 LEDs) //////
-BLECharacteristic ledSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1309);
-//BLECharacteristic tagSeq1A_PPG1Characteristic3 = BLECharacteristic(0x1310);
-BLECharacteristic ledSeq1A_PPG2Characteristic3 = BLECharacteristic(0x1311);
-//BLECharacteristic tagSeq1B_PPG2Characteristic3 = BLECharacteristic(0x1312);
-////// SNR (Signal Noise Ratio) //////
-BLECharacteristic SNR1_3PPG1Characteristic3 = BLECharacteristic(0x1317);
-BLECharacteristic SNR2_3PPG2Characteristic3 = BLECharacteristic(0x1318);
+BLECharacteristic PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic = BLECharacteristic(0x1303);
 
 //////////// Pointers used to send timestamp, 2 samples PD1, 2 samples PD2 and SNR by Bluetooth /////////////
-uint8_t pt_ledSeq1A_PD1_3[12];
-uint8_t pt_ledSeq1A_PD2_3[12];
-uint8_t SNR1_3[4], SNR2_3[4];
+uint8_t pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[28];
 
 void getDataPDsLEDs();
 #endif
@@ -86,7 +66,7 @@ int ledMode[10];
 #include "LEDsConfiguration_Sensor.h"
 
 
-/* Pin Definitions  */
+/* Pin Definitions */
 // #define MISO_PIN              19
 // #define MOSI_PIN              18
 // #define SCK_PIN               5
@@ -98,12 +78,10 @@ int ledMode[10];
 static int spiClk = 1000000; // 8 MHz Maximum
 int cpt1 = 0, cpt2 = 0;
 int interruptPin = 36;
-bool dataReady = false;
-long startTime;
-long samplesTaken = 0;
 int sequences_size = 0;
 int fifo_size = 8;
 float snr_pd1, snr_pd2;
+
 MAX86141 pulseOx1;
 
 
@@ -166,11 +144,6 @@ void configurePPG86(void) {
   delay(1000);
 
   pulseOx1.setDebug(false);
-
-  startTime = millis();
-
-  Serial.println();
-
 }
 
 
@@ -244,22 +217,15 @@ void updatePPG86(void) {
         }
 
 #ifdef PDsLED
-        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic2.notify(pt_ledSeq1A_PD1_2, 12))
-        CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic2.notify(pt_ledSeq1A_PD2_2, 12))
-        CHECK_NOTIFICATION(SNR1_2PPG1Characteristic2.notify(SNR1_2, 4))
-        CHECK_NOTIFICATION(SNR2_2PPG2Characteristic2.notify(SNR2_2, 4))
+        CHECK_NOTIFICATION(PDsLED_PD1_PD2_SNR1_SNR2Characteristic.notify(pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2, 28))
 #endif
 
 #ifdef PDLEDs
-        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic1.notify(pt_ledSeq1A_PD1_1, 20))
-        CHECK_NOTIFICATION(SNR1_1PPG1Characteristic1.notify(SNR1_1, 4))
+        CHECK_NOTIFICATION(PDLEDs_PD1_SNR1Characteristic.notify(pt_ledSeq1A_PD1_SNR1_1, 24))
 #endif
 
 #ifdef PDsLEDs
-        CHECK_NOTIFICATION(ledSeq1A_PPG1Characteristic3.notify(pt_ledSeq1A_PD1_3, 12))
-        CHECK_NOTIFICATION(ledSeq1A_PPG2Characteristic3.notify(pt_ledSeq1A_PD2_3, 12))
-        CHECK_NOTIFICATION(SNR1_3PPG1Characteristic3.notify(SNR1_3, 4))
-        CHECK_NOTIFICATION(SNR2_3PPG2Characteristic3.notify(SNR2_3, 4))
+        CHECK_NOTIFICATION(PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.notify(pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3, 28))
 #endif
       }
 
@@ -279,7 +245,6 @@ void updatePPG86(void) {
 #ifdef PDsLEDs
 void getDataPDsLEDs() {
 
-  //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
   Serial.println("----- PPG data ----- :");
   Serial.println("Reading all data from PD1: ");
@@ -296,7 +261,6 @@ void getDataPDsLEDs() {
   free(pulseOx1.tab_ledSeq1A_PD2);
 #endif
 
-  //---------------------------- Bluetooth Communication ----------------------------------//
 #ifdef BleTest
   ///////// See if direct ambient is affecting the output of ADC (OverFlow) /////////
   uint8_t InterruptStatus_without_AFull_DataReady = pulseOx1.read_reg(REG_INT_STAT_1) << 2;
@@ -313,21 +277,27 @@ void getDataPDsLEDs() {
 
       ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
       uint32_t timestamp1 = millis();
-      pt_ledSeq1A_PD1_3[3] = (uint8_t)timestamp1;
-      pt_ledSeq1A_PD1_3[2] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_3[1] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_3[0] = (uint8_t)(timestamp1 >>= 8);
 
+      uint8_t* ptTimeStamp = (uint8_t*)&timestamp1;
 
-      pt_ledSeq1A_PD1_3[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
-      pt_ledSeq1A_PD1_3[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_3[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_3[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[0] = ptTimeStamp[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[1] = ptTimeStamp[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[2] = ptTimeStamp[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[3] = ptTimeStamp[3];
 
-      pt_ledSeq1A_PD1_3[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
-      pt_ledSeq1A_PD1_3[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_3[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_3[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD1_1 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[0];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[4] = ptTab_ledSeq1A_PD1_1[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[5] = ptTab_ledSeq1A_PD1_1[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[6] = ptTab_ledSeq1A_PD1_1[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[7] = ptTab_ledSeq1A_PD1_1[3];
+
+      uint8_t* ptTab_ledSeq1A_PD1_2 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[1];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[8] = ptTab_ledSeq1A_PD1_2[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[9] = ptTab_ledSeq1A_PD1_2[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[10] = ptTab_ledSeq1A_PD1_2[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[11]  = ptTab_ledSeq1A_PD1_2[3];
 
       cpt1 += 2;
       if (cpt1 == SIZE) {
@@ -337,16 +307,20 @@ void getDataPDsLEDs() {
         var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
         if (var < 0) {
           int a = -100 * var;
-          SNR1_3[3] = (uint8_t)a;
-          SNR1_3[2] = (uint8_t)(a >>= 8);
-          SNR1_3[1] = (uint8_t)(a >>= 8);
-          SNR1_3[0] = (uint8_t)(a >>= 8);
+          uint8_t* ptVar = (uint8_t*)&a;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[12] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[13] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[14] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[15] = ptVar[3];
         }
         else {
-          SNR1_3[3] = (uint8_t)var;
-          SNR1_3[2] = (uint8_t)(var >>= 8);
-          SNR1_3[1] = (uint8_t)(var >>= 8);
-          SNR1_3[0] = (uint8_t)(var >>= 8);
+          uint8_t* ptVar = (uint8_t*)&var;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[12] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[13] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[14] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[15] = ptVar[3];
         }
         cpt1 = 0;
       }
@@ -360,21 +334,19 @@ void getDataPDsLEDs() {
       pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 1] = pulseOx1.tab_ledSeq1A_PD2[1];
 
       ///////////// Pointer to send only 4 samples by Bluetooth (PD2) ////////////
-      uint32_t timestamp2 = millis();
-      pt_ledSeq1A_PD2_3[3] = (uint8_t)timestamp2;
-      pt_ledSeq1A_PD2_3[2] = (uint8_t)(timestamp2 >>= 8);
-      pt_ledSeq1A_PD2_3[1] = (uint8_t)(timestamp2 >>= 8);
-      pt_ledSeq1A_PD2_3[0] = (uint8_t)(timestamp2 >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD2_1 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD2[0];
 
-      pt_ledSeq1A_PD2_3[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
-      pt_ledSeq1A_PD2_3[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-      pt_ledSeq1A_PD2_3[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-      pt_ledSeq1A_PD2_3[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[16] = ptTab_ledSeq1A_PD2_1[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[17] = ptTab_ledSeq1A_PD2_1[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[18] = ptTab_ledSeq1A_PD2_1[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[19] = ptTab_ledSeq1A_PD2_1[3];
 
-      pt_ledSeq1A_PD2_3[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[1];
-      pt_ledSeq1A_PD2_3[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-      pt_ledSeq1A_PD2_3[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-      pt_ledSeq1A_PD2_3[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD2_2 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD2[1];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[20] = ptTab_ledSeq1A_PD2_2[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[21] = ptTab_ledSeq1A_PD2_2[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[22] = ptTab_ledSeq1A_PD2_2[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[23] = ptTab_ledSeq1A_PD2_2[3];
 
       cpt2 += 2;
       if (cpt2 == SIZE) {
@@ -384,16 +356,20 @@ void getDataPDsLEDs() {
         var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
         if (var < 0) {
           int a = -100 * var;
-          SNR2_3[3] = (uint8_t)a;
-          SNR2_3[2] = (uint8_t)(a >>= 8);
-          SNR2_3[1] = (uint8_t)(a >>= 8);
-          SNR2_3[0] = (uint8_t)(a >>= 8);
+          uint8_t* ptVar = (uint8_t*)&a;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[24] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[25] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[26] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[27] = ptVar[3];
         }
         else {
-          SNR2_3[3] = (uint8_t)var;
-          SNR2_3[2] = (uint8_t)(var >>= 8);
-          SNR2_3[1] = (uint8_t)(var >>= 8);
-          SNR2_3[0] = (uint8_t)(var >>= 8);
+          uint8_t* ptVar = (uint8_t*)&var;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[24] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[25] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[26] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3[27] = ptVar[3];
         }
         cpt2 = 0;
       }
@@ -446,31 +422,41 @@ void getDataPDLEDs() {
 
       ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
       uint32_t timestamp1 = millis();
-      pt_ledSeq1A_PD1_1[3] = (uint8_t)timestamp1;
-      pt_ledSeq1A_PD1_1[2] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_1[1] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_1[0] = (uint8_t)(timestamp1 >>= 8);
 
+      uint8_t* ptTimeStamp = (uint8_t*)&timestamp1;
 
-      pt_ledSeq1A_PD1_1[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
-      pt_ledSeq1A_PD1_1[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_1[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_1[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_1[0] = ptTimeStamp[0];
+      pt_ledSeq1A_PD1_SNR1_1[1] = ptTimeStamp[1];
+      pt_ledSeq1A_PD1_SNR1_1[2] = ptTimeStamp[2];
+      pt_ledSeq1A_PD1_SNR1_1[3] = ptTimeStamp[3];
 
-      pt_ledSeq1A_PD1_1[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
-      pt_ledSeq1A_PD1_1[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_1[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_1[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD1_1 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[0];
 
-      pt_ledSeq1A_PD1_1[15] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[2];
-      pt_ledSeq1A_PD1_1[14] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
-      pt_ledSeq1A_PD1_1[13] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
-      pt_ledSeq1A_PD1_1[12] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[2] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_1[4] = ptTab_ledSeq1A_PD1_1[0];
+      pt_ledSeq1A_PD1_SNR1_1[5] = ptTab_ledSeq1A_PD1_1[1];
+      pt_ledSeq1A_PD1_SNR1_1[6] = ptTab_ledSeq1A_PD1_1[2];
+      pt_ledSeq1A_PD1_SNR1_1[7] = ptTab_ledSeq1A_PD1_1[3];
 
-      pt_ledSeq1A_PD1_1[19] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[3];
-      pt_ledSeq1A_PD1_1[18] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
-      pt_ledSeq1A_PD1_1[17] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
-      pt_ledSeq1A_PD1_1[16] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[3] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD1_2 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[1];
+
+      pt_ledSeq1A_PD1_SNR1_1[8]  = ptTab_ledSeq1A_PD1_2[0];
+      pt_ledSeq1A_PD1_SNR1_1[9]  = ptTab_ledSeq1A_PD1_2[1];
+      pt_ledSeq1A_PD1_SNR1_1[10] = ptTab_ledSeq1A_PD1_2[2];
+      pt_ledSeq1A_PD1_SNR1_1[11] = ptTab_ledSeq1A_PD1_2[3];
+
+      uint8_t* ptTab_ledSeq1A_PD1_3 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[2];
+
+      pt_ledSeq1A_PD1_SNR1_1[12] = ptTab_ledSeq1A_PD1_3[0];
+      pt_ledSeq1A_PD1_SNR1_1[13] = ptTab_ledSeq1A_PD1_3[1];
+      pt_ledSeq1A_PD1_SNR1_1[14] = ptTab_ledSeq1A_PD1_3[2];
+      pt_ledSeq1A_PD1_SNR1_1[15] = ptTab_ledSeq1A_PD1_3[3];
+
+      uint8_t* ptTab_ledSeq1A_PD1_4 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[3];
+
+      pt_ledSeq1A_PD1_SNR1_1[16] = ptTab_ledSeq1A_PD1_4[0];
+      pt_ledSeq1A_PD1_SNR1_1[17] = ptTab_ledSeq1A_PD1_4[1];
+      pt_ledSeq1A_PD1_SNR1_1[18] = ptTab_ledSeq1A_PD1_4[2];
+      pt_ledSeq1A_PD1_SNR1_1[19] = ptTab_ledSeq1A_PD1_4[3];
 
       cpt1 += 4;
       if (cpt1 == SIZE) {
@@ -480,16 +466,20 @@ void getDataPDLEDs() {
         var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
         if (var < 0) {
           int a = -100 * var;
-          SNR1_1[3] = (uint8_t)a;
-          SNR1_1[2] = (uint8_t)(a >>= 8);
-          SNR1_1[1] = (uint8_t)(a >>= 8);
-          SNR1_1[0] = (uint8_t)(a >>= 8);
+          uint8_t* ptVar = (uint8_t*)&a;
+
+          pt_ledSeq1A_PD1_SNR1_1[20] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_1[21] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_1[22] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_1[23] = ptVar[3];
         }
         else {
-          SNR1_1[3] = (uint8_t)var;
-          SNR1_1[2] = (uint8_t)(var >>= 8);
-          SNR1_1[1] = (uint8_t)(var >>= 8);
-          SNR1_1[0] = (uint8_t)(var >>= 8);
+          uint8_t* ptVar = (uint8_t*)&var;
+
+          pt_ledSeq1A_PD1_SNR1_1[20] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_1[21] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_1[22] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_1[23] = ptVar[3];
         }
         cpt1 = 0;
       }
@@ -546,21 +536,27 @@ void getDataPDsLED() {
 
       ///////////// Pointer to send only 4 samples by Bluetooth (PD1) ////////////
       uint32_t timestamp1 = millis();
-      pt_ledSeq1A_PD1_2[3] = (uint8_t)timestamp1;
-      pt_ledSeq1A_PD1_2[2] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_2[1] = (uint8_t)(timestamp1 >>= 8);
-      pt_ledSeq1A_PD1_2[0] = (uint8_t)(timestamp1 >>= 8);
 
+      uint8_t* ptTimeStamp = (uint8_t*)&timestamp1;
 
-      pt_ledSeq1A_PD1_2[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[0];
-      pt_ledSeq1A_PD1_2[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_2[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
-      pt_ledSeq1A_PD1_2[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[0] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[0] = ptTimeStamp[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[1] = ptTimeStamp[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[2] = ptTimeStamp[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[3] = ptTimeStamp[3];
 
-      pt_ledSeq1A_PD1_2[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD1[1];
-      pt_ledSeq1A_PD1_2[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_2[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
-      pt_ledSeq1A_PD1_2[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD1[1] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD1_1 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[0];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[4] = ptTab_ledSeq1A_PD1_1[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[5] = ptTab_ledSeq1A_PD1_1[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[6] = ptTab_ledSeq1A_PD1_1[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[7] = ptTab_ledSeq1A_PD1_1[3];
+
+      uint8_t* ptTab_ledSeq1A_PD1_2 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD1[1];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[8] = ptTab_ledSeq1A_PD1_2[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[9] = ptTab_ledSeq1A_PD1_2[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[10]  = ptTab_ledSeq1A_PD1_2[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[11]  = ptTab_ledSeq1A_PD1_2[3];
 
       cpt1 += 2;
       if (cpt1 == SIZE) {
@@ -570,16 +566,20 @@ void getDataPDsLED() {
         var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE));
         if (var < 0) {
           int a = -100 * var;
-          SNR1_2[3] = (uint8_t)a;
-          SNR1_2[2] = (uint8_t)(a >>= 8);
-          SNR1_2[1] = (uint8_t)(a >>= 8);
-          SNR1_2[0] = (uint8_t)(a >>= 8);
+          uint8_t* ptVar = (uint8_t*)&a;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[12] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[13] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[14] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[15] = ptVar[3];
         }
         else {
-          SNR1_2[3] = (uint8_t)var;
-          SNR1_2[2] = (uint8_t)(var >>= 8);
-          SNR1_2[1] = (uint8_t)(var >>= 8);
-          SNR1_2[0] = (uint8_t)(var >>= 8);
+          uint8_t* ptVar = (uint8_t*)&var;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[12] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[13] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[14] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[15] = ptVar[3];
         }
         cpt1 = 0;
       }
@@ -592,22 +592,20 @@ void getDataPDsLED() {
       pulseOx1.signalData_ledSeq1A_PD2[cpt2] = pulseOx1.tab_ledSeq1A_PD2[0];
       pulseOx1.signalData_ledSeq1A_PD2[cpt2 + 1] = pulseOx1.tab_ledSeq1A_PD2[1];
 
-      ///////////// Pointer to send only 4 samples by Bluetooth (PD2) ////////////
-      uint32_t timestamp2 = millis();
-      pt_ledSeq1A_PD2_2[3] = (uint8_t)timestamp2;
-      pt_ledSeq1A_PD2_2[2] = (uint8_t)(timestamp2 >>= 8);
-      pt_ledSeq1A_PD2_2[1] = (uint8_t)(timestamp2 >>= 8);
-      pt_ledSeq1A_PD2_2[0] = (uint8_t)(timestamp2 >>= 8);
+      ///////////// Pointer to send only 2 samples by Bluetooth (PD2) ////////////
+      uint8_t* ptTab_ledSeq1A_PD2_1 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD2[0];
 
-      pt_ledSeq1A_PD2_2[7] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[0];
-      pt_ledSeq1A_PD2_2[6] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-      pt_ledSeq1A_PD2_2[5] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
-      pt_ledSeq1A_PD2_2[4] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[0] >>= 8);
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[16] = ptTab_ledSeq1A_PD2_1[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[17] = ptTab_ledSeq1A_PD2_1[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[18] = ptTab_ledSeq1A_PD2_1[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[19] = ptTab_ledSeq1A_PD2_1[3];
 
-      pt_ledSeq1A_PD2_2[11] = (uint8_t)pulseOx1.tab_ledSeq1A_PD2[1];
-      pt_ledSeq1A_PD2_2[10] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-      pt_ledSeq1A_PD2_2[9] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
-      pt_ledSeq1A_PD2_2[8] = (uint8_t)(pulseOx1.tab_ledSeq1A_PD2[1] >>= 8);
+      uint8_t* ptTab_ledSeq1A_PD2_2 = (uint8_t*)&pulseOx1.tab_ledSeq1A_PD2[1];
+
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[20] = ptTab_ledSeq1A_PD2_2[0];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[21] = ptTab_ledSeq1A_PD2_2[1];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[22] = ptTab_ledSeq1A_PD2_2[2];
+      pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[23] = ptTab_ledSeq1A_PD2_2[3];
 
       cpt2 += 2;
       if (cpt2 == SIZE) {
@@ -617,16 +615,20 @@ void getDataPDsLED() {
         var = 100 * (pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE));
         if (var < 0) {
           int a = -100 * var;
-          SNR2_2[3] = (uint8_t)a;
-          SNR2_2[2] = (uint8_t)(a >>= 8);
-          SNR2_2[1] = (uint8_t)(a >>= 8);
-          SNR2_2[0] = (uint8_t)(a >>= 8);
+          uint8_t* ptVar = (uint8_t*)&a;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[24] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[25] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[26] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[27] = ptVar[3];
         }
         else {
-          SNR2_2[3] = (uint8_t)var;
-          SNR2_2[2] = (uint8_t)(var >>= 8);
-          SNR2_2[1] = (uint8_t)(var >>= 8);
-          SNR2_2[0] = (uint8_t)(var >>= 8);
+          uint8_t* ptVar = (uint8_t*)&var;
+
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[24] = ptVar[0];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[25] = ptVar[1];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[26] = ptVar[2];
+          pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2[27] = ptVar[3];
         }
         cpt2 = 0;
       }

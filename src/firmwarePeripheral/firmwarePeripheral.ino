@@ -89,7 +89,7 @@ void setup() {
 
   // Set the connect/disconnect callback handlers
   Bluefruit.Periph.setConnectCallback(connect_callback);
-  Bluefruit.Periph.setDisconnectCallback(disconnect_callback);  
+  Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
   Bluefruit.Periph.setConnInterval(12, 12); //min : 15ms, max: multiple of 15 ms for iphone
 
   // Configure and Start the Device Information Service
@@ -128,30 +128,22 @@ void setup() {
   setupPPGMax86();
 
 #ifdef PDLEDs
-  ledSeq1A_PPG1Characteristic1.write(pt_ledSeq1A_PD1_1, 20);
-  SNR1_1PPG1Characteristic1.write(SNR1_1, 4);
+  PDLEDs_PD1_SNR1Characteristic.write(pt_ledSeq1A_PD1_SNR1_1, 24);
 #endif
 
 #ifdef PDsLED
-  ledSeq1A_PPG1Characteristic2.write(pt_ledSeq1A_PD1_2, 12);
-  ledSeq1A_PPG2Characteristic2.write(pt_ledSeq1A_PD2_2, 12);
-  SNR1_2PPG1Characteristic2.write(SNR1_2, 4);
-  SNR2_2PPG2Characteristic2.write(SNR2_2, 4);
+  PDsLED_PD1_PD2_SNR1_SNR2Characteristic.write(pt_ledSeq1A_PD1_SNR1_PD2_SNR2_2, 28);
 #endif
 
 #ifdef PDsLEDs
-  ledSeq1A_PPG1Characteristic3.write(pt_ledSeq1A_PD1_3, 12);
-  ledSeq1A_PPG2Characteristic3.write(pt_ledSeq1A_PD2_3, 12);
-  SNR1_3PPG1Characteristic3.write(SNR1_3, 4);
-  SNR2_3PPG2Characteristic3.write(SNR2_3, 4);
+  PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic.write(pt_ledSeq1A_PD1_SNR1_PD2_SNR2_3, 28);
 #endif
+
 #endif
 
 #ifdef IMU9250
   setupIMUService();
-  AccCharacteristic.write(bufAcc, 11);
-  GyroCharacteristic.write(bufGyro, 11);
-  MagCharacteristic.write(bufMag, 10);
+  AccGyrMagCharacteristic.write(bufAccGyrMag, 22);
 #endif
 
   setupStart_StopService();

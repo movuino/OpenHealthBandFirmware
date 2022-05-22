@@ -6,7 +6,7 @@ void startAdv(void)
 
 
   Bluefruit.Advertising.addService(ErrorService, PPG86Service, IMUService);
-  Bluefruit.Advertising.addService(hrms);
+  Bluefruit.Advertising.addService(hrms, Start_StopService);
 
   // Include Name
   Bluefruit.Advertising.addName();

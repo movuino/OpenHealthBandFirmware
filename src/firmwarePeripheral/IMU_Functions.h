@@ -2,9 +2,7 @@
 
 /*IMU Service & characteristics*/
 BLEService IMUService = BLEService(0x1101);
-BLECharacteristic AccCharacteristic = BLECharacteristic(0x1102);
-BLECharacteristic GyroCharacteristic = BLECharacteristic(0x1103);
-BLECharacteristic MagCharacteristic = BLECharacteristic(0x1104);
+BLECharacteristic AccGyrMagCharacteristic = BLECharacteristic(0x1102);
 
 
 /*Debug Modes*/
@@ -25,19 +23,17 @@ float mag_scale_0 = 1.00, mag_scale_1 = 1.00, mag_scale_2 = 1.00;
 float mag_bias_0 = 0.00, mag_bias_1 = 0.00, mag_bias_2 = 0.00;
 float bias_to_current_bits = 1.00;
 
-uint8_t*  accelBuf;
-uint8_t*  gyroBuf;
-uint8_t*  magBuf;
 uint8_t*  raw_data;
 uint8_t*  raw_data_mag;
-
-uint8_t bufAcc[11];
-uint8_t bufGyro[11];
-uint8_t bufMag[10];
+uint8_t bufAccGyrMag[22];
 
 /* functions */
 void getDataAcc_Gyr();
 void getDataMag();
+
+// constants won't change:
+const long interval = 8;                  // interval at which to take data (milliseconds)
+unsigned long previousMillis = 0;        // will store last time data was updated
 
 void configureIMU() {
 
@@ -98,14 +94,20 @@ void updateIMU() {
         shutdown_or_restartIMU = 0;
         firstStartIMU = 1;
       }
-      if (!errorIMU) {
-        if (mpu.update()) {
-          getDataAcc_Gyr();
-          getDataMag();
+
+      unsigned long currentMillis = millis();
+      if (currentMillis - previousMillis >= interval) {
+        previousMillis = currentMillis;
+
+        if (!errorIMU) {
+          if (mpu.update()) {
+            getDataAcc_Gyr();
+            getDataMag();
+          }
+
+          CHECK_NOTIFICATION(AccGyrMagCharacteristic.notify(bufAccGyrMag, 22))
+
         }
-        CHECK_NOTIFICATION(AccCharacteristic.notify(bufAcc, 11))
-        CHECK_NOTIFICATION(GyroCharacteristic.notify(bufGyro, 11))
-        CHECK_NOTIFICATION(MagCharacteristic.notify(bufMag, 10))
       }
     }
   }
@@ -117,18 +119,17 @@ void getDataAcc_Gyr() {
 
 #ifdef BleTest
   uint32_t timestamp = millis();
-  bufAcc[3] = (uint8_t)timestamp;
-  bufAcc[2] = (uint8_t)(timestamp >>= 8);
-  bufAcc[1] = (uint8_t)(timestamp >>= 8);
-  bufAcc[0] = (uint8_t)(timestamp >>= 8);
-  bufAcc[4] = 16;
 
-  for (int i = 5; i <= 10; i++) {
-    bufAcc[i] = raw_data[i - 5];
+  bufAccGyrMag[3] = (uint8_t)timestamp;
+  bufAccGyrMag[2] = (uint8_t)(timestamp >>= 8);
+  bufAccGyrMag[1] = (uint8_t)(timestamp >>= 8);
+  bufAccGyrMag[0] = (uint8_t)(timestamp >>= 8);
+
+  for (int i = 4; i <= 9; i++) {
+    bufAccGyrMag[i] = raw_data[i - 4];
   }
 #endif
 
-  //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef debugAcc
   int16_t v_acc = ((int16_t) raw_data[0] << 8) | (int16_t)raw_data[1];
@@ -151,19 +152,11 @@ void getDataAcc_Gyr() {
 #endif
 
 #ifdef BleTest
-  uint32_t timestamp1 = millis();
-  bufGyro[3] = (uint8_t)timestamp1;
-  bufGyro[2] = (uint8_t)(timestamp1 >>= 8);
-  bufGyro[1] = (uint8_t)(timestamp1 >>= 8);
-  bufGyro[0] = (uint8_t)(timestamp1 >>= 8);
-  bufGyro[4] = 16;
-
-  for (int i = 5; i <= 10; i++) {
-    bufGyro[i] = raw_data[i + 3];
+  for (int i = 10; i <= 15; i++) {
+    bufAccGyrMag[i] = raw_data[i - 2];
   }
 #endif
 
-  //---------------------------- Serial Communication -------------------------------------//
 #ifdef SerialTest
 #ifdef debugGyr
   int16_t v_gyr = ((int16_t) raw_data[8] << 8) | (int16_t)raw_data[9];
@@ -191,14 +184,8 @@ void getDataMag() {
   raw_data_mag =  mpu.raw_data_mag;
 
 #ifdef BleTest
-  uint32_t timestamp2 = millis();
-  bufMag[3] = (uint8_t)timestamp2;
-  bufMag[2] = (uint8_t)(timestamp2 >>= 8);
-  bufMag[1] = (uint8_t)(timestamp2 >>= 8);
-  bufMag[0] = (uint8_t)(timestamp2 >>= 8);
-
-  for (int i = 4; i <= 9; i++) {
-    bufMag[i] = raw_data_mag[i - 4];
+  for (int i = 16; i <= 21; i++) {
+    bufAccGyrMag[i] = raw_data_mag[i - 16];
   }
 #endif
 
