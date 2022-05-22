@@ -86,7 +86,7 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 
 | 28 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) | 4 bytes (20-23) | 4 bytes (24-27) |
 |:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|PDsLED_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | | SNR photo-diode 2 |
+|PDsLED_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | SNR photo-diode 2 |
 
 
 + 2 PDs - 3 LEDs
@@ -100,7 +100,7 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 
 | 28 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) | 4 bytes (20-23) | 4 bytes (24-27) |
 |:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | | SNR photo-diode 2 |
+|PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | SNR photo-diode 2 |
 
 
 ##### HeartRate Service & characteristics
