@@ -32,387 +32,210 @@ void ErrorCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* 
   }
 }
 
-
-void AccCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
+void AccGyrMag_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
 {
   recieved_data++;
-  uint8_t  timeStamp = data[0];
-  timeStamp = (timeStamp  << 8) + data[1];
+  uint32_t  timeStamp = data[0];
+  timeStamp = (timeStamp << 8) + data[1];
   timeStamp = (timeStamp << 8) + data[2];
   timeStamp = (timeStamp << 8) + data[3];
 
-  int16_t v_acc = ((int16_t)data[5] << 8) | (int16_t)data[6];
+  int16_t v_acc = ((int16_t)data[4] << 8) | (int16_t)data[5];
   aX = (float)v_acc * acc_resolution;
 
-  v_acc = ((int16_t)data[7] << 8) | (int16_t)data[8];
+  v_acc = ((int16_t)data[6] << 8) | (int16_t)data[7];
   aY = (float)v_acc * acc_resolution;
 
-  v_acc = ((int16_t)data[9] << 8) | (int16_t)data[10];
+  v_acc = ((int16_t)data[8] << 8) | (int16_t)data[9];
   aZ = (float)v_acc * acc_resolution;
 
   //  Serial.println("----- Accelometer data ----- :");
   //  Serial.println(" A " + String( aX) + " " + String( aY) + " " + String( aZ) + " ");
-}
 
-void  GyroCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
-{
-  uint8_t timeStamp = data[0];
-  timeStamp = (timeStamp  << 8) + data[1];
-  timeStamp = (timeStamp << 8) + data[2];
-  timeStamp = (timeStamp << 8) + data[3];
-
-  int16_t v_gyr = ((int16_t) data[5] << 8) | (int16_t)data[6];
+  int16_t v_gyr = ((int16_t) data[10] << 8) | (int16_t)data[11];
   gX = (float)v_gyr * gyro_resolution;
 
-  v_gyr = ((int16_t) data[7] << 8) | (int16_t)data[8];
+  v_gyr = ((int16_t) data[12] << 8) | (int16_t)data[13];
   gY = (float)v_gyr * gyro_resolution;
 
-  v_gyr = ((int16_t) data[9] << 8) | (int16_t)data[10];
+  v_gyr = ((int16_t) data[14] << 8) | (int16_t)data[15];
   gZ = (float)v_gyr * gyro_resolution;
 
   //  Serial.println("----- Gyrometer data ----- :");
   //  Serial.print(" G " + String( gX) + " " + String( gY) + " " + String( gZ));
   //  Serial.println();
-}
 
-void  MagCharacteristic_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len)
-{
-  uint8_t timeStamp = data[0];
-  timeStamp = (timeStamp  << 8) + data[1];
-  timeStamp = (timeStamp << 8) + data[2];
-  timeStamp = (timeStamp << 8) + data[3];
-
-  int16_t v_mag = ((int16_t) data[5] << 8) | (int16_t)data[4];
+  int16_t v_mag = ((int16_t) data[17] << 8) | (int16_t)data[16];
   mX = (float) (v_mag * mag_resolution * mag_bias_factory_0 - mag_bias_0 * bias_to_current_bits) * mag_scale_0;
 
-  v_mag = ((int16_t) data[7] << 8) | (int16_t)data[6];
+  v_mag = ((int16_t) data[19] << 8) | (int16_t)data[18];
   mY = (float) (v_mag * mag_resolution * mag_bias_factory_1 - mag_bias_1 * bias_to_current_bits) * mag_scale_1;
 
-  v_mag = ((int16_t) data[9] << 8) | (int16_t)data[8];
+  v_mag = ((int16_t) data[21] << 8) | (int16_t)data[20];
   mZ = (float) (v_mag * mag_resolution * mag_bias_factory_2 - mag_bias_2 * bias_to_current_bits) * mag_scale_2;
 
   //  Serial.println("----- Magnetometer data ----- :");
   //  Serial.print(" M " + String( mX) + " " + String( mY) + " " + String( mZ));
   //  Serial.println();
   //  Serial.println();
+
 }
 
-// void PPGMax86_LED1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-//   uint32_t tp1;
-//   tp1 = data[0];
-//   tp1 = (tp1  << 8) + data[1];
-//   tp1 = (tp1  << 8) + data[2];
-//   tp1 = (tp1  << 8) + data[3];
+void PDLEDs_PD1_SNR1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
 
-//   uint32_t  tp2 = data[4];
-//   tp2 = (tp2  << 8) + data[5];
-//   tp2 = (tp2  << 8) + data[6];
-//   tp2 = (tp2  << 8) + data[7];
+  int timestamp = ( (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0] );
 
-//   uint32_t tp3 = data[8];
-//   tp3 = (tp3  << 8) + data[9];
-//   tp3 = (tp3  << 8) + data[10]; 
-//   tp3 = (tp3  << 8) + data[11];
+  int dataPD_1 = ( (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4] );
+
+  int dataPD_2 = ( (data[11] << 24) | (data[10] << 16) | (data[9] << 8) | data[8] );
+
+  int dataPD_3 = ( (data[15] << 24) | (data[14] << 16) | (data[13] << 8) | data[12] );
+
+  int dataPD_4 = ( (data[19] << 24) | (data[18] << 16) | (data[17] << 8) | data[16] );
+
+  int snr = ( (data[23] << 24) | (data[22] << 16) | (data[21] << 8) | data[20] );
+}
 
 
-// #ifdef PDLEDs
-//   uint32_t tp4 = data[12];
-//   tp4 = (tp4  << 8) + data[13];
-//   tp4 = (tp4  << 8) + data[14];
-//   tp4 = (tp4  << 8) + data[15];
 
-//   uint32_t tp5 = data[16];
-//   tp5 = (tp5  << 8) + data[17];
-//   tp5 = (tp5  << 8) + data[18];
-//   tp5 = (tp5  << 8) + data[19];
-// #endif
 
-//   int samples;
-// #ifndef PDLEDs
-//   samples = 3;
-//   uint32_t tab[3] = {tp1, tp2, tp3};
-// #else
-//   samples = 5;
-//   uint32_t tab[5] = {tp1, tp2, tp3, tp4, tp5};
-// #endif
+void PDsLED_PD1_PD2_SNR1_SNR2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
 
-// Serial.println("----- PPG data ----- :");
-// Serial.printf("%d samples :", samples);
-// for (uint32_t i = 1; i < samples; i++) {
-//   if (tab[i] != 0) {
-//     Serial.println(tab[i]);
-//   }
-// }
-// Serial.println();
-// Serial.println();
+  recieved_dataPDsLED++;
 
-// }
+  int timestamp = ( (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0] );
 
-void PPGMax86_ledSeq1A_PPG1_1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-  //Serial.println("tp1 - timestamp: "+String(tp1));
+  int dataPD1_1 = ( (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4] );
 
-  uint32_t  tp2 = data[4];
-  tp2 = (tp2  << 8) + data[5];
-  tp2 = (tp2  << 8) + data[6];
-  tp2 = (tp2  << 8) + data[7];
-  //Serial.println("tp2 : "+String(tp2));
+  int dataPD1_2 = ( (data[11] << 24) | (data[10] << 16) | (data[9] << 8) | data[8] );
 
-  uint32_t tp3 = data[8];
-  tp3 = (tp3  << 8) + data[9];
-  tp3 = (tp3  << 8) + data[10];
-  tp3 = (tp3  << 8) + data[11];
-  //Serial.println("tp3 : "+String(tp3));
+  int snr1 = ( (data[15] << 24) | (data[14] << 16) | (data[13] << 8) | data[12] );
 
-  uint32_t tp4 = data[12];
-  tp4 = (tp4  << 8) + data[13];
-  tp4 = (tp4  << 8) + data[14];
-  tp4 = (tp4  << 8) + data[15];
-  //Serial.println("tp4 : "+String(tp4));
+  int dataPD2_1 = ( (data[19] << 24) | (data[18] << 16) | (data[17] << 8) | data[16] );
 
-  uint32_t tp5 = data[16];
-  tp5 = (tp5  << 8) + data[17];
-  tp5 = (tp5  << 8) + data[18];
-  tp5 = (tp5  << 8) + data[19];
-  //Serial.println("tp5 : "+String(tp5));
+  int dataPD2_2 = ( (data[23] << 24) | (data[22] << 16) | (data[21] << 8) | data[20] );
 
-  uint32_t tab[5] = {tp1, tp2, tp3, tp4, tp5};
+  int snr2 = ( (data[27] << 24) | (data[26] << 16) | (data[25] << 8) | data[24] );
+
+  int tab[3] = {timestamp, dataPD1_1, dataPD1_2};
+
+  int tab1[3] = {timestamp, dataPD2_1, dataPD2_2};
+
+//  Serial.println("----- PPG data ----- :");
+//  Serial.println("##### From PD1 #####:");
+//  for (int i = 1; i < 3; i++) {
+//    if (tab[i] != 0) {
+//      Serial.println(tab[i]);
+//    }
+//  }
+//
+//  Serial.println();
+//  Serial.println("##### Signal Noise Ratio from PD1 #####:");
+//
+//  if (snr1 % 100 == 0) {
+//    float SNR_neg = snr1;
+//    SNR_neg = -(SNR_neg / 10000);
+//    Serial.println("Negatif: " + String(SNR_neg));
+//  }
+//  else {
+//    float SNR_pos = snr1;
+//    SNR_pos = SNR_pos / 100;
+//    Serial.println("Positif: " + String(SNR_pos));
+//  }
+//
+//
+//  Serial.println();
+//  Serial.println("##### From PD2 #####:");
+//  for (int i = 1; i < 3; i++) {
+//    if (tab1[i] != 0) {
+//      Serial.println(tab1[i]);
+//    }
+//  }
+//
+//  Serial.println();
+//  Serial.println("##### Signal Noise Ratio from PD2 #####:");
+//
+//  if (snr2 % 100 == 0) {
+//    float SNR_neg = snr2;
+//    SNR_neg = -(SNR_neg / 10000);
+//    Serial.println("Negatif: " + String(SNR_neg));
+//  }
+//  else {
+//    float SNR_pos = snr2;
+//    SNR_pos = SNR_pos / 100;
+//    Serial.println("Positif: " + String(SNR_pos));
+//  }
+//  Serial.println();
+//  Serial.println();
+}
+
+
+void PDsLEDs_PD1_PD2_SNR1_SNR2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
+
+  recieved_dataPDsLEDs++;
+
+  int timestamp = ( (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0] );
+
+  int dataPD1_1 = ( (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4] );
+
+  int dataPD1_2 = ( (data[11] << 24) | (data[10] << 16) | (data[9] << 8) | data[8] );
+
+  int snr1 = ( (data[15] << 24) | (data[14] << 16) | (data[13] << 8) | data[12] );
+
+  int dataPD2_1 = ( (data[19] << 24) | (data[18] << 16) | (data[17] << 8) | data[16] );
+
+  int dataPD2_2 = ( (data[23] << 24) | (data[22] << 16) | (data[21] << 8) | data[20] );
+
+  int snr2 = ( (data[27] << 24) | (data[26] << 16) | (data[25] << 8) | data[24] );
+
+  int tab[3] = {timestamp, dataPD1_1, dataPD1_2};
+
+  int tab1[3] = {timestamp, dataPD2_1, dataPD2_2};
 
   //  Serial.println("----- PPG data ----- :");
-  //  Serial.println("4 samples :");
-  //  for (uint32_t i = 1; i < 5; i++) {
+  //  Serial.println("##### From PD1 #####:");
+  //  for (int i = 1; i < 3; i++) {
   //    if (tab[i] != 0) {
   //      Serial.println(tab[i]);
   //    }
   //  }
+  //
   //  Serial.println();
+  //  Serial.println("##### Signal Noise Ratio from PD1 #####:");
+  //
+  //  if (snr1 % 100 == 0) {
+  //    float SNR_neg = snr1;
+  //    SNR_neg = -(SNR_neg / 10000);
+  //    Serial.println("Negatif: " + String(SNR_neg));
+  //  }
+  //  else {
+  //    float SNR_pos = snr1;
+  //    SNR_pos = SNR_pos / 100;
+  //    Serial.println("Positif: " + String(SNR_pos));
+  //  }
+  //
+  //
   //  Serial.println();
-}
-
-void PPGMax86_SNR1_1_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-
-  //Serial.println("Signal Noise Ratio");
-
-  if (tp1 % 100 == 0) {
-    float SNR_neg = tp1;
-    SNR_neg = -(SNR_neg / 10000);
-    //Serial.println("Négatif: "+String(SNR_neg));
-  }
-  else {
-    float SNR_pos = tp1;
-    SNR_pos = SNR_pos / 100;
-    //Serial.println("Positif: "+String(SNR_pos));}
-  }
-}
-
-void PPGMax86_ledSeq1A_PPG1_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-  //Serial.println("tp1 - timestamp: "+String(tp1));
-
-  uint32_t  tp2 = data[4];
-  tp2 = (tp2  << 8) + data[5];
-  tp2 = (tp2  << 8) + data[6];
-  tp2 = (tp2  << 8) + data[7];
-  //Serial.println("tp2 : "+String(tp2));
-
-  uint32_t tp3 = data[8];
-  tp3 = (tp3  << 8) + data[9];
-  tp3 = (tp3  << 8) + data[10];
-  tp3 = (tp3  << 8) + data[11];
-  //Serial.println("tp3 : "+String(tp3));
-
-  uint32_t tab[3] = {tp1, tp2, tp3};
-
-  //  Serial.println("----- PPG data ----- :");
-  //  Serial.println("4 samples :");
-  //  for (uint32_t i = 1; i < 3; i++) {
-  //    if (tab[i] != 0) {
-  //      Serial.println(tab[i]);
+  //  Serial.println("##### From PD2 #####:");
+  //  for (int i = 1; i < 3; i++) {
+  //    if (tab1[i] != 0) {
+  //      Serial.println(tab1[i]);
   //    }
   //  }
-}
-
-void PPGMax86_ledSeq1A_PPG2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-  //Serial.println("--- timestamp "+String(tp1));
-
-  uint32_t tp2 = data[4];
-  tp2 = (tp2  << 8) + data[5];
-  tp2 = (tp2  << 8) + data[6];
-  tp2 = (tp2  << 8) + data[7];
-  //Serial.println(tp2);
-
-  uint32_t tp3 = data[8];
-  tp3 = (tp3  << 8) + data[9];
-  tp3 = (tp3  << 8) + data[10];
-  tp3 = (tp3  << 8) + data[11];
-  //Serial.println(tp3);
-
-  uint32_t tab[3] = {tp1, tp2, tp3};
-
-  //  for (uint32_t i = 1; i < 3; i++) {
-  //    Serial.println(tab[i]);
+  //
+  //  Serial.println();
+  //  Serial.println("##### Signal Noise Ratio from PD2 #####:");
+  //
+  //  if (snr2 % 100 == 0) {
+  //    float SNR_neg = snr2;
+  //    SNR_neg = -(SNR_neg / 10000);
+  //    Serial.println("Negatif: " + String(SNR_neg));
+  //  }
+  //  else {
+  //    float SNR_pos = snr2;
+  //    SNR_pos = SNR_pos / 100;
+  //    Serial.println("Positif: " + String(SNR_pos));
   //  }
   //  Serial.println();
   //  Serial.println();
-}
-
-void PPGMax86_SNR1_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-
-  //Serial.println("Signal Noise Ratio");
-
-  if (tp1 % 100 == 0) {
-    float SNR_neg = tp1;
-    SNR_neg = -(SNR_neg / 10000);
-    //Serial.println("Négatif: "+String(SNR_neg));
-  }
-  else {
-    float SNR_pos = tp1;
-    SNR_pos = SNR_pos / 100;
-    //Serial.println("Positif: "+String(SNR_pos));}
-  }
-}
-void PPGMax86_SNR2_2_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-
-  // Serial.println(tp1);
-  if (tp1 % 100 == 0) {
-    float SNR_neg = tp1;
-    SNR_neg = -(SNR_neg / 10000);
-    //Serial.println("Négatif: "+String(SNR_neg));
-  }
-  else {
-    float SNR_pos = tp1;
-    SNR_pos = SNR_pos / 100;
-    //Serial.println("Positif: "+String(SNR_pos));}
-  }
-}
-
-void PPGMax86_ledSeq1A_PPG1_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-recieved_dataPD1++;
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-  //Serial.println("tp1 - timestamp: "+String(tp1));
-
-  uint32_t  tp2 = data[4];
-  tp2 = (tp2  << 8) + data[5];
-  tp2 = (tp2  << 8) + data[6];
-  tp2 = (tp2  << 8) + data[7];
-  //Serial.println("tp2 : "+String(tp2));
-
-  uint32_t tp3 = data[8];
-  tp3 = (tp3  << 8) + data[9];
-  tp3 = (tp3  << 8) + data[10];
-  tp3 = (tp3  << 8) + data[11];
-  //Serial.println("tp3 : "+String(tp3));
-
-  uint32_t tab[3] = {tp1, tp2, tp3};
-
-  //  Serial.println("----- PPG data ----- :");
-  //  Serial.println("4 samples :");
-  //  for (uint32_t i = 1; i < 3; i++) {
-  //    if (tab[i] != 0) {
-  //      Serial.println(tab[i]);
-  //    }
-  //  }
-}
-
-void PPGMax86_ledSeq1A_PPG2_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-  //Serial.println("--- timestamp "+String(tp1));
-
-  uint32_t tp2 = data[4];
-  tp2 = (tp2  << 8) + data[5];
-  tp2 = (tp2  << 8) + data[6];
-  tp2 = (tp2  << 8) + data[7];
-  //Serial.println(tp2);
-
-  uint32_t tp3 = data[8];
-  tp3 = (tp3  << 8) + data[9];
-  tp3 = (tp3  << 8) + data[10];
-  tp3 = (tp3  << 8) + data[11];
-  //Serial.println(tp3);
-
-  uint32_t tab[3] = {tp1, tp2, tp3};
-
-  //  for (uint32_t i = 1; i < 3; i++) {
-  //    Serial.println(tab[i]);
-  //  }
-  //  Serial.println();
-  //  Serial.println();
-}
-
-void PPGMax86_SNR1_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-
-  //Serial.println("Signal Noise Ratio");
-
-  if (tp1 % 100 == 0) {
-    float SNR_neg = tp1;
-    SNR_neg = -(SNR_neg / 10000);
-    //Serial.println("Négatif: "+String(SNR_neg));
-  }
-  else {
-    float SNR_pos = tp1;
-    SNR_pos = SNR_pos / 100;
-    //Serial.println("Positif: "+String(SNR_pos));}
-  }
-}
-void PPGMax86_SNR2_3_notify_callback(BLEClientCharacteristic* chr, uint8_t* data, uint16_t len) {
-  uint32_t tp1;
-  tp1 = data[0];
-  tp1 = (tp1  << 8) + data[1];
-  tp1 = (tp1  << 8) + data[2];
-  tp1 = (tp1  << 8) + data[3];
-
-  // Serial.println(tp1);
-  if (tp1 % 100 == 0) {
-    float SNR_neg = tp1;
-    SNR_neg = -(SNR_neg / 10000);
-    //Serial.println("Négatif: "+String(SNR_neg));
-  }
-  else {
-    float SNR_pos = tp1;
-    SNR_pos = SNR_pos / 100;
-    //Serial.println("Positif: "+String(SNR_pos));}
-  }
 }
