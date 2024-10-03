@@ -2,7 +2,8 @@
 
 # Open Health Band Firmware
 
-Firmware for Open Health Band
+Firmware for Open Health Band 
+use main bracnh to work with cyclist app
 
 ## Description
 

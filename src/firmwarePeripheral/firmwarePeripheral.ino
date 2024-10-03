@@ -85,7 +85,7 @@ void setup() {
   // Set the advertised device name (keep it short!)
   Serial.println("Setting Device Name to 'Open Health Band'");
 
-  Bluefruit.setName("Movuino OHB - 120");
+  Bluefruit.setName("Movuino OHB - 145");
 
   // Set the connect/disconnect callback handlers
   Bluefruit.Periph.setConnectCallback(connect_callback);
