@@ -2,7 +2,8 @@
 
 # Open Health Band Firmware
 
-Firmware for Open Health Band
+Firmware for Open Health Band 
+use main bracnh to work with cyclist app
 
 ## Description
 
@@ -44,18 +45,22 @@ The Error Characteristic allows to send boolean errors from IMU, PPG. Thus, when
 |:------:|:------:|:------:|
 |ErrorCharacteristic | errorIMU | errorPPG86 |
 
-##### IMU Service & characteristic
+##### IMU Service & characteristics
 
-With the IMU Service and characteristic, data from accelerometer, gyrometer and magnetometer can be send by BLE.
+With the IMU Service and characteristics, data from accelerometer, gyrometer and magnetometer can be send by BLE.
 
-|        | IMUService | AccGyrMagCharacteristic |
-|:------:|:------:|:------:|
-|UUID | **0x1101** | **0x1102** |
+|        | IMUService | AccCharacteristic | GyroCharacteristic | MagCharacteristic |
+|:------:|:------:|:------:|:------:|:------:|
+|UUID | **0x1101** | **0x1102** | **0x1103** | **0x1104** |
 
-|22 bytes        | 4 bytes (0-3) | 2 bytes (4-5) | 2 bytes (6-7) | 2 bytes (8-9) | 2 bytes (10-11) | 2 bytes (12-13) | 2 bytes (14-15) | 2 bytes (16-17) | 2 bytes (18-19) | 2 bytes (20-21) | 
-|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------: |
-|AccGyrMagCharacteristic | timestamp | AccX | AccY | AccZ | GyrX | GyrY | GyrZ | MagX | MagY | MagZ |
+|11 bytes        | 4 bytes (0-3) | 2 bytes (5-6) | 2 bytes (7-8) | 2 bytes (9-10) |    
+|:------:|:------:|:------:|:------:|:------:|
+|AccCharacteristic | timestamp | AccX | AccY | AccZ |
+|GyroCharacteristic | timestamp | GX | GY | GZ |
 
+|10 bytes        | 4 bytes (0-3) | 2 bytes (4-5) | 2 bytes (6-7) | 2 bytes (8-9) |    
+|:------:|:------:|:------:|:------:|:------:|
+|MagCharacteristic | timestamp | MX | MY | MZ |
 
 ##### PPG Max 86140 - 86141 Service & Characteristics
 
@@ -63,44 +68,63 @@ With the PPG Service and characteristics, data from PPG can be send by BLE. We c
 
 + 1 PD - 2 LEDS
 
-**PDLEDs_PD1_SNR1Characteristic** = characteristic for data taken from photo-diode
+**ledSeq1A_PPG1Characteristic1** = characteristic for data taken from photo-diode
 
 
-|        | PPG86Service | PDLEDs_PD1_SNR1Characteristic |
-|:------:|:------:|:------:|
-|UUID | **0x1300** | **0x1301** |
+|        | PPG86Service | ledSeq1A_PPG1Characteristic1 | SNR1_2PPG1Characteristic1 |
+|:------:|:------:|:------:|:------:|
+|UUID | **0x1300** | **0x1301** | **0x1315** |
 
-| 24 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) | 4 bytes (20-23) |    
-|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|PDLEDs_PD1_SNR1Characteristic | timestamp | sample 1 | sample 2 | sample 3 | sample 4 | SNR photo-diode |
+| 20 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) |    
+|:------:|:------:|:------:|:------:|:------:|:------:|
+|ledSeq1A_PPG1Characteristic1 | timestamp | sample 1 | sample 2 | sample 3 | sample 4 |
+
+|4 bytes | 4 bytes (0-3) |
+|:------:|:------:|
+|SNR1_2PPG1Characteristic1 | SNR photo-diode 1 |
+
 
 
 + 2 PDs - 1 LED
 
-**PDsLED_PD1_PD2_SNR1_SNR2Characteristic** = characteristic for data taken from photo-diode 1 and 2
+**ledSeq1A_PPG1Characteristic2** = characteristic for data taken from photo-diode 1
+**ledSeq1A_PPG2Characteristic2** = characteristic for data taken from photo-diode 2
 
 
-|        | PPG86Service | PDsLED_PD1_PD2_SNR1_SNR2Characteristic |
-|:------:|:------:|:------:|
-|UUID | **0x1300** | **0x1302** |
+|        | PPG86Service | ledSeq1A_PPG1Characteristic2 | ledSeq1A_PPG2Characteristic2 | SNR1_2PPG1Characteristic2 | SNR2_2PPG2Characteristic2 |
+|:------:|:------:|:------:|:------:|:------:|:------:|
+|UUID | **0x1300** | **0x1305** | **0x1307** | **0x1313** | **0x1314** |
 
-| 28 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) | 4 bytes (20-23) | 4 bytes (24-27) |
-|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|PDsLED_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | SNR photo-diode 2 |
+| 20 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) |   
+|:------:|:------:|:------:|:------:|
+|ledSeq1A_PPG1Characteristic2 | timestamp | sample 1 | sample 2 |
+|ledSeq1A_PPG2Characteristic2 | timestamp | sample 1 | sample 2 |
+
+|4 bytes | 4 bytes (0-3) |
+|:------:|:------:|
+|SNR1_2PPG1Characteristic2 | SNR photo-diode 1 |
+|SNR2_2PPG1Characteristic2 | SNR photo-diode 2 |
 
 
 + 2 PDs - 3 LEDs
 
-**PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic** = characteristic for data taken from photo-diode 1 and 2
+**ledSeq1A_PPG1Characteristic3** = characteristic for data taken from photo-diode 1
+**ledSeq1A_PPG2Characteristic3** = characteristic for data taken from photo-diode 2
 
 
-|        | PPG86Service | PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic |
-|:------:|:------:|:------:|
-|UUID | **0x1300** | **0x1303** |
+|        | PPG86Service | ledSeq1A_PPG1Characteristic3 | ledSeq1A_PPG2Characteristic3 | SNR1_2PPG1Characteristic3 | SNR2_2PPG2Characteristic3 |
+|:------:|:------:		|:------:					   |:------:					  |:------:					  |:------:					  |
+|UUID 	 | **0x1300** 	| **0x1309** 				   | **0x1311** 				  | **0x1317** 				  | **0x1318** 				  |
 
-| 28 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) | 4 bytes (12-15) | 4 bytes (16-19) | 4 bytes (20-23) | 4 bytes (24-27) |
-|:------:|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
-|PDsLEDs_PD1_PD2_SNR1_SNR2Characteristic | timestamp | sample 1 photo-diode 1 | sample 2 photo-diode 1 | SNR photo-diode 1 | sample 1 photo-diode 2 | sample 2 photo-diode 2 | SNR photo-diode 2 |
+| 12 bytes | 4 bytes (0-3) | 4 bytes (4-7) | 4 bytes (8-11) |    
+|:------:|:------:|:------:|:------:|
+|ledSeq1A_PPG1Characteristic3 | timestamp | sample 1 | sample 2 | 
+|ledSeq1A_PPG2Characteristic3 | timestamp | sample 1 | sample 2 |
+
+|4 bytes 				   | 4 bytes (0-3) |
+|:------:|:------:|
+|SNR1_2PPG1Characteristic3 | SNR photo-diode 1 |
+|SNR2_2PPG1Characteristic3 | SNR photo-diode 2 |
 
 
 ##### HeartRate Service & characteristics
